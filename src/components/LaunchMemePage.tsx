@@ -357,8 +357,8 @@ export default function LaunchMemePage() {
               )}
             </button>
 
-            <p className="text-xs text-gray-500 text-center">
-              By launching, you agree to our terms of service and acknowledge the risks involved in token creation.
+            <p className="text-xs text-red-500 text-center">
+              By launching without a Smart Vault, you agree not to earn liquidity rewards post-bonding curve.
             </p>
           </div>
         </div>
