@@ -237,7 +237,7 @@ export default function LaunchMemePage() {
                         <span>Initial Buy (Optional)</span>
                       </h3>
                       <p className="text-sm text-gray-400 mt-1">
-                        Make an initial purchase to bootstrap liquidity on {tokenData.selectedDEX}
+                        Be your token's first holder! {tokenData.selectedDEX}
                       </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
