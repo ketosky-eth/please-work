@@ -357,8 +357,8 @@ export default function LaunchMemePage() {
               )}
             </button>
 
-            <p className="text-xs text-red-500 text-center">
-              By launching without a Smart Vault, you agree not to earn liquidity rewards post-bonding curve.
+            <p className="text-xs text-gray-500 text-center">
+              <span className="text-xs text-yellow-500 text-center">Warning:</span> Launching WITHOUT a Smart Vault will not earn you liquidity rewards post-bonding curve.
             </p>
           </div>
         </div>
