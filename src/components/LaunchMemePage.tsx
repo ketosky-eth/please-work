@@ -331,7 +331,7 @@ export default function LaunchMemePage() {
                     ~{tokenData.selectedChain === 'Ethereum' ? '0.05' : 
                        tokenData.selectedChain === 'Base' ? '0.001' :
                        tokenData.selectedChain === 'Arbitrum' ? '0.002' :
-                       tokenData.selectedChain === 'Ronin' ? '0.1' :
+                       tokenData.selectedChain === 'Ronin' ? '0.5' :
                        '0.01'} {tokenData.selectedChain === 'BNB Chain' ? 'BNB' : tokenData.selectedChain === 'Ronin' ? 'RON' : 'ETH'}
                   </span>
                 </div>
