@@ -237,7 +237,7 @@ export default function LaunchMemePage() {
                         <span>Initial Buy (Optional)</span>
                       </h3>
                       <p className="text-sm text-gray-400 mt-1">
-                        Be your token's first holder before the token reaches {tokenData.selectedDEX}
+                        Be the first token holder before the it reaches {tokenData.selectedDEX}
                       </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
