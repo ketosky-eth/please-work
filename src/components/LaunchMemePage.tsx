@@ -149,7 +149,7 @@ export default function LaunchMemePage() {
                       type="text"
                       value={tokenData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
-                      placeholder="DogeCoin 2.0"
+                      placeholder="Token Name"
                       className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
@@ -161,7 +161,7 @@ export default function LaunchMemePage() {
                       type="text"
                       value={tokenData.symbol}
                       onChange={(e) => handleInputChange('symbol', e.target.value.toUpperCase())}
-                      placeholder="DOGE2"
+                      placeholder="TKN"
                       className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     />
                   </div>
@@ -235,7 +235,7 @@ export default function LaunchMemePage() {
                   <textarea
                     value={tokenData.description}
                     onChange={(e) => handleInputChange('description', e.target.value)}
-                    placeholder="The next generation of meme coins. To the moon! 🚀"
+                    placeholder="Moon it! 🚀"
                     rows={4}
                     className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                   />
