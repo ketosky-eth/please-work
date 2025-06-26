@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight } from 'lucide-react';
+import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle } from 'lucide-react';
 import { TokenData } from '../types';
+import { useWallet } from '../hooks/useWallet';
 
 interface DEXOption {
   name: string;
@@ -9,6 +10,8 @@ interface DEXOption {
 }
 
 export default function LaunchMemePage() {
+  const { isConnected, address, chainName, balance, balanceSymbol, connect } = useWallet();
+  
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
     symbol: '',
@@ -58,11 +61,16 @@ export default function LaunchMemePage() {
   };
 
   const handleLaunch = async () => {
+    if (!isConnected) {
+      connect?.();
+      return;
+    }
+
     setIsLoading(true);
-    // Simulate token creation
+    // Simulate token creation with wallet interaction
     setTimeout(() => {
       setIsLoading(false);
-      alert(`Token launched successfully on ${tokenData.selectedDEX} (${tokenData.selectedChain})! 🚀`);
+      alert(`Token launched successfully on ${tokenData.selectedDEX} (${tokenData.selectedChain})! 🚀\n\nTransaction will be sent to your wallet for confirmation.`);
     }, 3000);
   };
 
@@ -74,6 +82,15 @@ export default function LaunchMemePage() {
   ];
 
   const availableDEXs = getAvailableDEXs(tokenData.selectedChain);
+  const deploymentCost = tokenData.selectedChain === 'Ethereum' ? '0.05' : 
+                        tokenData.selectedChain === 'Base' ? '0.001' :
+                        tokenData.selectedChain === 'Arbitrum' ? '0.002' :
+                        tokenData.selectedChain === 'Ronin' ? '0.05' :
+                        '0.01';
+  const costSymbol = tokenData.selectedChain === 'BNB Chain' ? 'BNB' : 
+                    tokenData.selectedChain === 'Ronin' ? 'RON' : 'ETH';
+
+  const hasInsufficientBalance = isConnected && parseFloat(balance) < parseFloat(deploymentCost);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900/10 to-gray-900 pt-8 pb-16">
@@ -92,6 +109,25 @@ export default function LaunchMemePage() {
             Create and deploy your own meme token in minutes. Choose your chain and DEX for instant liquidity!
           </p>
         </div>
+
+        {/* Wallet Connection Warning */}
+        {!isConnected && (
+          <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-6 mb-8">
+            <div className="flex items-center space-x-3 text-yellow-400 mb-2">
+              <AlertTriangle className="w-6 h-6" />
+              <span className="font-semibold">Wallet Connection Required</span>
+            </div>
+            <p className="text-yellow-300 mb-4">
+              You need to connect your wallet to launch tokens. This ensures secure deployment and ownership of your contracts.
+            </p>
+            <button
+              onClick={connect}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            >
+              Connect Wallet Now
+            </button>
+          </div>
+        )}
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Token Creation Form */}
@@ -165,6 +201,20 @@ export default function LaunchMemePage() {
                   </div>
                 </div>
 
+                {/* Network Mismatch Warning */}
+                {isConnected && chainName !== tokenData.selectedChain && (
+                  <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 text-orange-400 mb-2">
+                      <AlertTriangle className="w-4 h-4" />
+                      <span className="font-medium">Network Mismatch</span>
+                    </div>
+                    <p className="text-orange-300 text-sm">
+                      Your wallet is connected to <strong>{chainName}</strong> but you're trying to deploy on <strong>{tokenData.selectedChain}</strong>. 
+                      Please switch networks in your wallet or change the selected blockchain.
+                    </p>
+                  </div>
+                )}
+
                 {/* DEX Info */}
                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
                   <div className="flex items-center space-x-2 text-blue-400 mb-2">
@@ -237,7 +287,7 @@ export default function LaunchMemePage() {
                         <span>Initial Buy (Optional)</span>
                       </h3>
                       <p className="text-sm text-gray-400 mt-1">
-                        Be the first token holder before the it reaches {tokenData.selectedDEX}
+                        Be the first token holder before it reaches {tokenData.selectedDEX}
                       </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
@@ -254,7 +304,7 @@ export default function LaunchMemePage() {
                   {tokenData.initialBuy && (
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Amount ({tokenData.selectedChain === 'BNB Chain' ? 'BNB' : tokenData.selectedChain === 'Ronin' ? 'RON' : 'ETH'})
+                        Amount ({costSymbol})
                       </label>
                       <input
                         type="text"
@@ -272,6 +322,27 @@ export default function LaunchMemePage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Wallet Status */}
+            {isConnected && (
+              <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-white mb-4">Wallet Status</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Connected</span>
+                    <span className="text-green-400">✓ {address?.slice(0, 6)}...{address?.slice(-4)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Network</span>
+                    <span className="text-white">{chainName}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Balance</span>
+                    <span className="text-white">{balance} {balanceSymbol}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Token Preview */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Token Preview</h3>
@@ -327,27 +398,41 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Deploy Cost</span>
-                  <span className="text-white">
-                    ~{tokenData.selectedChain === 'Ethereum' ? '0.05' : 
-                       tokenData.selectedChain === 'Base' ? '0.001' :
-                       tokenData.selectedChain === 'Arbitrum' ? '0.002' :
-                       tokenData.selectedChain === 'Ronin' ? '0.5' :
-                       '0.01'} {tokenData.selectedChain === 'BNB Chain' ? 'BNB' : tokenData.selectedChain === 'Ronin' ? 'RON' : 'ETH'}
+                  <span className={`text-white ${hasInsufficientBalance ? 'text-red-400' : ''}`}>
+                    ~{deploymentCost} {costSymbol}
                   </span>
                 </div>
               </div>
             </div>
 
+            {/* Insufficient Balance Warning */}
+            {hasInsufficientBalance && (
+              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+                <div className="flex items-center space-x-2 text-red-400 mb-2">
+                  <AlertTriangle className="w-5 h-5" />
+                  <span className="font-medium">Insufficient Balance</span>
+                </div>
+                <p className="text-red-300 text-sm">
+                  You need at least {deploymentCost} {costSymbol} to deploy this token. 
+                  Your current balance is {balance} {balanceSymbol}.
+                </p>
+              </div>
+            )}
+
             {/* Launch Button */}
             <button
               onClick={handleLaunch}
-              disabled={!tokenData.name || !tokenData.symbol || isLoading}
+              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || hasInsufficientBalance || (isConnected && chainName !== tokenData.selectedChain)}
               className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isLoading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                   <span>Launching...</span>
+                </>
+              ) : !isConnected ? (
+                <>
+                  <span>Connect Wallet to Launch</span>
                 </>
               ) : (
                 <>
@@ -356,13 +441,18 @@ export default function LaunchMemePage() {
                 </>
               )}
             </button>
-            <p className="text-m text-yellow-500 text-center">Warning:</p>
-            <p className="text-s text-gray-400 text-center">
-              Launching without a Smart Vault will not earn you liquidity rewards post-bonding curve.
-            </p>
-            <p className="text-xs text-yellow-500 text-center">
-              Proceed with caution.
-            </p>
+            
+            {!hasInsufficientBalance && (
+              <>
+                <p className="text-m text-yellow-500 text-center">Warning:</p>
+                <p className="text-s text-gray-400 text-center">
+                  Launching without a Smart Vault will not earn you liquidity rewards post-bonding curve.
+                </p>
+                <p className="text-xs text-yellow-500 text-center">
+                  Proceed with caution.
+                </p>
+              </>
+            )}
           </div>
         </div>
       </div>
