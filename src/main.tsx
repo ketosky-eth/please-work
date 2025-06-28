@@ -3,15 +3,39 @@ import { createRoot } from 'react-dom/client';
 import { WagmiProvider } from 'wagmi';
 import { getDefaultConfig, RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { mainnet, base, arbitrum, bsc, ronin } from 'wagmi/chains';
+import { defineChain } from 'viem';
 import App from './App.tsx';
 import './index.css';
 import '@rainbow-me/rainbowkit/styles.css';
 
+// Define Ronin Testnet
+const roninTestnet = defineChain({
+  id: 2021,
+  name: 'Ronin Testnet',
+  network: 'ronin-testnet',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'RON',
+    symbol: 'RON',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://site1.moralis-nodes.com/ronin-testnet/22d6b97153ed4427b60914f349b2336c'],
+    },
+    public: {
+      http: ['https://site1.moralis-nodes.com/ronin-testnet/22d6b97153ed4427b60914f349b2336c'],
+    },
+  },
+  blockExplorers: {
+    default: { name: 'Ronin Explorer', url: 'https://saigon-explorer.roninchain.com' },
+  },
+  testnet: true,
+});
+
 const config = getDefaultConfig({
-  appName: 'Meme Coin Launcher',
+  appName: 'VYTO Protocol',
   projectId: 'YOUR_PROJECT_ID', // Replace with your WalletConnect Cloud Project ID
-  chains: [mainnet, base, arbitrum, bsc, ronin],
+  chains: [roninTestnet],
   ssr: false,
 });
 

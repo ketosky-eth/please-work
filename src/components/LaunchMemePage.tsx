@@ -3,12 +3,6 @@ import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, Trendin
 import { TokenData } from '../types';
 import { useWallet } from '../hooks/useWallet';
 
-interface DEXOption {
-  name: string;
-  logo: string;
-  chains: string[];
-}
-
 export default function LaunchMemePage() {
   const { isConnected, address, chainName, balance, balanceSymbol, connect } = useWallet();
   
@@ -23,41 +17,14 @@ export default function LaunchMemePage() {
     discord: '',
     initialBuy: false,
     initialBuyAmount: '',
-    selectedChain: 'Ethereum',
-    selectedDEX: 'Uniswap'
+    selectedChain: 'Ronin Testnet',
+    selectedDEX: 'Katana'
   });
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const dexOptions: DEXOption[] = [
-    { name: 'Uniswap', logo: '🦄', chains: ['Ethereum', 'Arbitrum', 'Base'] },
-    { name: 'Katana', logo: '⚔️', chains: ['Ronin'] },
-    { name: 'PancakeSwap', logo: '🥞', chains: ['BNB Chain'] },
-    { name: 'BaseSwap', logo: '🔵', chains: ['Base'] },
-    { name: 'Camelot', logo: '🏰', chains: ['Arbitrum'] },
-    { name: 'SushiSwap', logo: '🍣', chains: ['Ethereum', 'Arbitrum', 'Base'] }
-  ];
-
-  const chainOptions = ['Ethereum', 'Base', 'Arbitrum', 'Ronin', 'BNB Chain'];
-
-  const getAvailableDEXs = (chain: string) => {
-    return dexOptions.filter(dex => dex.chains.includes(chain));
-  };
-
   const handleInputChange = (field: keyof TokenData, value: string | boolean) => {
-    setTokenData(prev => {
-      const updated = { ...prev, [field]: value };
-      
-      // Auto-select first available DEX when chain changes
-      if (field === 'selectedChain') {
-        const availableDEXs = getAvailableDEXs(value as string);
-        if (availableDEXs.length > 0) {
-          updated.selectedDEX = availableDEXs[0].name;
-        }
-      }
-      
-      return updated;
-    });
+    setTokenData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleLaunch = async () => {
@@ -70,7 +37,7 @@ export default function LaunchMemePage() {
     // Simulate token creation with wallet interaction
     setTimeout(() => {
       setIsLoading(false);
-      alert(`Token launched successfully on ${tokenData.selectedDEX} (${tokenData.selectedChain})! 🚀\n\nTransaction will be sent to your wallet for confirmation.`);
+      alert(`Token launched successfully on Katana (Ronin Testnet)! 🚀\n\nTransaction will be sent to your wallet for confirmation.`);
     }, 3000);
   };
 
@@ -81,16 +48,11 @@ export default function LaunchMemePage() {
     { key: 'discord', icon: MessageCircle, placeholder: 'https://discord.gg/mytoken', label: 'Discord' }
   ];
 
-  const availableDEXs = getAvailableDEXs(tokenData.selectedChain);
-  const deploymentCost = tokenData.selectedChain === 'Ethereum' ? '0.05' : 
-                        tokenData.selectedChain === 'Base' ? '0.001' :
-                        tokenData.selectedChain === 'Arbitrum' ? '0.002' :
-                        tokenData.selectedChain === 'Ronin' ? '0.05' :
-                        '0.01';
-  const costSymbol = tokenData.selectedChain === 'BNB Chain' ? 'BNB' : 
-                    tokenData.selectedChain === 'Ronin' ? 'RON' : 'ETH';
+  const deploymentCost = '0.05';
+  const costSymbol = 'RON';
 
   const hasInsufficientBalance = isConnected && parseFloat(balance) < parseFloat(deploymentCost);
+  const hasSmartVault = false; // This would be checked from the Smart Vault contract
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900/10 to-gray-900 pt-8 pb-16">
@@ -106,7 +68,7 @@ export default function LaunchMemePage() {
             Launch Your Meme Token
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Create and deploy your own meme token in minutes. Choose your chain and DEX for instant liquidity!
+            Create and deploy your own meme token on Ronin Testnet. Launch on Katana DEX for instant liquidity!
           </p>
         </div>
 
@@ -167,65 +129,31 @@ export default function LaunchMemePage() {
                   </div>
                 </div>
 
-                {/* Chain and DEX Selection */}
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Blockchain *
-                    </label>
-                    <select
-                      value={tokenData.selectedChain}
-                      onChange={(e) => handleInputChange('selectedChain', e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    >
-                      {chainOptions.map((chain) => (
-                        <option key={chain} value={chain}>{chain}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Launch DEX *
-                    </label>
-                    <select
-                      value={tokenData.selectedDEX}
-                      onChange={(e) => handleInputChange('selectedDEX', e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    >
-                      {availableDEXs.map((dex) => (
-                        <option key={dex.name} value={dex.name}>
-                          {dex.logo} {dex.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Network Mismatch Warning */}
-                {isConnected && chainName !== tokenData.selectedChain && (
-                  <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
-                    <div className="flex items-center space-x-2 text-orange-400 mb-2">
-                      <AlertTriangle className="w-4 h-4" />
-                      <span className="font-medium">Network Mismatch</span>
-                    </div>
-                    <p className="text-orange-300 text-sm">
-                      Your wallet is connected to <strong>{chainName}</strong> but you're trying to deploy on <strong>{tokenData.selectedChain}</strong>. 
-                      Please switch networks in your wallet or change the selected blockchain.
-                    </p>
-                  </div>
-                )}
-
-                {/* DEX Info */}
+                {/* Network Info */}
                 <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
                   <div className="flex items-center space-x-2 text-blue-400 mb-2">
                     <ArrowRight className="w-4 h-4" />
                     <span className="font-medium">Launch Information</span>
                   </div>
                   <p className="text-blue-300 text-sm">
-                    Your token will be launched on <strong>{tokenData.selectedDEX}</strong> on the <strong>{tokenData.selectedChain}</strong> network. 
+                    Your token will be launched on <strong>Katana DEX</strong> on the <strong>Ronin Testnet</strong> network. 
                     Liquidity will be automatically added and trading will begin immediately.
                   </p>
                 </div>
+
+                {/* Network Mismatch Warning */}
+                {isConnected && chainName !== 'Ronin Testnet' && (
+                  <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 text-orange-400 mb-2">
+                      <AlertTriangle className="w-4 h-4" />
+                      <span className="font-medium">Network Mismatch</span>
+                    </div>
+                    <p className="text-orange-300 text-sm">
+                      Your wallet is connected to <strong>{chainName}</strong> but you need to be on <strong>Ronin Testnet</strong>. 
+                      Please switch networks in your wallet.
+                    </p>
+                  </div>
+                )}
 
                 {/* Description */}
                 <div>
@@ -287,7 +215,7 @@ export default function LaunchMemePage() {
                         <span>Initial Buy (Optional)</span>
                       </h3>
                       <p className="text-sm text-gray-400 mt-1">
-                        Be the first token holder before it reaches {tokenData.selectedDEX}
+                        Be the first token holder before it reaches Katana
                       </p>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
@@ -304,7 +232,7 @@ export default function LaunchMemePage() {
                   {tokenData.initialBuy && (
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Amount ({costSymbol})
+                        Amount (RON)
                       </label>
                       <input
                         type="text"
@@ -343,6 +271,26 @@ export default function LaunchMemePage() {
               </div>
             )}
 
+            {/* Smart Vault Status */}
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Smart Vault Status</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Smart Vault</span>
+                  <span className={hasSmartVault ? "text-green-400" : "text-red-400"}>
+                    {hasSmartVault ? "✓ Active" : "✗ Not Minted"}
+                  </span>
+                </div>
+                {!hasSmartVault && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
+                    <p className="text-yellow-300 text-sm">
+                      Mint a Smart Vault NFT to automatically receive LP tokens and earn fees from your launched tokens.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Token Preview */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Token Preview</h3>
@@ -367,10 +315,10 @@ export default function LaunchMemePage() {
                 </p>
                 <div className="flex items-center space-x-2 text-xs">
                   <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
-                    {tokenData.selectedChain}
+                    Ronin Testnet
                   </span>
                   <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded">
-                    {tokenData.selectedDEX}
+                    Katana
                   </span>
                 </div>
               </div>
@@ -390,11 +338,11 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Network</span>
-                  <span className="text-white">{tokenData.selectedChain}</span>
+                  <span className="text-white">Ronin Testnet</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">DEX</span>
-                  <span className="text-white">{tokenData.selectedDEX}</span>
+                  <span className="text-white">Katana</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Deploy Cost</span>
@@ -422,7 +370,7 @@ export default function LaunchMemePage() {
             {/* Launch Button */}
             <button
               onClick={handleLaunch}
-              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || hasInsufficientBalance || (isConnected && chainName !== tokenData.selectedChain)}
+              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || hasInsufficientBalance || (isConnected && chainName !== 'Ronin Testnet')}
               className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isLoading ? (
@@ -442,7 +390,7 @@ export default function LaunchMemePage() {
               )}
             </button>
             
-            {!hasInsufficientBalance && (
+            {!hasInsufficientBalance && !hasSmartVault && (
               <>
                 <p className="text-m text-yellow-500 text-center">Warning:</p>
                 <p className="text-s text-gray-400 text-center">

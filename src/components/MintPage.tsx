@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Palette, Zap, Shield, Star, Crown, Unlock } from 'lucide-react';
+import { Palette, Zap, Shield, Star, Crown, Unlock, Clock } from 'lucide-react';
 
 interface NFTCollection {
   id: string;
@@ -12,45 +12,52 @@ interface NFTCollection {
   gradient: string;
   features: string[];
   rarity: string;
+  comingSoon?: boolean;
 }
 
 export default function MintPage() {
-  const [selectedCollection, setSelectedCollection] = useState<string>('founders');
+  const [selectedCollection, setSelectedCollection] = useState<string>('smart');
   const [mintQuantity, setMintQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
   const collections: NFTCollection[] = [
     {
-      id: 'founders',
-      name: 'Founders Vault Shard',
+      id: 'genesis',
+      name: 'Genesis Vault Shard',
       description: 'Exclusive limited edition NFTs for early supporters and founders. Only 350 pieces will ever exist, making each one a rare digital asset.',
       price: 65,
       totalSupply: 350,
-      minted: 127,
+      minted: 0,
       icon: Crown,
       gradient: 'from-yellow-500 via-orange-500 to-red-500',
       features: ['Limited Edition', 'Founder Benefits', 'Exclusive Access', 'Premium Rewards'],
-      rarity: 'Legendary'
+      rarity: 'Legendary',
+      comingSoon: true
     },
     {
       id: 'smart',
       name: 'Smart Vault',
-      description: 'Accessible NFTs for the community with unlimited minting. Perfect for getting started in the VYTO ecosystem.',
+      description: 'Essential NFT for the VYTO ecosystem. Mint once per wallet to unlock advanced features like LP token management and fee harvesting.',
       price: 5,
       totalSupply: null,
       minted: 2847,
       icon: Unlock,
       gradient: 'from-blue-500 via-purple-500 to-pink-500',
-      features: ['Unlimited Supply', 'Community Access', 'Affordable Entry', 'Utility Features'],
-      rarity: 'Common'
+      features: ['One Per Wallet', 'LP Management', 'Fee Harvesting', 'Non-Transferable'],
+      rarity: 'Essential'
     }
   ];
 
   const selectedNFT = collections.find(c => c.id === selectedCollection)!;
-  const maxMintPerTx = selectedCollection === 'founders' ? 5 : 10;
+  const maxMintPerTx = selectedCollection === 'genesis' ? 5 : 1; // Smart Vault is 1 per wallet
   const remainingSupply = selectedNFT.totalSupply ? selectedNFT.totalSupply - selectedNFT.minted : null;
 
   const handleMint = async () => {
+    if (selectedNFT.comingSoon) {
+      alert('Genesis Vault Shard coming soon! 🚀');
+      return;
+    }
+
     setIsLoading(true);
     // Simulate minting process
     setTimeout(() => {
@@ -60,6 +67,8 @@ export default function MintPage() {
   };
 
   const handleQuantityChange = (change: number) => {
+    if (selectedCollection === 'smart') return; // Smart Vault is always 1
+    
     const newQuantity = mintQuantity + change;
     const maxAllowed = remainingSupply ? Math.min(maxMintPerTx, remainingSupply) : maxMintPerTx;
     
@@ -68,7 +77,7 @@ export default function MintPage() {
     }
   };
 
-  const totalCost = selectedNFT.price * mintQuantity;
+  const totalCost = selectedNFT.price * (selectedCollection === 'smart' ? 1 : mintQuantity);
   const estimatedGas = 0.003;
 
   return (
@@ -94,14 +103,23 @@ export default function MintPage() {
           {collections.map((collection) => (
             <div
               key={collection.id}
-              onClick={() => setSelectedCollection(collection.id)}
-              className={`relative bg-gray-800/50 backdrop-blur-sm border-2 rounded-2xl p-6 cursor-pointer transition-all transform hover:scale-105 ${
-                selectedCollection === collection.id
-                  ? 'border-purple-500 ring-2 ring-purple-500/20'
-                  : 'border-gray-700 hover:border-gray-600'
+              onClick={() => !collection.comingSoon && setSelectedCollection(collection.id)}
+              className={`relative bg-gray-800/50 backdrop-blur-sm border-2 rounded-2xl p-6 transition-all transform hover:scale-105 ${
+                collection.comingSoon 
+                  ? 'border-gray-600 opacity-75 cursor-not-allowed' 
+                  : selectedCollection === collection.id
+                  ? 'border-purple-500 ring-2 ring-purple-500/20 cursor-pointer'
+                  : 'border-gray-700 hover:border-gray-600 cursor-pointer'
               }`}
             >
-              {selectedCollection === collection.id && (
+              {collection.comingSoon && (
+                <div className="absolute top-4 right-4 bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium flex items-center space-x-1">
+                  <Clock className="w-3 h-3" />
+                  <span>Coming Soon</span>
+                </div>
+              )}
+
+              {!collection.comingSoon && selectedCollection === collection.id && (
                 <div className="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
                 </div>
@@ -117,13 +135,15 @@ export default function MintPage() {
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                       collection.rarity === 'Legendary' 
                         ? 'bg-yellow-500/20 text-yellow-400' 
+                        : collection.rarity === 'Essential'
+                        ? 'bg-green-500/20 text-green-400'
                         : 'bg-blue-500/20 text-blue-400'
                     }`}>
                       {collection.rarity}
                     </span>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-400">
-                    <span>${collection.price} each</span>
+                    <span>{collection.price} RON each</span>
                     <span>•</span>
                     <span>
                       {collection.totalSupply ? `${collection.minted}/${collection.totalSupply} minted` : `${collection.minted} minted`}
@@ -182,26 +202,50 @@ export default function MintPage() {
                   <div className="flex items-center justify-center space-x-4 bg-gray-700/50 rounded-xl p-4">
                     <button
                       onClick={() => handleQuantityChange(-1)}
-                      disabled={mintQuantity <= 1}
+                      disabled={mintQuantity <= 1 || selectedCollection === 'smart'}
                       className="w-12 h-12 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg flex items-center justify-center font-bold text-xl transition-colors"
                     >
                       -
                     </button>
                     <div className="text-center">
-                      <div className="text-3xl font-bold text-white">{mintQuantity}</div>
+                      <div className="text-3xl font-bold text-white">
+                        {selectedCollection === 'smart' ? 1 : mintQuantity}
+                      </div>
                       <div className="text-xs text-gray-400">
-                        Max {remainingSupply ? Math.min(maxMintPerTx, remainingSupply) : maxMintPerTx} per transaction
+                        {selectedCollection === 'smart' 
+                          ? 'One per wallet' 
+                          : `Max ${remainingSupply ? Math.min(maxMintPerTx, remainingSupply) : maxMintPerTx} per transaction`
+                        }
                       </div>
                     </div>
                     <button
                       onClick={() => handleQuantityChange(1)}
-                      disabled={mintQuantity >= (remainingSupply ? Math.min(maxMintPerTx, remainingSupply) : maxMintPerTx)}
+                      disabled={
+                        selectedCollection === 'smart' || 
+                        mintQuantity >= (remainingSupply ? Math.min(maxMintPerTx, remainingSupply) : maxMintPerTx)
+                      }
                       className="w-12 h-12 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg flex items-center justify-center font-bold text-xl transition-colors"
                     >
                       +
                     </button>
                   </div>
                 </div>
+
+                {/* Smart Vault Info */}
+                {selectedCollection === 'smart' && (
+                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 text-blue-400 mb-2">
+                      <Shield className="w-5 h-5" />
+                      <span className="font-medium">Smart Vault Benefits</span>
+                    </div>
+                    <ul className="text-blue-300 text-sm space-y-1">
+                      <li>• Automatically receive LP tokens from your launched meme tokens</li>
+                      <li>• Harvest trading fees from your token pairs</li>
+                      <li>• Non-transferable - permanently linked to your wallet</li>
+                      <li>• Required for advanced VYTO ecosystem features</li>
+                    </ul>
+                  </div>
+                )}
 
                 {/* Supply Warning */}
                 {remainingSupply && remainingSupply <= 50 && (
@@ -222,24 +266,26 @@ export default function MintPage() {
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">Price per NFT</span>
-                      <span className="text-white font-semibold">${selectedNFT.price}</span>
+                      <span className="text-white font-semibold">{selectedNFT.price} RON</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">Quantity</span>
-                      <span className="text-white font-semibold">{mintQuantity}</span>
+                      <span className="text-white font-semibold">
+                        {selectedCollection === 'smart' ? 1 : mintQuantity}
+                      </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">Subtotal</span>
-                      <span className="text-white font-semibold">${totalCost}</span>
+                      <span className="text-white font-semibold">{totalCost} RON</span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-gray-300">Gas Fee (Est.)</span>
-                      <span className="text-white font-semibold">{estimatedGas} ETH</span>
+                      <span className="text-white font-semibold">{estimatedGas} RON</span>
                     </div>
                     <hr className="border-gray-600 my-3" />
                     <div className="flex justify-between items-center">
                       <span className="text-white font-bold text-lg">Total</span>
-                      <span className="text-white font-bold text-lg">${totalCost}</span>
+                      <span className="text-white font-bold text-lg">{totalCost} RON</span>
                     </div>
                   </div>
                 </div>
@@ -247,10 +293,19 @@ export default function MintPage() {
                 {/* Mint Button */}
                 <button
                   onClick={handleMint}
-                  disabled={isLoading || (remainingSupply !== null && remainingSupply <= 0)}
+                  disabled={
+                    isLoading || 
+                    (remainingSupply !== null && remainingSupply <= 0) ||
+                    selectedNFT.comingSoon
+                  }
                   className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
                 >
-                  {isLoading ? (
+                  {selectedNFT.comingSoon ? (
+                    <>
+                      <Clock className="w-5 h-5" />
+                      <span>Coming Soon</span>
+                    </>
+                  ) : isLoading ? (
                     <>
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       <span>Minting...</span>
@@ -260,7 +315,7 @@ export default function MintPage() {
                   ) : (
                     <>
                       <Zap className="w-5 h-5" />
-                      <span>Mint NFTs</span>
+                      <span>Mint NFT</span>
                     </>
                   )}
                 </button>
@@ -274,6 +329,14 @@ export default function MintPage() {
                 <div className={`aspect-square bg-gradient-to-br ${selectedNFT.gradient} rounded-xl mb-6 flex items-center justify-center relative overflow-hidden`}>
                   <selectedNFT.icon className="w-20 h-20 text-white opacity-80" />
                   <div className="absolute inset-0 bg-black/20 backdrop-blur-[1px]"></div>
+                  {selectedNFT.comingSoon && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <div className="text-white text-center">
+                        <Clock className="w-12 h-12 mx-auto mb-2" />
+                        <div className="text-lg font-bold">Coming Soon</div>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="space-y-4">
@@ -287,7 +350,7 @@ export default function MintPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-gray-600/50 rounded-lg p-3">
                       <div className="text-gray-400 text-xs mb-1">Price</div>
-                      <div className="text-white font-semibold">${selectedNFT.price}</div>
+                      <div className="text-white font-semibold">{selectedNFT.price} RON</div>
                     </div>
                     <div className="bg-gray-600/50 rounded-lg p-3">
                       <div className="text-gray-400 text-xs mb-1">Supply</div>
