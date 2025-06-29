@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Palette, Zap, Shield, Star, Crown, Unlock, Clock } from 'lucide-react';
+import { Palette, Zap, Shield, Star, Crown, Unlock, Clock, Gift } from 'lucide-react';
 
 interface NFTCollection {
   id: string;
@@ -67,7 +67,7 @@ export default function MintPage() {
       minted: null, // Hide minted count
       icon: Unlock,
       gradient: 'from-yellow-500 via-orange-500 to-blue-500',
-      features: ['One Per Wallet', 'LP Management', 'Fee Harvesting', 'Non-Transferable'],
+      features: ['One Per Wallet', 'LP Management', 'Fee Harvesting', '1x FREE Meme Token Creation'],
       rarity: 'Essential',
       isDynamicPrice: true
     }
@@ -115,10 +115,10 @@ export default function MintPage() {
               <Palette className="w-8 h-8 text-white" />
             </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            VYTO NFT Collection
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Build the Future with VYTO
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-300 max-w-2xl mx-auto">
             Mint exclusive NFTs and join the VYTO ecosystem. Choose from our premium collections.
           </p>
         </div>
@@ -137,13 +137,6 @@ export default function MintPage() {
                   : 'border-gray-700 hover:border-gray-600 cursor-pointer'
               }`}
             >
-              {collection.comingSoon && (
-                <div className="absolute top-4 right-4 bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium flex items-center space-x-1">
-                  <Clock className="w-3 h-3" />
-                  <span>Coming Soon</span>
-                </div>
-              )}
-
               {!collection.comingSoon && selectedCollection === collection.id && (
                 <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
@@ -167,7 +160,13 @@ export default function MintPage() {
                       {collection.rarity}
                     </span>
                   </div>
-                  <div className="flex items-center space-x-4 text-sm text-gray-400">
+                  {collection.comingSoon && (
+                    <div className="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded-full text-sm font-medium flex items-center space-x-1 w-fit">
+                      <Clock className="w-3 h-3" />
+                      <span>Coming Soon</span>
+                    </div>
+                  )}
+                  <div className="flex items-center space-x-4 text-sm text-gray-400 mt-2">
                     {collection.price !== null && (
                       <>
                         <span>
@@ -197,8 +196,14 @@ export default function MintPage() {
               <div className="grid grid-cols-2 gap-2">
                 {collection.features.map((feature, index) => (
                   <div key={index} className="flex items-center space-x-2 text-xs text-gray-400">
-                    <Star className="w-3 h-3" />
-                    <span>{feature}</span>
+                    {feature === '1x FREE Meme Token Creation' ? (
+                      <Gift className="w-3 h-3 text-green-400" />
+                    ) : (
+                      <Star className="w-3 h-3" />
+                    )}
+                    <span className={feature === '1x FREE Meme Token Creation' ? 'text-green-400 font-medium' : ''}>
+                      {feature}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -279,6 +284,7 @@ export default function MintPage() {
                     <ul className="text-yellow-300 text-sm space-y-1">
                       <li>• Automatically receive LP tokens from your launched meme tokens</li>
                       <li>• Harvest trading fees from your token pairs</li>
+                      <li>• <span className="text-green-400 font-medium">Get 1 FREE meme token creation</span></li>
                       <li>• Non-transferable - permanently linked to your wallet</li>
                       <li>• Required for advanced VYTO ecosystem features</li>
                     </ul>
@@ -424,11 +430,17 @@ export default function MintPage() {
 
                   <div className="space-y-2">
                     <div className="text-gray-400 text-sm">Features:</div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-1 gap-2">
                       {selectedNFT.features.map((feature, index) => (
                         <div key={index} className="flex items-center space-x-2 text-xs text-gray-300">
-                          <Star className="w-3 h-3 text-yellow-400" />
-                          <span>{feature}</span>
+                          {feature === '1x FREE Meme Token Creation' ? (
+                            <Gift className="w-3 h-3 text-green-400" />
+                          ) : (
+                            <Star className="w-3 h-3 text-yellow-400" />
+                          )}
+                          <span className={feature === '1x FREE Meme Token Creation' ? 'text-green-400 font-medium' : ''}>
+                            {feature}
+                          </span>
                         </div>
                       ))}
                     </div>
