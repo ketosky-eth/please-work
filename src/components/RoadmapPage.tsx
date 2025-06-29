@@ -205,7 +205,7 @@ export default function RoadmapPage() {
             <Rocket className="w-12 h-12 text-yellow-400" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-4">
-            Ready to Build the Future?
+            Ready to Build Liquidity?
           </h2>
           <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
             Join us on this exciting journey as we revolutionize token creation and management. 
