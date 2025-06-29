@@ -282,9 +282,9 @@ export default function MintPage() {
                       <span className="font-medium">Smart Vault Benefits</span>
                     </div>
                     <ul className="text-yellow-300 text-sm space-y-1">
+                      <li>• <span className="text-green-400 font-medium">Get 1 FREE meme token creation after minting!</span></li>
                       <li>• Automatically receive LP tokens from your launched meme tokens</li>
                       <li>• Harvest trading fees from your token pairs</li>
-                      <li>• <span className="text-green-400 font-medium">Get 1 FREE meme token creation</span></li>
                       <li>• Non-transferable - permanently linked to your wallet</li>
                       <li>• Required for advanced VYTO ecosystem features</li>
                     </ul>
