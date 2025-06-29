@@ -1,5 +1,8 @@
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -12,6 +15,9 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
+    hardhat: {
+      chainId: 1337,
+    },
     roninTestnet: {
       url: "https://site1.moralis-nodes.com/ronin-testnet/22d6b97153ed4427b60914f349b2336c",
       chainId: 2021,
@@ -32,6 +38,12 @@ const config: HardhatUserConfig = {
         }
       }
     ]
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts"
   }
 };
 
