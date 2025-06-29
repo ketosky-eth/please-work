@@ -204,4 +204,4 @@ For support and questions:
 
 ---
 
-**Built with ❤️ for the Ronin ecosystem**
+**Built with ❤️ by Ketosky.ron for the Ronin ecosystem**
