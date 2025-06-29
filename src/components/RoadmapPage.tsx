@@ -16,18 +16,18 @@ export default function RoadmapPage() {
       id: '1',
       title: 'Platform Foundation',
       description: 'Core infrastructure and basic token creation capabilities',
-      status: 'completed',
+      status: 'in-progress',
       quarter: 'Q2 2025',
       features: [
         'Smart contract development',
-        'Meme Token',
+        'Social Exposure',
         'Ronin Network integration',
-        'Social Media'
+        'SCommunity Building'
       ]
     },
     {
       id: '2',
-      title: 'Genesis Vault Shard',
+      title: 'Smart Vault System',
       description: 'Revolutionary LP token management and fee harvesting system',
       status: 'in-progress',
       quarter: 'Q1 2024',
@@ -40,7 +40,7 @@ export default function RoadmapPage() {
     },
     {
       id: '3',
-      title: 'Smart Vault System',
+      title: 'Enhanced Token Features',
       description: 'Advanced token creation with IPFS integration and metadata support',
       status: 'in-progress',
       quarter: 'Q1 2024',
@@ -88,19 +88,6 @@ export default function RoadmapPage() {
         'Base network integration',
         'Arbitrum compatibility',
         'Cross-chain bridging'
-      ]
-    },
-        {
-      id: '7',
-      title: 'Smart Vault System',
-      description: 'Revolutionary LP token management and fee harvesting system',
-      status: 'in-progress',
-      quarter: 'Q1 2024',
-      features: [
-        'Smart Vault NFT minting',
-        'Automated LP token management',
-        'Fee harvesting mechanics',
-        'Non-transferable NFT system'
       ]
     }
   ];
