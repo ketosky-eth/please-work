@@ -8,10 +8,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run scripts/deploy.ts --network roninTestnet",
-    "verify": "npx hardhat verify --network roninTestnet",
-    "test": "npx hardhat test"
+    "compile": "npx hardhat compile --config hardhat.config.mts",
+    "deploy": "npx hardhat run scripts/deploy.ts --network roninTestnet --config hardhat.config.mts",
+    "verify": "npx hardhat verify --network roninTestnet --config hardhat.config.mts",
+    "test": "npx hardhat test --config hardhat.config.mts"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
