@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Palette, Zap, Shield, Star, Crown, Unlock, Clock, Gift } from 'lucide-react';
+import { Palette, Zap, Shield, Star, Crown, Unlock, Clock, Gift, CheckCircle, AlertTriangle, User, Wallet } from 'lucide-react';
 import { useSmartVault } from '../hooks/useSmartVault';
 import { useWallet } from '../hooks/useWallet';
 import { formatCurrency } from '../hooks/useAnalytics';
@@ -21,13 +21,12 @@ interface NFTCollection {
 
 export default function MintPage() {
   const [selectedCollection, setSelectedCollection] = useState<string>('smart');
-  const [mintQuantity, setMintQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [ronPrice, setRonPrice] = useState<number>(0.5); // Default fallback price
   const [smartVaultUsdPrice] = useState(5); // $5 USD
   const [priceLoading, setPriceLoading] = useState(true);
 
-  const { isConnected, connect } = useWallet();
+  const { isConnected, connect, address } = useWallet();
   const { hasMinted, mintPrice, mintSmartVault, isContractDeployed } = useSmartVault();
 
   // Fetch RON price for Smart Vault dynamic pricing
@@ -97,8 +96,6 @@ export default function MintPage() {
   ];
 
   const selectedNFT = collections.find(c => c.id === selectedCollection)!;
-  const maxMintPerTx = selectedCollection === 'genesis' ? 5 : 1; // Smart Vault is 1 per wallet
-  const remainingSupply = selectedNFT.totalSupply ? selectedNFT.totalSupply - (selectedNFT.minted || 0) : null;
 
   const handleMint = async () => {
     if (!isConnected) {
@@ -106,13 +103,13 @@ export default function MintPage() {
       return;
     }
 
-    if (selectedNFT.comingSoon) {
-      alert('Genesis Vault Shard coming soon! 🚀');
+    if (!isContractDeployed) {
+      alert('Smart contracts are not deployed yet. Please deploy the contracts first.');
       return;
     }
 
-    if (!isContractDeployed) {
-      alert('Smart contracts are not deployed yet. Please deploy the contracts first.');
+    if (selectedNFT.comingSoon) {
+      alert('Genesis Vault Shard coming soon! 🚀');
       return;
     }
 
@@ -135,18 +132,7 @@ export default function MintPage() {
     }
   };
 
-  const handleQuantityChange = (change: number) => {
-    if (selectedCollection === 'smart') return; // Smart Vault is always 1
-    
-    const newQuantity = mintQuantity + change;
-    const maxAllowed = remainingSupply ? Math.min(maxMintPerTx, remainingSupply) : maxMintPerTx;
-    
-    if (newQuantity >= 1 && newQuantity <= maxAllowed) {
-      setMintQuantity(newQuantity);
-    }
-  };
-
-  const totalCost = selectedNFT.price ? selectedNFT.price * (selectedCollection === 'smart' ? 1 : mintQuantity) : 0;
+  const totalCost = selectedNFT.price ? selectedNFT.price : 0;
   const estimatedGas = 0.003;
 
   // Format price display
@@ -307,87 +293,152 @@ export default function MintPage() {
               </h2>
 
               <div className="space-y-6">
-                {/* Already Minted Warning */}
-                {selectedCollection === 'smart' && hasMinted && (
-                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
-                    <div className="flex items-center space-x-2 text-green-400 mb-2">
-                      <Shield className="w-5 h-5" />
-                      <span className="font-medium">Smart Vault Already Minted</span>
-                    </div>
-                    <p className="text-green-300 text-sm">
-                      You have already minted your Smart Vault NFT! You can now enjoy free token creation and LP management features.
-                    </p>
-                  </div>
-                )}
-
-                {/* Quantity Selector */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-3">
-                    Quantity to Mint
-                  </label>
-                  <div className="flex items-center justify-center space-x-4 bg-gray-700/50 rounded-xl p-4">
-                    <button
-                      onClick={() => handleQuantityChange(-1)}
-                      disabled={mintQuantity <= 1 || selectedCollection === 'smart'}
-                      className="w-12 h-12 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg flex items-center justify-center font-bold text-xl transition-colors"
-                    >
-                      -
-                    </button>
-                    <div className="text-center">
-                      <div className="text-3xl font-bold text-white">
-                        {selectedCollection === 'smart' ? 1 : mintQuantity}
+                {/* Smart Vault Status Window */}
+                {selectedCollection === 'smart' && (
+                  <div className="bg-gray-700/50 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4 flex items-center space-x-2">
+                      <Shield className="w-5 h-5 text-yellow-400" />
+                      <span>Smart Vault Status</span>
+                    </h3>
+                    
+                    {!isConnected ? (
+                      <div className="text-center py-6">
+                        <Wallet className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+                        <p className="text-gray-400 mb-4">Connect your wallet to check Smart Vault status</p>
+                        <button
+                          onClick={connect}
+                          className="bg-yellow-600 hover:bg-yellow-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+                        >
+                          Connect Wallet
+                        </button>
                       </div>
-                      <div className="text-xs text-gray-400">
-                        {selectedCollection === 'smart' 
-                          ? 'One per wallet' 
-                          : `Max ${remainingSupply ? Math.min(maxMintPerTx, remainingSupply) : maxMintPerTx} per transaction`
-                        }
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => handleQuantityChange(1)}
-                      disabled={
-                        selectedCollection === 'smart' || 
-                        mintQuantity >= (remainingSupply ? Math.min(maxMintPerTx, remainingSupply) : maxMintPerTx)
-                      }
-                      className="w-12 h-12 bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg flex items-center justify-center font-bold text-xl transition-colors"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {/* Wallet Info */}
+                        <div className="bg-gray-600/50 rounded-lg p-4">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <User className="w-5 h-5 text-blue-400" />
+                            <span className="text-white font-medium">Wallet Information</span>
+                          </div>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Address</span>
+                              <span className="text-white font-mono">
+                                {address?.slice(0, 6)}...{address?.slice(-4)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Network</span>
+                              <span className="text-white">Ronin Testnet</span>
+                            </div>
+                          </div>
+                        </div>
 
-                {/* Smart Vault Info */}
-                {selectedCollection === 'smart' && !hasMinted && (
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-                    <div className="flex items-center space-x-2 text-yellow-400 mb-2">
-                      <Shield className="w-5 h-5" />
-                      <span className="font-medium">Smart Vault Benefits</span>
-                    </div>
-                    <ul className="text-yellow-300 text-sm space-y-1">
-                      <li>• <span className="text-green-400 font-medium">Get 1 FREE meme token creation to bootstrap your journey</span></li>
-                      <li>• Automatically receive LP tokens from your launched meme tokens</li>
-                      <li>• Harvest trading fees from your token pairs</li>
-                      <li>• Non-transferable - permanently linked to your wallet</li>
-                      <li>• Required for advanced VYTO ecosystem features</li>
-                    </ul>
-                    {selectedNFT.isDynamicPrice && (
-                      <div className="mt-3 pt-3 border-t border-yellow-500/20">
-                        <p className="text-yellow-300 text-xs">
-                          Price updates automatically based on RON market value to maintain $5 USD equivalent.
-                          {!priceLoading && (
-                            <span className="block mt-1">
-                              Current RON price: ${ronPrice.toFixed(4)} USD
-                            </span>
+                        {/* Smart Vault Status */}
+                        <div className="bg-gray-600/50 rounded-lg p-4">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <Shield className="w-5 h-5 text-yellow-400" />
+                            <span className="text-white font-medium">Smart Vault Status</span>
+                          </div>
+                          
+                          {hasMinted ? (
+                            <div className="space-y-3">
+                              <div className="flex items-center space-x-2 text-green-400">
+                                <CheckCircle className="w-5 h-5" />
+                                <span className="font-medium">Smart Vault Already Minted</span>
+                              </div>
+                              <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-3">
+                                <p className="text-green-300 text-sm">
+                                  ✅ You already own a Smart Vault NFT! You can now:
+                                </p>
+                                <ul className="text-green-300 text-sm mt-2 space-y-1">
+                                  <li>• Create tokens for FREE (first launch)</li>
+                                  <li>• Automatically receive LP tokens</li>
+                                  <li>• Harvest trading fees</li>
+                                  <li>• Access advanced VYTO features</li>
+                                </ul>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="space-y-3">
+                              <div className="flex items-center space-x-2 text-orange-400">
+                                <AlertTriangle className="w-5 h-5" />
+                                <span className="font-medium">No Smart Vault Detected</span>
+                              </div>
+                              <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-3">
+                                <p className="text-orange-300 text-sm">
+                                  You haven't minted a Smart Vault NFT yet. Mint one to unlock:
+                                </p>
+                                <ul className="text-orange-300 text-sm mt-2 space-y-1">
+                                  <li>• <span className="text-green-400 font-medium">FREE first token launch</span></li>
+                                  <li>• Automatic LP token management</li>
+                                  <li>• Trading fee harvesting</li>
+                                  <li>• Advanced ecosystem features</li>
+                                </ul>
+                              </div>
+                            </div>
                           )}
-                        </p>
+                        </div>
+
+                        {/* Minting Eligibility */}
+                        <div className="bg-gray-600/50 rounded-lg p-4">
+                          <div className="flex items-center space-x-3 mb-3">
+                            <Zap className="w-5 h-5 text-purple-400" />
+                            <span className="text-white font-medium">Minting Eligibility</span>
+                          </div>
+                          
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Wallet Connected</span>
+                              <span className="text-green-400 flex items-center space-x-1">
+                                <CheckCircle className="w-4 h-4" />
+                                <span>Yes</span>
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Contracts Deployed</span>
+                              <span className={`flex items-center space-x-1 ${isContractDeployed ? 'text-green-400' : 'text-red-400'}`}>
+                                {isContractDeployed ? (
+                                  <CheckCircle className="w-4 h-4" />
+                                ) : (
+                                  <AlertTriangle className="w-4 h-4" />
+                                )}
+                                <span>{isContractDeployed ? 'Yes' : 'No'}</span>
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-gray-400">Already Minted</span>
+                              <span className={`flex items-center space-x-1 ${hasMinted ? 'text-red-400' : 'text-green-400'}`}>
+                                {hasMinted ? (
+                                  <AlertTriangle className="w-4 h-4" />
+                                ) : (
+                                  <CheckCircle className="w-4 h-4" />
+                                )}
+                                <span>{hasMinted ? 'Yes' : 'No'}</span>
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
                 )}
 
+                {/* Smart Vault Info for non-Smart Vault collections */}
+                {selectedCollection !== 'smart' && selectedNFT.comingSoon && (
+                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 text-yellow-400 mb-2">
+                      <Clock className="w-5 h-5" />
+                      <span className="font-medium">Coming Soon</span>
+                    </div>
+                    <p className="text-yellow-300 text-sm">
+                      This collection is not available yet. Stay tuned for the launch announcement!
+                    </p>
+                  </div>
+                )}
+
                 {/* Cost Breakdown */}
-                {selectedNFT.price !== null && !hasMinted && !priceLoading && (
+                {selectedNFT.price !== null && !hasMinted && !priceLoading && selectedCollection === 'smart' && (
                   <div className="bg-gray-700/50 rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-white mb-4">Cost Breakdown</h3>
                     <div className="space-y-3">
@@ -402,9 +453,7 @@ export default function MintPage() {
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Quantity</span>
-                        <span className="text-white font-semibold">
-                          {selectedCollection === 'smart' ? 1 : mintQuantity}
-                        </span>
+                        <span className="text-white font-semibold">1</span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-gray-300">Subtotal</span>
@@ -435,9 +484,8 @@ export default function MintPage() {
                     isLoading || 
                     priceLoading ||
                     !isContractDeployed ||
-                    (remainingSupply !== null && remainingSupply <= 0) ||
                     selectedNFT.comingSoon ||
-                    (selectedNFT.price === null && !selectedNFT.comingSoon) ||
+                    selectedNFT.price === null ||
                     (selectedCollection === 'smart' && hasMinted)
                   }
                   className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
@@ -459,8 +507,6 @@ export default function MintPage() {
                     </>
                   ) : !isContractDeployed ? (
                     <span>Deploy Contracts First</span>
-                  ) : remainingSupply !== null && remainingSupply <= 0 ? (
-                    <span>Sold Out</span>
                   ) : selectedNFT.price === null ? (
                     <span>Price Loading...</span>
                   ) : selectedCollection === 'smart' && hasMinted ? (
