@@ -25,24 +25,47 @@ export default function MintPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [ronPrice, setRonPrice] = useState<number>(0.5); // Default fallback price
   const [smartVaultUsdPrice] = useState(5); // $5 USD
+  const [priceLoading, setPriceLoading] = useState(true);
 
   const { isConnected, connect } = useWallet();
-  const { hasMinted, mintPrice, mintSmartVault } = useSmartVault();
+  const { hasMinted, mintPrice, mintSmartVault, isContractDeployed } = useSmartVault();
 
   // Fetch RON price for Smart Vault dynamic pricing
   useEffect(() => {
     const fetchRonPrice = async () => {
+      setPriceLoading(true);
       try {
-        // For testnet, we'll use a fixed price since RON might not be on CoinGecko
-        setRonPrice(0.5); // $0.5 USD per RON for testnet
+        // Try to fetch from CoinGecko API
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ronin&vs_currencies=usd');
+        const data = await response.json();
+        
+        if (data.ronin && data.ronin.usd) {
+          setRonPrice(data.ronin.usd);
+        } else {
+          // Fallback to fixed price for testnet
+          setRonPrice(0.5);
+        }
       } catch (error) {
         console.error('Failed to fetch RON price:', error);
-        setRonPrice(0.5); // Fallback price
+        // Use fallback price for testnet
+        setRonPrice(0.5);
+      } finally {
+        setPriceLoading(false);
       }
     };
 
     fetchRonPrice();
+    
+    // Update price every 5 minutes
+    const interval = setInterval(fetchRonPrice, 5 * 60 * 1000);
+    return () => clearInterval(interval);
   }, []);
+
+  // Calculate RON amount needed for $5 USD
+  const calculateRonAmount = () => {
+    if (priceLoading || ronPrice <= 0) return 0;
+    return smartVaultUsdPrice / ronPrice;
+  };
 
   const collections: NFTCollection[] = [
     {
@@ -62,7 +85,7 @@ export default function MintPage() {
       id: 'smart',
       name: 'Smart Vault',
       description: 'Essential NFT for the VYTO ecosystem. Mint once per wallet to unlock advanced features like LP token management and fee harvesting.',
-      price: mintPrice ? Number(mintPrice) / 10**18 : smartVaultUsdPrice / ronPrice,
+      price: isContractDeployed && mintPrice ? Number(mintPrice) / 10**18 : calculateRonAmount(),
       totalSupply: null,
       minted: null, // Hide minted count
       icon: Unlock,
@@ -85,6 +108,11 @@ export default function MintPage() {
 
     if (selectedNFT.comingSoon) {
       alert('Genesis Vault Shard coming soon! 🚀');
+      return;
+    }
+
+    if (!isContractDeployed) {
+      alert('Smart contracts are not deployed yet. Please deploy the contracts first.');
       return;
     }
 
@@ -121,6 +149,18 @@ export default function MintPage() {
   const totalCost = selectedNFT.price ? selectedNFT.price * (selectedCollection === 'smart' ? 1 : mintQuantity) : 0;
   const estimatedGas = 0.003;
 
+  // Format price display
+  const formatPriceDisplay = (collection: NFTCollection) => {
+    if (collection.price === null) return 'TBA';
+    
+    if (collection.isDynamicPrice) {
+      if (priceLoading) return 'Loading...';
+      return `$${smartVaultUsdPrice} (${collection.price.toFixed(3)} RON)`;
+    }
+    
+    return `${collection.price} RON`;
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -138,6 +178,29 @@ export default function MintPage() {
             Mint exclusive NFTs and join the VYTO ecosystem. Choose from our premium collections.
           </p>
         </div>
+
+        {/* Contract Status Warning */}
+        {!isContractDeployed && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 mb-8">
+            <div className="flex items-center space-x-3 text-red-400 mb-2">
+              <Shield className="w-6 h-6" />
+              <span className="font-semibold">Contracts Not Deployed</span>
+            </div>
+            <p className="text-red-300">
+              The smart contracts haven't been deployed yet. Please deploy them first before minting NFTs.
+            </p>
+          </div>
+        )}
+
+        {/* Price Update Status */}
+        {priceLoading && (
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 mb-8">
+            <div className="flex items-center space-x-2 text-blue-400">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+              <span className="text-sm">Updating RON market price...</span>
+            </div>
+          </div>
+        )}
 
         {/* Collection Selection */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
@@ -183,22 +246,13 @@ export default function MintPage() {
                     </div>
                   )}
                   <div className="flex items-center space-x-4 text-sm text-gray-400 mt-2">
-                    {collection.price !== null && (
+                    <span>{formatPriceDisplay(collection)}</span>
+                    {collection.minted !== null && (
                       <>
+                        <span>•</span>
                         <span>
-                          {collection.isDynamicPrice 
-                            ? `${formatCurrency(smartVaultUsdPrice)} (${collection.price.toFixed(3)} RON)` 
-                            : `${collection.price} RON each`
-                          }
+                          {collection.totalSupply ? `${collection.minted}/${collection.totalSupply} minted` : `${collection.minted} minted`}
                         </span>
-                        {collection.minted !== null && (
-                          <>
-                            <span>•</span>
-                            <span>
-                              {collection.totalSupply ? `${collection.minted}/${collection.totalSupply} minted` : `${collection.minted} minted`}
-                            </span>
-                          </>
-                        )}
                       </>
                     )}
                   </div>
@@ -321,6 +375,11 @@ export default function MintPage() {
                       <div className="mt-3 pt-3 border-t border-yellow-500/20">
                         <p className="text-yellow-300 text-xs">
                           Price updates automatically based on RON market value to maintain $5 USD equivalent.
+                          {!priceLoading && (
+                            <span className="block mt-1">
+                              Current RON price: ${ronPrice.toFixed(4)} USD
+                            </span>
+                          )}
                         </p>
                       </div>
                     )}
@@ -328,7 +387,7 @@ export default function MintPage() {
                 )}
 
                 {/* Cost Breakdown */}
-                {selectedNFT.price !== null && !hasMinted && (
+                {selectedNFT.price !== null && !hasMinted && !priceLoading && (
                   <div className="bg-gray-700/50 rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-white mb-4">Cost Breakdown</h3>
                     <div className="space-y-3">
@@ -336,7 +395,7 @@ export default function MintPage() {
                         <span className="text-gray-300">Price per NFT</span>
                         <span className="text-white font-semibold">
                           {selectedNFT.isDynamicPrice 
-                            ? `${formatCurrency(smartVaultUsdPrice)} (${selectedNFT.price.toFixed(3)} RON)`
+                            ? `$${smartVaultUsdPrice} (${selectedNFT.price.toFixed(3)} RON)`
                             : `${selectedNFT.price} RON`
                           }
                         </span>
@@ -360,6 +419,11 @@ export default function MintPage() {
                         <span className="text-white font-bold text-lg">Total</span>
                         <span className="text-white font-bold text-lg">{totalCost.toFixed(3)} RON</span>
                       </div>
+                      {selectedNFT.isDynamicPrice && (
+                        <div className="text-xs text-gray-400 text-center">
+                          ≈ ${smartVaultUsdPrice} USD at current market rate
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
@@ -369,6 +433,8 @@ export default function MintPage() {
                   onClick={handleMint}
                   disabled={
                     isLoading || 
+                    priceLoading ||
+                    !isContractDeployed ||
                     (remainingSupply !== null && remainingSupply <= 0) ||
                     selectedNFT.comingSoon ||
                     (selectedNFT.price === null && !selectedNFT.comingSoon) ||
@@ -386,6 +452,13 @@ export default function MintPage() {
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       <span>Minting...</span>
                     </>
+                  ) : priceLoading ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      <span>Loading Price...</span>
+                    </>
+                  ) : !isContractDeployed ? (
+                    <span>Deploy Contracts First</span>
                   ) : remainingSupply !== null && remainingSupply <= 0 ? (
                     <span>Sold Out</span>
                   ) : selectedNFT.price === null ? (
@@ -433,12 +506,7 @@ export default function MintPage() {
                     <div className="bg-gray-600/50 rounded-lg p-3">
                       <div className="text-gray-400 text-xs mb-1">Price</div>
                       <div className="text-white font-semibold">
-                        {selectedNFT.price !== null 
-                          ? selectedNFT.isDynamicPrice 
-                            ? formatCurrency(smartVaultUsdPrice)
-                            : `${selectedNFT.price} RON`
-                          : 'TBA'
-                        }
+                        {formatPriceDisplay(selectedNFT)}
                       </div>
                     </div>
                     <div className="bg-gray-600/50 rounded-lg p-3">
