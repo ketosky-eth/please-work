@@ -26,8 +26,8 @@ export default function RoadmapPage() {
       ]
     },
     {
-      id: '3',
-      title: 'Smart Vault System',
+      id: '2',
+      title: 'Genesis Vault Shard',
       description: 'Revolutionary LP token management and fee harvesting system',
       status: 'in-progress',
       quarter: 'Q1 2024',
@@ -39,8 +39,8 @@ export default function RoadmapPage() {
       ]
     },
     {
-      id: '2',
-      title: 'Enhanced Token Features',
+      id: '3',
+      title: 'Smart Vault System',
       description: 'Advanced token creation with IPFS integration and metadata support',
       status: 'in-progress',
       quarter: 'Q1 2024',
