@@ -54,11 +54,17 @@ export function useMemeTokenFactory() {
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
 
+  // Check if contracts are deployed (not zero address)
+  const isContractDeployed = CONTRACT_ADDRESSES.MEME_TOKEN_FACTORY !== '0x0000000000000000000000000000000000000000';
+
   // Get deployment fee
   const { data: deploymentFee } = useReadContract({
     address: CONTRACT_ADDRESSES.MEME_TOKEN_FACTORY,
     abi: MEME_TOKEN_FACTORY_ABI,
     functionName: 'deploymentFee',
+    query: {
+      enabled: isContractDeployed,
+    },
   });
 
   // Check if user can use free deployment
@@ -67,6 +73,9 @@ export function useMemeTokenFactory() {
     abi: MEME_TOKEN_FACTORY_ABI,
     functionName: 'canUseFreeDeployment',
     args: address ? [address] : undefined,
+    query: {
+      enabled: isContractDeployed && !!address,
+    },
   });
 
   // Get user's created tokens
@@ -75,6 +84,9 @@ export function useMemeTokenFactory() {
     abi: MEME_TOKEN_FACTORY_ABI,
     functionName: 'getCreatorTokens',
     args: address ? [address] : undefined,
+    query: {
+      enabled: isContractDeployed && !!address,
+    },
   });
 
   // Get all tokens
@@ -82,6 +94,9 @@ export function useMemeTokenFactory() {
     address: CONTRACT_ADDRESSES.MEME_TOKEN_FACTORY,
     abi: MEME_TOKEN_FACTORY_ABI,
     functionName: 'getAllTokens',
+    query: {
+      enabled: isContractDeployed,
+    },
   });
 
   const createMemeToken = async (
@@ -95,6 +110,7 @@ export function useMemeTokenFactory() {
     discord: string = ''
   ) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
     if (!deploymentFee) throw new Error('Deployment fee not loaded');
     
     const fee = canUseFreeDeployment ? 0n : deploymentFee;
@@ -123,5 +139,6 @@ export function useMemeTokenFactory() {
     canUseFreeDeployment: !!canUseFreeDeployment,
     creatorTokens: creatorTokens || [],
     allTokens: allTokens || [],
+    isContractDeployed,
   };
 }

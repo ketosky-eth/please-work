@@ -104,8 +104,12 @@ export function useBondingCurve() {
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
 
+  // Check if contracts are deployed (not zero address)
+  const isContractDeployed = CONTRACT_ADDRESSES.BONDING_CURVE !== '0x0000000000000000000000000000000000000000';
+
   const buyTokens = async (tokenAddress: string, ethAmount: string) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
     
     return writeContract({
       address: CONTRACT_ADDRESSES.BONDING_CURVE,
@@ -118,6 +122,7 @@ export function useBondingCurve() {
 
   const sellTokens = async (tokenAddress: string, tokenAmount: bigint) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
     
     return writeContract({
       address: CONTRACT_ADDRESSES.BONDING_CURVE,
@@ -129,6 +134,7 @@ export function useBondingCurve() {
 
   const claimCreatorReward = async (tokenAddress: string) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
     
     return writeContract({
       address: CONTRACT_ADDRESSES.BONDING_CURVE,
@@ -145,6 +151,9 @@ export function useBondingCurve() {
       abi: BONDING_CURVE_ABI,
       functionName: 'getTokenProgress',
       args: [tokenAddress],
+      query: {
+        enabled: isContractDeployed && !!tokenAddress,
+      },
     });
   };
 
@@ -154,6 +163,9 @@ export function useBondingCurve() {
       abi: BONDING_CURVE_ABI,
       functionName: 'isGraduated',
       args: [tokenAddress],
+      query: {
+        enabled: isContractDeployed && !!tokenAddress,
+      },
     });
   };
 
@@ -164,7 +176,7 @@ export function useBondingCurve() {
       functionName: 'canClaimReward',
       args: [tokenAddress, address || '0x0'],
       query: {
-        enabled: !!address,
+        enabled: isContractDeployed && !!address && !!tokenAddress,
       },
     });
   };
@@ -175,6 +187,9 @@ export function useBondingCurve() {
       abi: BONDING_CURVE_ABI,
       functionName: 'getCurrentPrice',
       args: [tokenAddress],
+      query: {
+        enabled: isContractDeployed && !!tokenAddress,
+      },
     });
   };
 
@@ -184,6 +199,9 @@ export function useBondingCurve() {
       abi: BONDING_CURVE_ABI,
       functionName: 'tokenInfo',
       args: [tokenAddress],
+      query: {
+        enabled: isContractDeployed && !!tokenAddress,
+      },
     });
   };
 
@@ -194,7 +212,7 @@ export function useBondingCurve() {
       functionName: 'calculateTokensForETH',
       args: [tokenAddress, ethAmount],
       query: {
-        enabled: ethAmount > 0n,
+        enabled: isContractDeployed && ethAmount > 0n && !!tokenAddress,
       },
     });
   };
@@ -206,7 +224,7 @@ export function useBondingCurve() {
       functionName: 'calculateETHForTokens',
       args: [tokenAddress, tokenAmount],
       query: {
-        enabled: tokenAmount > 0n,
+        enabled: isContractDeployed && tokenAmount > 0n && !!tokenAddress,
       },
     });
   };
@@ -222,5 +240,6 @@ export function useBondingCurve() {
     useTokenInfo,
     useCalculateTokensForETH,
     useCalculateETHForTokens,
+    isContractDeployed,
   };
 }

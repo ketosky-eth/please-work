@@ -59,6 +59,9 @@ export function useSmartVault() {
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
 
+  // Check if contracts are deployed (not zero address)
+  const isContractDeployed = CONTRACT_ADDRESSES.SMART_VAULT !== '0x0000000000000000000000000000000000000000';
+
   // Check if user has minted a Smart Vault
   const { data: hasMinted } = useReadContract({
     address: CONTRACT_ADDRESSES.SMART_VAULT,
@@ -66,7 +69,7 @@ export function useSmartVault() {
     functionName: 'hasMinted',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!address,
+      enabled: isContractDeployed && !!address,
     },
   });
 
@@ -77,7 +80,7 @@ export function useSmartVault() {
     functionName: 'getUserTokenId',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!hasMinted && !!address,
+      enabled: isContractDeployed && !!hasMinted && !!address,
     },
   });
 
@@ -86,10 +89,14 @@ export function useSmartVault() {
     address: CONTRACT_ADDRESSES.SMART_VAULT,
     abi: SMART_VAULT_ABI,
     functionName: 'mintPrice',
+    query: {
+      enabled: isContractDeployed,
+    },
   });
 
   const mintSmartVault = async () => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
     if (!mintPrice) throw new Error('Mint price not loaded');
     
     return writeContract({
@@ -102,6 +109,7 @@ export function useSmartVault() {
 
   const addLPTokens = async (lpTokenAddress: string, amount: bigint) => {
     if (!address || !tokenId) throw new Error('Smart Vault not minted');
+    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
     
     return writeContract({
       address: CONTRACT_ADDRESSES.SMART_VAULT,
@@ -113,6 +121,7 @@ export function useSmartVault() {
 
   const withdrawFees = async (feeTokenAddress: string) => {
     if (!address || !tokenId) throw new Error('Smart Vault not minted');
+    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
     
     return writeContract({
       address: CONTRACT_ADDRESSES.SMART_VAULT,
@@ -129,5 +138,6 @@ export function useSmartVault() {
     mintSmartVault,
     addLPTokens,
     withdrawFees,
+    isContractDeployed,
   };
 }

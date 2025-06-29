@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMemeTokenFactory } from './useMemeTokenFactory';
 import { useBondingCurve } from './useBondingCurve';
+import { useSmartVault } from './useSmartVault';
 
 interface AnalyticsData {
   totalTokens: number;
@@ -129,6 +130,8 @@ export function useUserAnalytics(userAddress: string) {
         canUseFreeDeployment: !!canUseFreeDeployment,
         isLoading: false,
       });
+    } else {
+      setUserData(prev => ({ ...prev, isLoading: false }));
     }
   }, [userAddress, creatorTokens, hasMinted, canUseFreeDeployment]);
 
