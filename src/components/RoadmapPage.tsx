@@ -17,10 +17,10 @@ export default function RoadmapPage() {
       title: 'Platform Foundation',
       description: 'Core infrastructure and basic token creation capabilities',
       status: 'completed',
-      quarter: 'Q4 2023',
+      quarter: 'Q2 2025',
       features: [
         'Smart contract development',
-        'Basic token creation',
+        'Meme Token',
         'Ronin network integration',
         'Wallet connectivity'
       ]
@@ -29,7 +29,7 @@ export default function RoadmapPage() {
       id: '2',
       title: 'Smart Vault System',
       description: 'Revolutionary LP token management and fee harvesting system',
-      status: 'in-progress',
+      status: 'completed',
       quarter: 'Q1 2024',
       features: [
         'Smart Vault NFT minting',
