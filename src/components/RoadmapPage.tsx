@@ -132,7 +132,7 @@ export default function RoadmapPage() {
             Roadmap
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Our journey to revolutionize token creation and management on the Ronin network
+            Our journey to revolutionize DeFi, token creations, and token liquidity on the Ronin Network starts here
           </p>
         </div>
 
