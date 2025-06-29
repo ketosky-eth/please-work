@@ -216,7 +216,9 @@ export default function RoadmapPage() {
               Start Building
             </button>
             <button className="border border-gray-600 text-white hover:bg-gray-800 px-6 py-3 rounded-lg font-semibold transition-all">
+              <a href="https://www.discord.com/2Q4GMjGAWk" target="_blank">
               Join Community
+              </a>
             </button>
           </div>
         </div>
