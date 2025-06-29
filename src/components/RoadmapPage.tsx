@@ -21,7 +21,7 @@ export default function RoadmapPage() {
       features: [
         'Smart Contract Engineering',
         'Social Exposure',
-        'Ronin Network Integration',
+        'Architecture & Design',
         'Community Building'
       ]
     },
