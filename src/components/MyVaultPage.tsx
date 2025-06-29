@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Vault, TrendingUp, DollarSign, ExternalLink, Download, Eye, BarChart3, Coins, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Vault, TrendingUp, DollarSign, ExternalLink, Download, Eye, BarChart3, Coins, ArrowUpRight, ArrowDownRight, Gift, CheckCircle } from 'lucide-react';
 
 interface LaunchedToken {
   id: string;
@@ -17,12 +17,17 @@ interface LaunchedToken {
   feesEarned: number;
   totalSupply: number;
   holders: number;
-  status: 'active' | 'paused' | 'migrated';
+  bondingProgress: number;
+  graduated: boolean;
+  creatorReward: number;
+  rewardClaimed: boolean;
+  status: 'active' | 'graduated' | 'paused';
 }
 
 export default function MyVaultPage() {
   const [selectedToken, setSelectedToken] = useState<string | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState<string | null>(null);
+  const [isClaimingReward, setIsClaimingReward] = useState<string | null>(null);
 
   const launchedTokens: LaunchedToken[] = [
     {
@@ -41,7 +46,11 @@ export default function MyVaultPage() {
       feesEarned: 2.45,
       totalSupply: 1000000000,
       holders: 1247,
-      status: 'active'
+      bondingProgress: 100,
+      graduated: true,
+      creatorReward: 500,
+      rewardClaimed: false,
+      status: 'graduated'
     },
     {
       id: '2',
@@ -59,6 +68,10 @@ export default function MyVaultPage() {
       feesEarned: 1.87,
       totalSupply: 1000000000,
       holders: 892,
+      bondingProgress: 67,
+      graduated: false,
+      creatorReward: 0,
+      rewardClaimed: false,
       status: 'active'
     },
     {
@@ -77,7 +90,33 @@ export default function MyVaultPage() {
       feesEarned: 0.92,
       totalSupply: 1000000000,
       holders: 634,
+      bondingProgress: 45,
+      graduated: false,
+      creatorReward: 0,
+      rewardClaimed: false,
       status: 'active'
+    },
+    {
+      id: '4',
+      name: 'DiamondToken',
+      symbol: 'DIAM',
+      logo: '💎',
+      chain: 'Ronin',
+      dex: 'Katana',
+      contractAddress: '0x789d35Cc6634C0532925a3b8D4C9db4C4C4C4C4C',
+      launchDate: '2024-01-12',
+      currentPrice: 0.0023,
+      priceChange24h: 34.2,
+      volume24h: 234000,
+      marketCap: 2300000,
+      feesEarned: 5.67,
+      totalSupply: 1000000000,
+      holders: 2156,
+      bondingProgress: 100,
+      graduated: true,
+      creatorReward: 500,
+      rewardClaimed: true,
+      status: 'graduated'
     }
   ];
 
@@ -87,6 +126,20 @@ export default function MyVaultPage() {
     setTimeout(() => {
       setIsWithdrawing(null);
       alert('Fees withdrawn successfully! 💰');
+    }, 2000);
+  };
+
+  const handleClaimReward = async (tokenId: string) => {
+    setIsClaimingReward(tokenId);
+    // Simulate reward claiming process
+    setTimeout(() => {
+      setIsClaimingReward(null);
+      alert('Creator reward claimed successfully! 🎉\n500 RON has been sent to your wallet.');
+      // Update the token to mark reward as claimed
+      const tokenIndex = launchedTokens.findIndex(t => t.id === tokenId);
+      if (tokenIndex !== -1) {
+        launchedTokens[tokenIndex].rewardClaimed = true;
+      }
     }, 2000);
   };
 
@@ -101,6 +154,9 @@ export default function MyVaultPage() {
   const totalFeesEarned = launchedTokens.reduce((sum, token) => sum + token.feesEarned, 0);
   const totalMarketCap = launchedTokens.reduce((sum, token) => sum + token.marketCap, 0);
   const totalVolume24h = launchedTokens.reduce((sum, token) => sum + token.volume24h, 0);
+  const graduatedTokens = launchedTokens.filter(token => token.graduated);
+  const unclaimedRewards = launchedTokens.filter(token => token.graduated && !token.rewardClaimed);
+  const totalUnclaimedRewards = unclaimedRewards.reduce((sum, token) => sum + token.creatorReward, 0);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
@@ -116,12 +172,33 @@ export default function MyVaultPage() {
             My Vault
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Track your launched meme tokens, monitor their performance, and withdraw earned fees
+            Track your launched meme tokens, monitor their performance, and claim rewards
           </p>
         </div>
 
+        {/* Unclaimed Rewards Banner */}
+        {unclaimedRewards.length > 0 && (
+          <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-6 mb-8">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Gift className="w-8 h-8 text-green-400" />
+                <div>
+                  <h3 className="text-xl font-bold text-green-400">Creator Rewards Available!</h3>
+                  <p className="text-green-300">
+                    You have {unclaimedRewards.length} token{unclaimedRewards.length > 1 ? 's' : ''} with unclaimed rewards totaling {totalUnclaimedRewards} RON
+                  </p>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-green-400">{totalUnclaimedRewards} RON</div>
+                <div className="text-green-300 text-sm">Ready to claim</div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Stats Overview */}
-        <div className="grid md:grid-cols-4 gap-6 mb-12">
+        <div className="grid md:grid-cols-5 gap-6 mb-12">
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
             <div className="flex items-center space-x-3 mb-2">
               <Coins className="w-6 h-6 text-yellow-400" />
@@ -153,6 +230,14 @@ export default function MyVaultPage() {
             </div>
             <div className="text-2xl font-bold text-white">${(totalVolume24h / 1000).toFixed(0)}K</div>
           </div>
+
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+            <div className="flex items-center space-x-3 mb-2">
+              <CheckCircle className="w-6 h-6 text-green-400" />
+              <span className="text-gray-400 text-sm">Graduated</span>
+            </div>
+            <div className="text-2xl font-bold text-white">{graduatedTokens.length}</div>
+          </div>
         </div>
 
         {/* Tokens List */}
@@ -171,15 +256,14 @@ export default function MyVaultPage() {
                       {token.logo}
                     </div>
                     <div>
-                      <div className="text-white font-semibold">{token.name}</div>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-white font-semibold">{token.name}</span>
+                        {token.graduated && (
+                          <CheckCircle className="w-4 h-4 text-green-400" title="Graduated" />
+                        )}
+                      </div>
                       <div className="text-gray-400 text-sm">${token.symbol}</div>
                     </div>
-                  </div>
-
-                  {/* Chain & DEX */}
-                  <div className="lg:col-span-2">
-                    <div className="text-white text-sm font-medium">{token.chain}</div>
-                    <div className="text-gray-400 text-xs">{token.dex}</div>
                   </div>
 
                   {/* Price & Change */}
@@ -203,14 +287,38 @@ export default function MyVaultPage() {
                     <div className="text-gray-400 text-xs">${(token.marketCap / 1000).toFixed(0)}K MC</div>
                   </div>
 
-                  {/* Fees Earned */}
+                  {/* Bonding Progress / Status */}
                   <div className="lg:col-span-2">
-                    <div className="text-green-400 font-semibold">{token.feesEarned.toFixed(3)} RON</div>
-                    <div className="text-gray-400 text-xs">Fees Earned</div>
+                    {token.graduated ? (
+                      <div className="text-center">
+                        <div className="text-green-400 font-semibold text-sm">Graduated</div>
+                        <div className="text-gray-400 text-xs">Trading on Katana</div>
+                      </div>
+                    ) : (
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-gray-400 text-xs">Progress</span>
+                          <span className="text-white text-xs font-medium">{token.bondingProgress}%</span>
+                        </div>
+                        <div className="w-full bg-gray-700 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500"
+                            style={{ width: `${token.bondingProgress}%` }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Fees Earned */}
+                  <div className="lg:col-span-1">
+                    <div className="text-green-400 font-semibold text-sm">{token.feesEarned.toFixed(3)} RON</div>
+                    <div className="text-gray-400 text-xs">Fees</div>
                   </div>
 
                   {/* Actions */}
-                  <div className="lg:col-span-1 flex items-center space-x-2">
+                  <div className="lg:col-span-2 flex items-center space-x-2">
+                    {/* Withdraw Fees Button */}
                     <button
                       onClick={() => handleWithdraw(token.id)}
                       disabled={token.feesEarned <= 0 || isWithdrawing === token.id}
@@ -225,13 +333,39 @@ export default function MyVaultPage() {
                         {isWithdrawing === token.id ? 'Withdrawing...' : 'Withdraw'}
                       </span>
                     </button>
+
+                    {/* Claim Reward Button */}
+                    {token.graduated && !token.rewardClaimed && (
+                      <button
+                        onClick={() => handleClaimReward(token.id)}
+                        disabled={isClaimingReward === token.id}
+                        className="bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center space-x-1"
+                      >
+                        {isClaimingReward === token.id ? (
+                          <div className="animate-spin rounded-full h-3 w-3 border-b border-white"></div>
+                        ) : (
+                          <Gift className="w-3 h-3" />
+                        )}
+                        <span className="hidden sm:inline">
+                          {isClaimingReward === token.id ? 'Claiming...' : `Claim ${token.creatorReward} RON`}
+                        </span>
+                      </button>
+                    )}
+
+                    {/* Already Claimed Indicator */}
+                    {token.graduated && token.rewardClaimed && (
+                      <div className="bg-gray-600 text-gray-300 px-3 py-1.5 rounded-lg text-sm font-medium flex items-center space-x-1">
+                        <CheckCircle className="w-3 h-3" />
+                        <span className="hidden sm:inline">Claimed</span>
+                      </div>
+                    )}
                     
                     <div className="flex space-x-1">
                       <a
                         href={getDexUrl(token.chain, token.dex, token.contractAddress)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-yellow-600 hover:bg-yellow-700 text-white p-1.5 rounded-lg transition-colors"
+                        className="bg-orange-600 hover:bg-orange-700 text-white p-1.5 rounded-lg transition-colors"
                         title="View on DEX"
                       >
                         <ExternalLink className="w-3 h-3" />
@@ -241,7 +375,7 @@ export default function MyVaultPage() {
                         href={getExplorerUrl(token.chain, token.contractAddress)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-orange-600 hover:bg-orange-700 text-white p-1.5 rounded-lg transition-colors"
+                        className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition-colors"
                         title="View on Explorer"
                       >
                         <Eye className="w-3 h-3" />
@@ -269,14 +403,33 @@ export default function MyVaultPage() {
                       <div>
                         <div className="text-gray-400 mb-1">Status</div>
                         <div className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                          token.status === 'active' ? 'bg-green-500/20 text-green-400' :
-                          token.status === 'paused' ? 'bg-yellow-500/20 text-yellow-400' :
+                          token.status === 'graduated' ? 'bg-green-500/20 text-green-400' :
+                          token.status === 'active' ? 'bg-yellow-500/20 text-yellow-400' :
                           'bg-gray-500/20 text-gray-400'
                         }`}>
                           {token.status.charAt(0).toUpperCase() + token.status.slice(1)}
                         </div>
                       </div>
                     </div>
+
+                    {/* Graduation Info */}
+                    {token.graduated && (
+                      <div className="mt-4 bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                        <h4 className="text-green-400 font-semibold mb-2">🎉 Token Graduated!</h4>
+                        <div className="grid md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <div className="text-gray-400">Graduation Target Reached</div>
+                            <div className="text-white font-semibold">108,800 RON</div>
+                          </div>
+                          <div>
+                            <div className="text-gray-400">Creator Reward</div>
+                            <div className={`font-semibold ${token.rewardClaimed ? 'text-green-400' : 'text-yellow-400'}`}>
+                              {token.creatorReward} RON {token.rewardClaimed ? '(Claimed)' : '(Available)'}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
 

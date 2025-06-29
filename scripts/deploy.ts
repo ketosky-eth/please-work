@@ -5,8 +5,7 @@ async function main() {
 
   // Deploy Smart Vault first
   const SmartVault = await ethers.getContractFactory("SmartVault");
-  const protocolFeeRecipient = "0x742d35Cc6634C0532925a3b8D4C9db4C4C4C4C4C"; // Replace with actual address
-  const smartVault = await SmartVault.deploy(protocolFeeRecipient);
+  const smartVault = await SmartVault.deploy();
   await smartVault.waitForDeployment();
   
   console.log("SmartVault deployed to:", await smartVault.getAddress());
@@ -18,27 +17,41 @@ async function main() {
   
   console.log("IPFSStorage deployed to:", await ipfsStorage.getAddress());
 
+  // Deploy Bonding Curve
+  const BondingCurve = await ethers.getContractFactory("BondingCurve");
+  const katanaRouter = "0x7D02c116b98d0965ba7B642ace0183ad8b8D2196"; // Katana Router on Ronin Testnet
+  const bondingCurve = await BondingCurve.deploy(katanaRouter);
+  await bondingCurve.waitForDeployment();
+  
+  console.log("BondingCurve deployed to:", await bondingCurve.getAddress());
+
   // Deploy Meme Token Factory
   const MemeTokenFactory = await ethers.getContractFactory("MemeTokenFactory");
-  const katanaRouter = "0x7D02c116b98d0965ba7B642ace0183ad8b8D2196"; // Katana Router on Ronin Testnet
-  const feeRecipient = protocolFeeRecipient; // Same as protocol fee recipient
-  
   const memeTokenFactory = await MemeTokenFactory.deploy(
-    katanaRouter,
     await smartVault.getAddress(),
-    feeRecipient
+    await bondingCurve.getAddress(),
+    await ipfsStorage.getAddress()
   );
   await memeTokenFactory.waitForDeployment();
   
   console.log("MemeTokenFactory deployed to:", await memeTokenFactory.getAddress());
 
+  // Set the factory as owner of bonding curve
+  await bondingCurve.transferOwnership(await memeTokenFactory.getAddress());
+  console.log("BondingCurve ownership transferred to MemeTokenFactory");
+
   // Save deployment addresses
   const deploymentInfo = {
     smartVault: await smartVault.getAddress(),
     ipfsStorage: await ipfsStorage.getAddress(),
+    bondingCurve: await bondingCurve.getAddress(),
     memeTokenFactory: await memeTokenFactory.getAddress(),
     network: "Ronin Testnet",
-    chainId: 2021
+    chainId: 2021,
+    protocolAddress: "0x1A4edf1D0F2a2e7dbe86479A7a95f86b87205802",
+    graduationTarget: "108800 RON",
+    creatorReward: "500 RON",
+    protocolReward: "100 RON"
   };
 
   console.log("\nDeployment Summary:");

@@ -22,8 +22,9 @@ contract SmartVault is ERC721, Ownable, ReentrancyGuard {
     uint256 private _tokenIdCounter = 1;
     uint256 public constant PROTOCOL_FEE = 50; // 0.5% (50 basis points)
     uint256 public constant BASIS_POINTS = 10000;
+    uint256 public mintPrice = 5 ether; // 5 RON
     
-    address public protocolFeeRecipient;
+    address public constant PROTOCOL_ADDRESS = 0x1A4edf1D0F2a2e7dbe86479A7a95f86b87205802;
     
     // Mapping from token ID to LP tokens held
     mapping(uint256 => address[]) public vaultLPTokens;
@@ -40,9 +41,7 @@ contract SmartVault is ERC721, Ownable, ReentrancyGuard {
     event FeesHarvested(uint256 indexed tokenId, address indexed lpToken, uint256 amount);
     event FeesWithdrawn(uint256 indexed tokenId, address indexed owner, uint256 amount);
 
-    constructor(address _protocolFeeRecipient) ERC721("Smart Vault", "SVAULT") {
-        protocolFeeRecipient = _protocolFeeRecipient;
-    }
+    constructor() ERC721("Smart Vault", "SVAULT") {}
 
     modifier onlyVaultOwner(uint256 tokenId) {
         require(ownerOf(tokenId) == msg.sender, "Not vault owner");
@@ -54,13 +53,18 @@ contract SmartVault is ERC721, Ownable, ReentrancyGuard {
         _;
     }
 
-    function mint() external onlyOncePerWallet nonReentrant {
+    function mint() external payable onlyOncePerWallet nonReentrant {
+        require(msg.value >= mintPrice, "Insufficient payment");
+        
         uint256 tokenId = _tokenIdCounter++;
         
         hasMinted[msg.sender] = true;
         walletToTokenId[msg.sender] = tokenId;
         
         _safeMint(msg.sender, tokenId);
+        
+        // Send payment to protocol
+        payable(PROTOCOL_ADDRESS).transfer(msg.value);
         
         emit VaultMinted(msg.sender, tokenId);
     }
@@ -176,8 +180,8 @@ contract SmartVault is ERC721, Ownable, ReentrancyGuard {
     }
 
     // Admin functions
-    function setProtocolFeeRecipient(address _newRecipient) external onlyOwner {
-        protocolFeeRecipient = _newRecipient;
+    function setMintPrice(uint256 _newPrice) external onlyOwner {
+        mintPrice = _newPrice;
     }
 
     function emergencyWithdraw(address token, uint256 amount) external onlyOwner {
