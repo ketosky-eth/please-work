@@ -367,15 +367,15 @@ export default function LaunchMemePage() {
               <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-white mb-4">Wallet Status</h3>
                 <div className="space-y-3">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-gray-400">Connected</span>
                     <span className="text-green-400">✓ {address?.slice(0, 6)}...{address?.slice(-4)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-gray-400">Network</span>
                     <span className="text-white">{chainName}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center">
                     <span className="text-gray-400">Balance</span>
                     <span className="text-white">{balance} {balanceSymbol}</span>
                   </div>
@@ -387,13 +387,13 @@ export default function LaunchMemePage() {
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Smart Vault Status</h3>
               <div className="space-y-3">
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-gray-400">Smart Vault</span>
                   <span className={hasSmartVault ? "text-green-400" : "text-red-400"}>
                     {hasSmartVault ? "✓ Active" : "✗ Not Minted"}
                   </span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between items-center">
                   <span className="text-gray-400">Free Launch</span>
                   <span className={canUseFreeDeployment ? "text-green-400" : "text-gray-400"}>
                     {canUseFreeDeployment ? "✓ Available" : "✗ Used/Unavailable"}
@@ -446,33 +446,33 @@ export default function LaunchMemePage() {
               </div>
             </div>
 
-            {/* Launch Stats */}
+            {/* Launch Details - Fixed Alignment */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Launch Details</h3>
               <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Total Supply</span>
-                  <span className="text-white">1,000,000,000</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm">Total Supply</span>
+                  <span className="text-white text-sm font-medium">1,000,000,000</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">For Sale</span>
-                  <span className="text-white">800,000,000 (80%)</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm">For Sale</span>
+                  <span className="text-white text-sm font-medium">800,000,000 (80%)</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">For Liquidity</span>
-                  <span className="text-white">200,000,000 (20%)</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm">For Liquidity</span>
+                  <span className="text-white text-sm font-medium">200,000,000 (20%)</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Graduation Target</span>
-                  <span className="text-white">108,800 RON</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm">Graduation Target</span>
+                  <span className="text-white text-sm font-medium">108,800 RON</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Creator Reward</span>
-                  <span className="text-green-400">500 RON</span>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm">Creator Reward</span>
+                  <span className="text-green-400 text-sm font-medium">500 RON</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">Deploy Cost</span>
-                  <span className={`${canUseFreeDeployment ? 'text-green-400' : hasInsufficientBalance ? 'text-red-400' : 'text-white'}`}>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm">Deploy Cost</span>
+                  <span className={`text-sm font-medium ${canUseFreeDeployment ? 'text-green-400' : hasInsufficientBalance ? 'text-red-400' : 'text-white'}`}>
                     {canUseFreeDeployment ? 'FREE' : `${actualCost} ${costSymbol}`}
                   </span>
                 </div>
@@ -518,8 +518,8 @@ export default function LaunchMemePage() {
             
             {!hasInsufficientBalance && !hasSmartVault && !canUseFreeDeployment && (
               <>
-                <p className="text-m text-yellow-500 text-center">Tip:</p>
-                <p className="text-s text-gray-400 text-center">
+                <p className="text-sm text-yellow-500 text-center font-medium">💡 Pro Tip:</p>
+                <p className="text-xs text-gray-400 text-center">
                   Mint a Smart Vault NFT to get your first token launch for FREE and earn LP rewards!
                 </p>
               </>

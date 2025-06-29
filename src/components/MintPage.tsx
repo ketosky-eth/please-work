@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Palette, Zap, Shield, Star, Crown, Unlock, Clock, Gift } from 'lucide-react';
 import { useSmartVault } from '../hooks/useSmartVault';
 import { useWallet } from '../hooks/useWallet';
+import { formatCurrency } from '../hooks/useAnalytics';
 
 interface NFTCollection {
   id: string;
@@ -186,7 +187,7 @@ export default function MintPage() {
                       <>
                         <span>
                           {collection.isDynamicPrice 
-                            ? `$${smartVaultUsdPrice} (${collection.price.toFixed(3)} RON)` 
+                            ? `${formatCurrency(smartVaultUsdPrice)} (${collection.price.toFixed(3)} RON)` 
                             : `${collection.price} RON each`
                           }
                         </span>
@@ -335,7 +336,7 @@ export default function MintPage() {
                         <span className="text-gray-300">Price per NFT</span>
                         <span className="text-white font-semibold">
                           {selectedNFT.isDynamicPrice 
-                            ? `$${smartVaultUsdPrice} (${selectedNFT.price.toFixed(3)} RON)`
+                            ? `${formatCurrency(smartVaultUsdPrice)} (${selectedNFT.price.toFixed(3)} RON)`
                             : `${selectedNFT.price} RON`
                           }
                         </span>
@@ -434,7 +435,7 @@ export default function MintPage() {
                       <div className="text-white font-semibold">
                         {selectedNFT.price !== null 
                           ? selectedNFT.isDynamicPrice 
-                            ? `$${smartVaultUsdPrice}`
+                            ? formatCurrency(smartVaultUsdPrice)
                             : `${selectedNFT.price} RON`
                           : 'TBA'
                         }

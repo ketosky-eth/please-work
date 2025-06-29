@@ -65,6 +65,9 @@ export function useSmartVault() {
     abi: SMART_VAULT_ABI,
     functionName: 'hasMinted',
     args: address ? [address] : undefined,
+    query: {
+      enabled: !!address,
+    },
   });
 
   // Get user's token ID if they have minted
@@ -74,7 +77,7 @@ export function useSmartVault() {
     functionName: 'getUserTokenId',
     args: address ? [address] : undefined,
     query: {
-      enabled: !!hasMinted,
+      enabled: !!hasMinted && !!address,
     },
   });
 

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Vault, TrendingUp, DollarSign, ExternalLink, Download, Eye, BarChart3, Coins, ArrowUpRight, ArrowDownRight, Gift, CheckCircle, Rocket } from 'lucide-react';
+import { useAnalytics, useUserAnalytics, formatCurrency, formatNumber } from '../hooks/useAnalytics';
+import { useWallet } from '../hooks/useWallet';
 
 interface LaunchedToken {
   id: string;
@@ -28,6 +30,10 @@ export default function MyVaultPage() {
   const [selectedToken, setSelectedToken] = useState<string | null>(null);
   const [isWithdrawing, setIsWithdrawing] = useState<string | null>(null);
   const [isClaimingReward, setIsClaimingReward] = useState<string | null>(null);
+
+  const { address } = useWallet();
+  const analytics = useAnalytics();
+  const userAnalytics = useUserAnalytics(address || '');
 
   // Fresh start - no tokens launched yet
   const launchedTokens: LaunchedToken[] = [];
@@ -76,14 +82,16 @@ export default function MyVaultPage() {
           </p>
         </div>
 
-        {/* Fresh Stats Overview */}
+        {/* Live Stats Overview */}
         <div className="grid md:grid-cols-5 gap-6 mb-12">
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
             <div className="flex items-center space-x-3 mb-2">
               <Coins className="w-6 h-6 text-yellow-400" />
               <span className="text-gray-400 text-sm">Total Tokens</span>
             </div>
-            <div className="text-2xl font-bold text-white">0</div>
+            <div className="text-2xl font-bold text-white">
+              {userAnalytics.isLoading ? '...' : formatNumber(userAnalytics.tokensCreated)}
+            </div>
           </div>
           
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
@@ -91,7 +99,9 @@ export default function MyVaultPage() {
               <DollarSign className="w-6 h-6 text-green-400" />
               <span className="text-gray-400 text-sm">Total Fees Earned</span>
             </div>
-            <div className="text-2xl font-bold text-white">0 RON</div>
+            <div className="text-2xl font-bold text-white">
+              {userAnalytics.isLoading ? '...' : formatCurrency(userAnalytics.totalFeesEarned, 'RON')}
+            </div>
           </div>
           
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
@@ -99,7 +109,9 @@ export default function MyVaultPage() {
               <BarChart3 className="w-6 h-6 text-orange-400" />
               <span className="text-gray-400 text-sm">Total Market Cap</span>
             </div>
-            <div className="text-2xl font-bold text-white">$0</div>
+            <div className="text-2xl font-bold text-white">
+              {analytics.isLoading ? '...' : formatCurrency(0)}
+            </div>
           </div>
           
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
@@ -107,7 +119,9 @@ export default function MyVaultPage() {
               <TrendingUp className="w-6 h-6 text-yellow-400" />
               <span className="text-gray-400 text-sm">24h Volume</span>
             </div>
-            <div className="text-2xl font-bold text-white">$0</div>
+            <div className="text-2xl font-bold text-white">
+              {analytics.isLoading ? '...' : formatCurrency(analytics.totalVolume24h)}
+            </div>
           </div>
 
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
@@ -115,9 +129,32 @@ export default function MyVaultPage() {
               <CheckCircle className="w-6 h-6 text-green-400" />
               <span className="text-gray-400 text-sm">Graduated</span>
             </div>
-            <div className="text-2xl font-bold text-white">0</div>
+            <div className="text-2xl font-bold text-white">
+              {analytics.isLoading ? '...' : formatNumber(0)}
+            </div>
           </div>
         </div>
+
+        {/* Smart Vault Status */}
+        {address && (
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 mb-8">
+            <h3 className="text-xl font-bold text-white mb-4">Smart Vault Status</h3>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Smart Vault NFT</span>
+                <span className={userAnalytics.hasSmartVault ? "text-green-400" : "text-red-400"}>
+                  {userAnalytics.hasSmartVault ? "✓ Minted" : "✗ Not Minted"}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-gray-400">Free Launch Available</span>
+                <span className={userAnalytics.canUseFreeDeployment ? "text-green-400" : "text-gray-400"}>
+                  {userAnalytics.canUseFreeDeployment ? "✓ Available" : "✗ Used/Unavailable"}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Empty State */}
         <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden">

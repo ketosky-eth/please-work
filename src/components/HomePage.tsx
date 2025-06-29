@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TrendingUp, Flame, Target, Search, Filter, ExternalLink, ArrowUpRight, ArrowDownRight, Clock, Users } from 'lucide-react';
+import { useAnalytics, formatCurrency, formatNumber } from '../hooks/useAnalytics';
 
 interface Token {
   id: string;
@@ -21,6 +22,8 @@ interface Token {
 export default function HomePage() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'new' | 'trending' | 'graduating'>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  const analytics = useAnalytics();
 
   // Fresh empty state - no tokens launched yet
   const tokens: Token[] = [];
@@ -75,22 +78,30 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Stats Overview - Fresh start */}
+        {/* Stats Overview - Live Analytics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
-            <div className="text-2xl font-bold text-white mb-1">0</div>
+            <div className="text-2xl font-bold text-white mb-1">
+              {analytics.isLoading ? '...' : formatNumber(analytics.totalTokens)}
+            </div>
             <div className="text-gray-400 text-sm">Total Tokens</div>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
-            <div className="text-2xl font-bold text-green-400 mb-1">$0</div>
+            <div className="text-2xl font-bold text-green-400 mb-1">
+              {analytics.isLoading ? '...' : formatCurrency(analytics.totalVolume24h)}
+            </div>
             <div className="text-gray-400 text-sm">24h Volume</div>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
-            <div className="text-2xl font-bold text-yellow-400 mb-1">0</div>
+            <div className="text-2xl font-bold text-yellow-400 mb-1">
+              {analytics.isLoading ? '...' : formatNumber(analytics.graduatedTokens)}
+            </div>
             <div className="text-gray-400 text-sm">Graduating</div>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
-            <div className="text-2xl font-bold text-orange-400 mb-1">0</div>
+            <div className="text-2xl font-bold text-orange-400 mb-1">
+              {analytics.isLoading ? '...' : formatNumber(analytics.newTokensToday)}
+            </div>
             <div className="text-gray-400 text-sm">New Today</div>
           </div>
         </div>
