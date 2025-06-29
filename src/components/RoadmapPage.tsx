@@ -214,7 +214,7 @@ export default function RoadmapPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-semibold transition-all">
             <a href="https://www.x.com/vyto_xyz" target="_blank">
-              Follow Us
+              Follow Us on X
             </a>
             </button>
             <button className="border border-gray-600 text-white hover:bg-gray-800 px-6 py-3 rounded-lg font-semibold transition-all">
