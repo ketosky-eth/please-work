@@ -29,7 +29,7 @@ export default function RoadmapPage() {
       id: '2',
       title: 'Smart Vault System',
       description: 'Revolutionary LP token management and fee harvesting system',
-      status: 'completed',
+      status: 'in-progress',
       quarter: 'Q1 2024',
       features: [
         'Smart Vault NFT minting',
