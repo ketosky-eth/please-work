@@ -42,5 +42,11 @@
     "hardhat": "^2.19.0",
     "@nomicfoundation/hardhat-toolbox": "^4.0.0",
     "@types/node": "^20.10.0"
+  },
+  "ts-node": {
+    "esm": false,
+    "compilerOptions": {
+      "module": "commonjs"
+    }
   }
 }
