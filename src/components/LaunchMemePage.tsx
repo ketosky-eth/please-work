@@ -491,7 +491,7 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Creator Reward</span>
-                  <span className="text-green-400 text-sm font-medium">500 RON</span>
+                  <CheckCircle className="w-4 h-4" />
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Deploy Cost</span>
