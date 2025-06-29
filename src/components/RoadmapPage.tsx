@@ -21,8 +21,8 @@ export default function RoadmapPage() {
       features: [
         'Smart contract development',
         'Meme Token',
-        'Ronin network integration',
-        'Wallet connectivity'
+        'Ronin Network integration',
+        'Social Media'
       ]
     },
     {
@@ -88,6 +88,19 @@ export default function RoadmapPage() {
         'Base network integration',
         'Arbitrum compatibility',
         'Cross-chain bridging'
+      ]
+    },
+        {
+      id: '7',
+      title: 'Smart Vault System',
+      description: 'Revolutionary LP token management and fee harvesting system',
+      status: 'in-progress',
+      quarter: 'Q1 2024',
+      features: [
+        'Smart Vault NFT minting',
+        'Automated LP token management',
+        'Fee harvesting mechanics',
+        'Non-transferable NFT system'
       ]
     }
   ];
