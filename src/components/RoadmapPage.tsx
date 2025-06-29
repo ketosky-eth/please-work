@@ -15,20 +15,20 @@ export default function RoadmapPage() {
     {
       id: '1',
       title: 'Platform Foundation',
-      description: 'Core infrastructure and basic token creation capabilities',
+      description: 'Core infrastructure',
       status: 'in-progress',
       quarter: 'Q2 2025',
       features: [
-        'Smart contract development',
+        'Smart Contract Engineering',
         'Social Exposure',
-        'Ronin Network integration',
-        'SCommunity Building'
+        'Ronin Network Integration',
+        'Community Building'
       ]
     },
     {
       id: '2',
-      title: 'Smart Vault System',
-      description: 'Revolutionary LP token management and fee harvesting system',
+      title: 'Genesis Vault Shards',
+      description: 'Onboarding ',
       status: 'in-progress',
       quarter: 'Q1 2024',
       features: [
