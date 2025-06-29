@@ -479,11 +479,11 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">For Sale</span>
-                  <span className="text-white text-sm font-medium">800,000,000 (80%)</span>
+                  <span className="text-white text-sm font-medium">800M (80%)</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">For Liquidity</span>
-                  <span className="text-white text-sm font-medium">200,000,000 (20%)</span>
+                  <span className="text-white text-sm font-medium">200M (20%)</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Graduation Target</span>
