@@ -388,7 +388,7 @@ export default function LaunchMemePage() {
                 {!hasSmartVault && (
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
                     <p className="text-yellow-300 text-sm">
-                      Mint a Smart Vault NFT to automatically receive LP tokens and earn fees from your launched tokens.
+                      Mint a Smart Vault to automatically receive LP tokens and earn fees from your launched tokens.
                     </p>
                   </div>
                 )}
