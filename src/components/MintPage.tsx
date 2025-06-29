@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Palette, Zap, Shield, Star, Crown, Unlock, Clock, Gift } from 'lucide-react';
+import { useSmartVault } from '../hooks/useSmartVault';
+import { useWallet } from '../hooks/useWallet';
 
 interface NFTCollection {
   id: string;
@@ -20,18 +22,18 @@ export default function MintPage() {
   const [selectedCollection, setSelectedCollection] = useState<string>('smart');
   const [mintQuantity, setMintQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [ronPrice, setRonPrice] = useState<number>(0);
+  const [ronPrice, setRonPrice] = useState<number>(0.5); // Default fallback price
   const [smartVaultUsdPrice] = useState(5); // $5 USD
+
+  const { isConnected, connect } = useWallet();
+  const { hasMinted, mintPrice, mintSmartVault } = useSmartVault();
 
   // Fetch RON price for Smart Vault dynamic pricing
   useEffect(() => {
     const fetchRonPrice = async () => {
       try {
-        // Simulated price fetch - replace with actual API call
-        // Example: CoinGecko API for RON price
-        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ronin&vs_currencies=usd');
-        const data = await response.json();
-        setRonPrice(data.ronin?.usd || 0.5); // Fallback to $0.5 if API fails
+        // For testnet, we'll use a fixed price since RON might not be on CoinGecko
+        setRonPrice(0.5); // $0.5 USD per RON for testnet
       } catch (error) {
         console.error('Failed to fetch RON price:', error);
         setRonPrice(0.5); // Fallback price
@@ -39,9 +41,6 @@ export default function MintPage() {
     };
 
     fetchRonPrice();
-    // Refresh price every 30 seconds
-    const interval = setInterval(fetchRonPrice, 30000);
-    return () => clearInterval(interval);
   }, []);
 
   const collections: NFTCollection[] = [
@@ -62,7 +61,7 @@ export default function MintPage() {
       id: 'smart',
       name: 'Smart Vault',
       description: 'Essential NFT for the VYTO ecosystem. Mint once per wallet to unlock advanced features like LP token management and fee harvesting.',
-      price: ronPrice > 0 ? smartVaultUsdPrice / ronPrice : null,
+      price: mintPrice ? Number(mintPrice) / 10**18 : smartVaultUsdPrice / ronPrice,
       totalSupply: null,
       minted: null, // Hide minted count
       icon: Unlock,
@@ -78,17 +77,33 @@ export default function MintPage() {
   const remainingSupply = selectedNFT.totalSupply ? selectedNFT.totalSupply - (selectedNFT.minted || 0) : null;
 
   const handleMint = async () => {
+    if (!isConnected) {
+      connect?.();
+      return;
+    }
+
     if (selectedNFT.comingSoon) {
       alert('Genesis Vault Shard coming soon! 🚀');
       return;
     }
 
-    setIsLoading(true);
-    // Simulate minting process
-    setTimeout(() => {
-      setIsLoading(false);
-      alert(`Successfully minted ${mintQuantity} ${selectedNFT.name} NFT${mintQuantity > 1 ? 's' : ''}! 🎉`);
-    }, 3000);
+    if (selectedCollection === 'smart') {
+      if (hasMinted) {
+        alert('You have already minted a Smart Vault NFT! Only one per wallet is allowed.');
+        return;
+      }
+
+      setIsLoading(true);
+      try {
+        await mintSmartVault();
+        alert('Smart Vault NFT minted successfully! 🎉\n\nYou now have access to:\n• Free token creation\n• LP token management\n• Fee harvesting');
+      } catch (error) {
+        console.error('Mint error:', error);
+        alert('Failed to mint Smart Vault NFT. Please try again.');
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
   const handleQuantityChange = (change: number) => {
@@ -237,6 +252,19 @@ export default function MintPage() {
               </h2>
 
               <div className="space-y-6">
+                {/* Already Minted Warning */}
+                {selectedCollection === 'smart' && hasMinted && (
+                  <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 text-green-400 mb-2">
+                      <Shield className="w-5 h-5" />
+                      <span className="font-medium">Smart Vault Already Minted</span>
+                    </div>
+                    <p className="text-green-300 text-sm">
+                      You have already minted your Smart Vault NFT! You can now enjoy free token creation and LP management features.
+                    </p>
+                  </div>
+                )}
+
                 {/* Quantity Selector */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-3">
@@ -275,7 +303,7 @@ export default function MintPage() {
                 </div>
 
                 {/* Smart Vault Info */}
-                {selectedCollection === 'smart' && (
+                {selectedCollection === 'smart' && !hasMinted && (
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
                     <div className="flex items-center space-x-2 text-yellow-400 mb-2">
                       <Shield className="w-5 h-5" />
@@ -298,21 +326,8 @@ export default function MintPage() {
                   </div>
                 )}
 
-                {/* Supply Warning */}
-                {remainingSupply && remainingSupply <= 50 && (
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-                    <div className="flex items-center space-x-2 text-yellow-400">
-                      <Shield className="w-5 h-5" />
-                      <span className="font-medium">Limited Supply Warning</span>
-                    </div>
-                    <p className="text-yellow-300 text-sm mt-1">
-                      Only {remainingSupply} {selectedNFT.name} NFTs remaining! Once sold out, no more will be minted.
-                    </p>
-                  </div>
-                )}
-
                 {/* Cost Breakdown */}
-                {selectedNFT.price !== null && (
+                {selectedNFT.price !== null && !hasMinted && (
                   <div className="bg-gray-700/50 rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-white mb-4">Cost Breakdown</h3>
                     <div className="space-y-3">
@@ -355,7 +370,8 @@ export default function MintPage() {
                     isLoading || 
                     (remainingSupply !== null && remainingSupply <= 0) ||
                     selectedNFT.comingSoon ||
-                    (selectedNFT.price === null && !selectedNFT.comingSoon)
+                    (selectedNFT.price === null && !selectedNFT.comingSoon) ||
+                    (selectedCollection === 'smart' && hasMinted)
                   }
                   className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
                 >
@@ -373,6 +389,10 @@ export default function MintPage() {
                     <span>Sold Out</span>
                   ) : selectedNFT.price === null ? (
                     <span>Price Loading...</span>
+                  ) : selectedCollection === 'smart' && hasMinted ? (
+                    <span>Already Minted</span>
+                  ) : !isConnected ? (
+                    <span>Connect Wallet to Mint</span>
                   ) : (
                     <>
                       <Zap className="w-5 h-5" />

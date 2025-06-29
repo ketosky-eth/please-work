@@ -1,13 +1,17 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "vyto-protocol",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.ts --network roninTestnet",
+    "verify": "npx hardhat verify --network roninTestnet",
+    "test": "npx hardhat test"
   },
   "dependencies": {
     "lucide-react": "^0.344.0",
