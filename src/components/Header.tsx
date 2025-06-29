@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Wallet, Zap } from 'lucide-react';
+import { ChevronDown, Wallet, BookOpen, Map } from 'lucide-react';
 import { SUPPORTED_CHAINS } from '../constants/chains';
 import { Chain } from '../types';
 
@@ -11,6 +11,7 @@ interface HeaderProps {
 export default function Header({ currentPage, onPageChange }: HeaderProps) {
   const [selectedChain, setSelectedChain] = useState<Chain>(SUPPORTED_CHAINS[0]);
   const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
+  const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
 
   const handleConnectWallet = () => {
@@ -24,10 +25,14 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'landing', label: 'Landing' },
     { id: 'mint', label: 'NFT Mint' },
     { id: 'launch', label: 'Launch Meme' },
     { id: 'vault', label: 'My Vault' }
+  ];
+
+  const aboutItems = [
+    { id: 'docs', label: 'Docs', icon: BookOpen },
+    { id: 'roadmap', label: 'Roadmap', icon: Map }
   ];
 
   return (
@@ -35,28 +40,65 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center">
-              <Zap className="w-5 h-5 text-white" />
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-lg overflow-hidden">
+              <img 
+                src="/Main Logo.jpg" 
+                alt="VYTO Logo" 
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-xl font-bold text-white">VYTO</span>
           </div>
 
           {/* Navigation */}
-          <nav className="hidden md:flex space-x-8">
+          <nav className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => onPageChange(item.id)}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                   currentPage === item.id
-                    ? 'text-purple-400 bg-purple-400/10'
+                    ? 'text-yellow-400 bg-yellow-400/10'
                     : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
                 }`}
               >
                 {item.label}
               </button>
             ))}
+            
+            {/* About Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsAboutDropdownOpen(!isAboutDropdownOpen)}
+                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  currentPage === 'docs' || currentPage === 'roadmap'
+                    ? 'text-yellow-400 bg-yellow-400/10'
+                    : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
+                }`}
+              >
+                <span>About</span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+
+              {isAboutDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-10">
+                  {aboutItems.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => {
+                        onPageChange(item.id);
+                        setIsAboutDropdownOpen(false);
+                      }}
+                      className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors text-left"
+                    >
+                      <item.icon className="w-4 h-4 text-yellow-400" />
+                      <span className="text-white text-sm">{item.label}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* Chain Selector & Wallet */}
@@ -67,7 +109,7 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
                 onClick={() => setIsChainDropdownOpen(!isChainDropdownOpen)}
                 className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 transition-colors"
               >
-                <div className="w-5 h-5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500"></div>
+                <div className="w-5 h-5 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500"></div>
                 <span className="text-sm text-white hidden sm:block">{selectedChain.name}</span>
                 <ChevronDown className="w-4 h-4 text-gray-400" />
               </button>
@@ -80,7 +122,7 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
                       onClick={() => handleChainSelect(chain)}
                       className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors"
                     >
-                      <div className="w-5 h-5 rounded-full bg-gradient-to-r from-purple-500 to-blue-500"></div>
+                      <div className="w-5 h-5 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500"></div>
                       <div className="text-left">
                         <div className="text-white text-sm font-medium">{chain.name}</div>
                         <div className="text-gray-400 text-xs">{chain.symbol}</div>
@@ -97,7 +139,7 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
                 isWalletConnected
                   ? 'bg-green-600 hover:bg-green-700 text-white'
-                  : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white'
+                  : 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white'
               }`}
             >
               <Wallet className="w-4 h-4" />

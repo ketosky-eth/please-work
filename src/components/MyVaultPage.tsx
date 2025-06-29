@@ -30,8 +30,8 @@ export default function MyVaultPage() {
       name: 'MoonDoge',
       symbol: 'MDOGE',
       logo: '🚀',
-      chain: 'Ethereum',
-      dex: 'Uniswap',
+      chain: 'Ronin',
+      dex: 'Katana',
       contractAddress: '0x742d35Cc6634C0532925a3b8D4C9db4C4C4C4C4C',
       launchDate: '2024-01-15',
       currentPrice: 0.00045,
@@ -48,8 +48,8 @@ export default function MyVaultPage() {
       name: 'SafeRocket',
       symbol: 'SRKT',
       logo: '🛡️',
-      chain: 'Base',
-      dex: 'BaseSwap',
+      chain: 'Ronin',
+      dex: 'Katana',
       contractAddress: '0x123d35Cc6634C0532925a3b8D4C9db4C4C4C4C4C',
       launchDate: '2024-01-20',
       currentPrice: 0.0012,
@@ -91,25 +91,11 @@ export default function MyVaultPage() {
   };
 
   const getDexUrl = (chain: string, dex: string, address: string) => {
-    const urls: { [key: string]: string } = {
-      'Ethereum-Uniswap': `https://app.uniswap.org/#/tokens/ethereum/${address}`,
-      'Base-BaseSwap': `https://baseswap.fi/swap?outputCurrency=${address}`,
-      'Ronin-Katana': `https://katana.roninchain.com/swap?outputCurrency=${address}`,
-      'Arbitrum-Camelot': `https://app.camelot.exchange/?token2=${address}`,
-      'BNB Chain-PancakeSwap': `https://pancakeswap.finance/swap?outputCurrency=${address}`
-    };
-    return urls[`${chain}-${dex}`] || '#';
+    return `https://katana.roninchain.com/swap?outputCurrency=${address}`;
   };
 
   const getExplorerUrl = (chain: string, address: string) => {
-    const explorers: { [key: string]: string } = {
-      'Ethereum': `https://etherscan.io/token/${address}`,
-      'Base': `https://basescan.org/token/${address}`,
-      'Ronin': `https://explorer.roninchain.com/token/${address}`,
-      'Arbitrum': `https://arbiscan.io/token/${address}`,
-      'BNB Chain': `https://bscscan.com/token/${address}`
-    };
-    return explorers[chain] || '#';
+    return `https://explorer.roninchain.com/token/${address}`;
   };
 
   const totalFeesEarned = launchedTokens.reduce((sum, token) => sum + token.feesEarned, 0);
@@ -117,12 +103,12 @@ export default function MyVaultPage() {
   const totalVolume24h = launchedTokens.reduce((sum, token) => sum + token.volume24h, 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900 pt-8 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center">
               <Vault className="w-8 h-8 text-white" />
             </div>
           </div>
@@ -138,7 +124,7 @@ export default function MyVaultPage() {
         <div className="grid md:grid-cols-4 gap-6 mb-12">
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
             <div className="flex items-center space-x-3 mb-2">
-              <Coins className="w-6 h-6 text-blue-400" />
+              <Coins className="w-6 h-6 text-yellow-400" />
               <span className="text-gray-400 text-sm">Total Tokens</span>
             </div>
             <div className="text-2xl font-bold text-white">{launchedTokens.length}</div>
@@ -149,12 +135,12 @@ export default function MyVaultPage() {
               <DollarSign className="w-6 h-6 text-green-400" />
               <span className="text-gray-400 text-sm">Total Fees Earned</span>
             </div>
-            <div className="text-2xl font-bold text-white">{totalFeesEarned.toFixed(3)} ETH</div>
+            <div className="text-2xl font-bold text-white">{totalFeesEarned.toFixed(3)} RON</div>
           </div>
           
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
             <div className="flex items-center space-x-3 mb-2">
-              <BarChart3 className="w-6 h-6 text-purple-400" />
+              <BarChart3 className="w-6 h-6 text-orange-400" />
               <span className="text-gray-400 text-sm">Total Market Cap</span>
             </div>
             <div className="text-2xl font-bold text-white">${(totalMarketCap / 1000000).toFixed(2)}M</div>
@@ -162,7 +148,7 @@ export default function MyVaultPage() {
           
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
             <div className="flex items-center space-x-3 mb-2">
-              <TrendingUp className="w-6 h-6 text-orange-400" />
+              <TrendingUp className="w-6 h-6 text-yellow-400" />
               <span className="text-gray-400 text-sm">24h Volume</span>
             </div>
             <div className="text-2xl font-bold text-white">${(totalVolume24h / 1000).toFixed(0)}K</div>
@@ -181,7 +167,7 @@ export default function MyVaultPage() {
                 <div className="grid lg:grid-cols-12 gap-4 items-center">
                   {/* Token Info */}
                   <div className="lg:col-span-3 flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-xl">
+                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center text-xl">
                       {token.logo}
                     </div>
                     <div>
@@ -219,7 +205,7 @@ export default function MyVaultPage() {
 
                   {/* Fees Earned */}
                   <div className="lg:col-span-2">
-                    <div className="text-green-400 font-semibold">{token.feesEarned.toFixed(3)} ETH</div>
+                    <div className="text-green-400 font-semibold">{token.feesEarned.toFixed(3)} RON</div>
                     <div className="text-gray-400 text-xs">Fees Earned</div>
                   </div>
 
@@ -245,7 +231,7 @@ export default function MyVaultPage() {
                         href={getDexUrl(token.chain, token.dex, token.contractAddress)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-blue-600 hover:bg-blue-700 text-white p-1.5 rounded-lg transition-colors"
+                        className="bg-yellow-600 hover:bg-yellow-700 text-white p-1.5 rounded-lg transition-colors"
                         title="View on DEX"
                       >
                         <ExternalLink className="w-3 h-3" />
@@ -255,7 +241,7 @@ export default function MyVaultPage() {
                         href={getExplorerUrl(token.chain, token.contractAddress)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-purple-600 hover:bg-purple-700 text-white p-1.5 rounded-lg transition-colors"
+                        className="bg-orange-600 hover:bg-orange-700 text-white p-1.5 rounded-lg transition-colors"
                         title="View on Explorer"
                       >
                         <Eye className="w-3 h-3" />
@@ -296,7 +282,7 @@ export default function MyVaultPage() {
 
                 <button
                   onClick={() => setSelectedToken(selectedToken === token.id ? null : token.id)}
-                  className="mt-3 text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                  className="mt-3 text-yellow-400 hover:text-yellow-300 text-sm transition-colors"
                 >
                   {selectedToken === token.id ? 'Hide Details' : 'Show Details'}
                 </button>
@@ -311,7 +297,7 @@ export default function MyVaultPage() {
             <Vault className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-white mb-2">No Tokens Launched Yet</h3>
             <p className="text-gray-400 mb-6">Launch your first meme token to start tracking it here.</p>
-            <button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-semibold transition-all">
+            <button className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-semibold transition-all">
               Launch Your First Token
             </button>
           </div>

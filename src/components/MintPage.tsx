@@ -42,7 +42,7 @@ export default function MintPage() {
       totalSupply: null,
       minted: 2847,
       icon: Unlock,
-      gradient: 'from-blue-500 via-purple-500 to-pink-500',
+      gradient: 'from-yellow-500 via-orange-500 to-blue-500',
       features: ['One Per Wallet', 'LP Management', 'Fee Harvesting', 'Non-Transferable'],
       rarity: 'Essential'
     }
@@ -81,12 +81,12 @@ export default function MintPage() {
   const estimatedGas = 0.003;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/10 to-gray-900 pt-8 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center">
               <Palette className="w-8 h-8 text-white" />
             </div>
           </div>
@@ -108,7 +108,7 @@ export default function MintPage() {
                 collection.comingSoon 
                   ? 'border-gray-600 opacity-75 cursor-not-allowed' 
                   : selectedCollection === collection.id
-                  ? 'border-purple-500 ring-2 ring-purple-500/20 cursor-pointer'
+                  ? 'border-yellow-500 ring-2 ring-yellow-500/20 cursor-pointer'
                   : 'border-gray-700 hover:border-gray-600 cursor-pointer'
               }`}
             >
@@ -120,7 +120,7 @@ export default function MintPage() {
               )}
 
               {!collection.comingSoon && selectedCollection === collection.id && (
-                <div className="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
+                <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
                 </div>
               )}
@@ -189,7 +189,7 @@ export default function MintPage() {
             {/* Mint Controls */}
             <div>
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-2">
-                <Zap className="w-6 h-6 text-purple-500" />
+                <Zap className="w-6 h-6 text-yellow-500" />
                 <span>Mint {selectedNFT.name}</span>
               </h2>
 
@@ -233,12 +233,12 @@ export default function MintPage() {
 
                 {/* Smart Vault Info */}
                 {selectedCollection === 'smart' && (
-                  <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-                    <div className="flex items-center space-x-2 text-blue-400 mb-2">
+                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                    <div className="flex items-center space-x-2 text-yellow-400 mb-2">
                       <Shield className="w-5 h-5" />
                       <span className="font-medium">Smart Vault Benefits</span>
                     </div>
-                    <ul className="text-blue-300 text-sm space-y-1">
+                    <ul className="text-yellow-300 text-sm space-y-1">
                       <li>• Automatically receive LP tokens from your launched meme tokens</li>
                       <li>• Harvest trading fees from your token pairs</li>
                       <li>• Non-transferable - permanently linked to your wallet</li>
@@ -298,7 +298,7 @@ export default function MintPage() {
                     (remainingSupply !== null && remainingSupply <= 0) ||
                     selectedNFT.comingSoon
                   }
-                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
+                  className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
                 >
                   {selectedNFT.comingSoon ? (
                     <>
@@ -365,7 +365,7 @@ export default function MintPage() {
                     <div className="grid grid-cols-2 gap-2">
                       {selectedNFT.features.map((feature, index) => (
                         <div key={index} className="flex items-center space-x-2 text-xs text-gray-300">
-                          <Star className="w-3 h-3 text-purple-400" />
+                          <Star className="w-3 h-3 text-yellow-400" />
                           <span>{feature}</span>
                         </div>
                       ))}

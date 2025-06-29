@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle } from 'lucide-react';
 import { TokenData } from '../types';
-import { useWallet } from '../hooks/useWallet';
 
 export default function LaunchMemePage() {
-  const { isConnected, address, chainName, balance, balanceSymbol, connect } = useWallet();
+  const [isConnected] = useState(false);
+  const [address] = useState('');
+  const [chainName] = useState('Ronin Testnet');
+  const [balance] = useState('0');
+  const [balanceSymbol] = useState('RON');
   
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
@@ -29,7 +32,7 @@ export default function LaunchMemePage() {
 
   const handleLaunch = async () => {
     if (!isConnected) {
-      connect?.();
+      alert('Please connect your wallet first');
       return;
     }
 
@@ -55,12 +58,12 @@ export default function LaunchMemePage() {
   const hasSmartVault = false; // This would be checked from the Smart Vault contract
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-green-900/10 to-gray-900 pt-8 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center">
               <Rocket className="w-8 h-8 text-white" />
             </div>
           </div>
@@ -82,10 +85,7 @@ export default function LaunchMemePage() {
             <p className="text-yellow-300 mb-4">
               You need to connect your wallet to launch tokens. This ensures secure deployment and ownership of your contracts.
             </p>
-            <button
-              onClick={connect}
-              className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-            >
+            <button className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
               Connect Wallet Now
             </button>
           </div>
@@ -96,7 +96,7 @@ export default function LaunchMemePage() {
           <div className="lg:col-span-2">
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-8">
               <h2 className="text-2xl font-bold text-white mb-6 flex items-center space-x-2">
-                <TrendingUp className="w-6 h-6 text-green-500" />
+                <TrendingUp className="w-6 h-6 text-yellow-500" />
                 <span>Token Details</span>
               </h2>
 
@@ -112,7 +112,7 @@ export default function LaunchMemePage() {
                       value={tokenData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       placeholder="Token Name"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     />
                   </div>
                   <div>
@@ -124,18 +124,18 @@ export default function LaunchMemePage() {
                       value={tokenData.symbol}
                       onChange={(e) => handleInputChange('symbol', e.target.value.toUpperCase())}
                       placeholder="TKN"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                     />
                   </div>
                 </div>
 
                 {/* Network Info */}
-                <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-                  <div className="flex items-center space-x-2 text-blue-400 mb-2">
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                  <div className="flex items-center space-x-2 text-yellow-400 mb-2">
                     <ArrowRight className="w-4 h-4" />
                     <span className="font-medium">Launch Information</span>
                   </div>
-                  <p className="text-blue-300 text-sm">
+                  <p className="text-yellow-300 text-sm">
                     Your token will be launched on <strong>Katana DEX</strong> on the <strong>Ronin Testnet</strong> network. 
                     Liquidity will be automatically added and trading will begin immediately.
                   </p>
@@ -165,7 +165,7 @@ export default function LaunchMemePage() {
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     placeholder="Moon it! 🚀"
                     rows={4}
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
                   />
                 </div>
 
@@ -174,7 +174,7 @@ export default function LaunchMemePage() {
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Token Logo
                   </label>
-                  <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-green-500 transition-colors">
+                  <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors">
                     <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                     <p className="text-gray-400 mb-2">Upload your meme logo</p>
                     <p className="text-sm text-gray-500">PNG, JPG, SVG up to 5MB</p>
@@ -199,7 +199,7 @@ export default function LaunchMemePage() {
                           value={tokenData[social.key as keyof TokenData] as string}
                           onChange={(e) => handleInputChange(social.key as keyof TokenData, e.target.value)}
                           placeholder={social.placeholder}
-                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                         />
                       </div>
                     ))}
@@ -211,7 +211,7 @@ export default function LaunchMemePage() {
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <h3 className="text-lg font-semibold text-white flex items-center space-x-2">
-                        <DollarSign className="w-5 h-5 text-green-500" />
+                        <DollarSign className="w-5 h-5 text-yellow-500" />
                         <span>Initial Buy (Optional)</span>
                       </h3>
                       <p className="text-sm text-gray-400 mt-1">
@@ -225,7 +225,7 @@ export default function LaunchMemePage() {
                         onChange={(e) => handleInputChange('initialBuy', e.target.checked)}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-600"></div>
+                      <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
                     </label>
                   </div>
                   
@@ -239,7 +239,7 @@ export default function LaunchMemePage() {
                         value={tokenData.initialBuyAmount}
                         onChange={(e) => handleInputChange('initialBuyAmount', e.target.value)}
                         placeholder="0.001"
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                       />
                     </div>
                   )}
@@ -296,7 +296,7 @@ export default function LaunchMemePage() {
               <h3 className="text-lg font-semibold text-white mb-4">Token Preview</h3>
               <div className="bg-gray-700/50 rounded-lg p-4">
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
                     <span className="text-white font-bold">
                       {tokenData.symbol.charAt(0) || '?'}
                     </span>
@@ -314,10 +314,10 @@ export default function LaunchMemePage() {
                   {tokenData.description || 'Token description will appear here...'}
                 </p>
                 <div className="flex items-center space-x-2 text-xs">
-                  <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
+                  <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
                     Ronin Testnet
                   </span>
-                  <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded">
+                  <span className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded">
                     Katana
                   </span>
                 </div>
@@ -371,7 +371,7 @@ export default function LaunchMemePage() {
             <button
               onClick={handleLaunch}
               disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || hasInsufficientBalance || (isConnected && chainName !== 'Ronin Testnet')}
-              className="w-full bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
+              className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isLoading ? (
                 <>

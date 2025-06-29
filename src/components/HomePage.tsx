@@ -1,5 +1,5 @@
 import React from 'react';
-import { Zap, Shield, Coins, Palette, ArrowRight, TrendingUp } from 'lucide-react';
+import { Shield, Coins, Palette, ArrowRight, TrendingUp } from 'lucide-react';
 
 export default function HomePage() {
   const features = [
@@ -15,8 +15,8 @@ export default function HomePage() {
     },
     {
       icon: Shield,
-      title: 'Multi-Chain Support',
-      description: 'Deploy across multiple EVM-compatible chains including Ethereum, Base, and Arbitrum.'
+      title: 'Smart Vault System',
+      description: 'Secure your LP tokens and earn fees automatically with our innovative Smart Vault technology.'
     },
     {
       icon: TrendingUp,
@@ -33,30 +33,34 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900">
       {/* Hero Section */}
       <section className="relative px-4 sm:px-6 lg:px-8 pt-20 pb-32">
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex justify-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl flex items-center justify-center">
-              <Zap className="w-8 h-8 text-white" />
+            <div className="w-20 h-20 rounded-2xl overflow-hidden">
+              <img 
+                src="/Main Logo.jpg" 
+                alt="VYTO Logo" 
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-bold text-white mb-6">
             Build the Future with
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400 block">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-400 block">
               VYTO
             </span>
           </h1>
           
           <p className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed">
-            Create, mint, and launch your tokens and NFTs across multiple blockchain networks. 
-            Join thousands of creators building the next generation of digital assets.
+            Create, mint, and launch your tokens and NFTs on the Ronin Network. 
+            Join thousands of creators building the next generation of digital assets with Smart Vault technology.
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-xl font-semibold transition-all transform hover:scale-105 flex items-center justify-center space-x-2">
+            <button className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-8 py-4 rounded-xl font-semibold transition-all transform hover:scale-105 flex items-center justify-center space-x-2">
               <span>Start Building</span>
               <ArrowRight className="w-5 h-5" />
             </button>
@@ -68,9 +72,9 @@ export default function HomePage() {
 
         {/* Floating Cards */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-10 w-20 h-20 bg-purple-500/20 rounded-full blur-xl animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-32 h-32 bg-blue-500/20 rounded-full blur-xl animate-pulse delay-1000"></div>
-          <div className="absolute bottom-20 left-20 w-24 h-24 bg-green-500/20 rounded-full blur-xl animate-pulse delay-2000"></div>
+          <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-500/20 rounded-full blur-xl animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-32 h-32 bg-orange-500/20 rounded-full blur-xl animate-pulse delay-1000"></div>
+          <div className="absolute bottom-20 left-20 w-24 h-24 bg-blue-500/20 rounded-full blur-xl animate-pulse delay-2000"></div>
         </div>
       </section>
 
@@ -96,7 +100,7 @@ export default function HomePage() {
               Everything You Need to Build
             </h2>
             <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              Comprehensive tools and infrastructure for creating, managing, and scaling your digital assets.
+              Comprehensive tools and infrastructure for creating, managing, and scaling your digital assets on Ronin.
             </p>
           </div>
 
@@ -104,9 +108,9 @@ export default function HomePage() {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-purple-500/50 transition-all hover:transform hover:scale-105"
+                className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 hover:border-yellow-500/50 transition-all hover:transform hover:scale-105"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-lg flex items-center justify-center mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-lg flex items-center justify-center mb-4">
                   <feature.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
@@ -118,7 +122,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-r from-purple-900/50 to-blue-900/50">
+      <section className="px-4 sm:px-6 lg:px-8 py-20 bg-gradient-to-r from-yellow-900/50 to-orange-900/50">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to Launch Your Project?
@@ -126,7 +130,7 @@ export default function HomePage() {
           <p className="text-xl text-gray-300 mb-8">
             Join thousands of creators who have already launched their tokens and NFTs on VYTO.
           </p>
-          <button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-12 py-4 rounded-xl font-semibold transition-all transform hover:scale-105 flex items-center justify-center space-x-2 mx-auto">
+          <button className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-12 py-4 rounded-xl font-semibold transition-all transform hover:scale-105 flex items-center justify-center space-x-2 mx-auto">
             <span>Get Started Now</span>
             <ArrowRight className="w-5 h-5" />
           </button>
