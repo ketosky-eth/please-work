@@ -224,7 +224,7 @@ export default function RoadmapPage() {
         {/* Note for Manual Editing */}
         <div className="mt-8 bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
           <p className="text-yellow-300 text-sm text-center">
-            <strong>Note:</strong> This roadmap is ready for your manual editing. Update the roadmapItems array above to reflect your actual development timeline and milestones.
+            <strong>Note:</strong> This roadmap is ready is a work in progress. Stay tuned for more updates!
           </p>
         </div>
       </div>
