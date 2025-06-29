@@ -29,7 +29,7 @@ export default function RoadmapPage() {
       id: '2',
       title: 'Genesis Vault Shards',
       description: 'Onboarding ',
-      status: 'in-progress',
+      status: 'planned',
       quarter: 'Q1 2024',
       features: [
         'Smart Vault NFT minting',
@@ -42,7 +42,7 @@ export default function RoadmapPage() {
       id: '3',
       title: 'Enhanced Token Features',
       description: 'Advanced token creation with IPFS integration and metadata support',
-      status: 'in-progress',
+      status: 'planned',
       quarter: 'Q1 2024',
       features: [
         'IPFS metadata storage',
