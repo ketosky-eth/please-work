@@ -26,7 +26,7 @@ export default function RoadmapPage() {
       ]
     },
     {
-      id: '2',
+      id: '3',
       title: 'Smart Vault System',
       description: 'Revolutionary LP token management and fee harvesting system',
       status: 'in-progress',
@@ -39,7 +39,7 @@ export default function RoadmapPage() {
       ]
     },
     {
-      id: '3',
+      id: '2',
       title: 'Enhanced Token Features',
       description: 'Advanced token creation with IPFS integration and metadata support',
       status: 'in-progress',
