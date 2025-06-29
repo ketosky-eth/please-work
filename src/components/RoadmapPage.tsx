@@ -35,8 +35,7 @@ export default function RoadmapPage() {
         'Smart Vault NFT minting',
         'Automated LP token management',
         'Fee harvesting mechanics',
-        'Non-transferable NFT system',
-        'asdkjh'
+        'Non-transferable NFT system'
       ]
     },
     {
