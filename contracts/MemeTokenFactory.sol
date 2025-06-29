@@ -61,7 +61,7 @@ contract MemeTokenFactory is Ownable, ReentrancyGuard {
     IKatanaRouter public immutable katanaRouter;
     SmartVault public immutable smartVault;
     
-    uint256 public deploymentFee = 0.05 ether; // 0.05 RON
+    uint256 public deploymentFee = 0.5 ether; // 0.5 RON
     address public feeRecipient;
     
     struct TokenInfo {
