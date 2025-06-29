@@ -76,7 +76,7 @@ export default function MintPage() {
       minted: null, // No minted count shown
       icon: Crown,
       gradient: 'from-yellow-500 via-orange-500 to-red-500',
-      features: ['Limited Edition', 'Founder Benefits', 'Exclusive Access', 'Premium Rewards'],
+      features: ['Limited Edition', 'Founder Benefits', 'Exclusive Access', 'Maximized Perks'],
       rarity: 'Legendary',
       comingSoon: true
     },
