@@ -1,5 +1,6 @@
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { parseEther } from 'viem';
+import { CONTRACT_ADDRESSES } from '../constants/contracts';
 
 // Smart Vault contract ABI (simplified)
 const SMART_VAULT_ABI = [
@@ -7,7 +8,7 @@ const SMART_VAULT_ABI = [
     "inputs": [],
     "name": "mint",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -20,6 +21,13 @@ const SMART_VAULT_ABI = [
   {
     "inputs": [{"internalType": "address", "name": "user", "type": "address"}],
     "name": "getUserTokenId",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "mintPrice",
     "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
     "stateMutability": "view",
     "type": "function"
@@ -47,15 +55,13 @@ const SMART_VAULT_ABI = [
   }
 ] as const;
 
-const SMART_VAULT_ADDRESS = '0x0000000000000000000000000000000000000000'; // Replace with deployed address
-
 export function useSmartVault() {
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
 
   // Check if user has minted a Smart Vault
   const { data: hasMinted } = useReadContract({
-    address: SMART_VAULT_ADDRESS,
+    address: CONTRACT_ADDRESSES.SMART_VAULT,
     abi: SMART_VAULT_ABI,
     functionName: 'hasMinted',
     args: address ? [address] : undefined,
@@ -63,7 +69,7 @@ export function useSmartVault() {
 
   // Get user's token ID if they have minted
   const { data: tokenId } = useReadContract({
-    address: SMART_VAULT_ADDRESS,
+    address: CONTRACT_ADDRESSES.SMART_VAULT,
     abi: SMART_VAULT_ABI,
     functionName: 'getUserTokenId',
     args: address ? [address] : undefined,
@@ -72,14 +78,22 @@ export function useSmartVault() {
     },
   });
 
+  // Get mint price
+  const { data: mintPrice } = useReadContract({
+    address: CONTRACT_ADDRESSES.SMART_VAULT,
+    abi: SMART_VAULT_ABI,
+    functionName: 'mintPrice',
+  });
+
   const mintSmartVault = async () => {
     if (!address) throw new Error('Wallet not connected');
+    if (!mintPrice) throw new Error('Mint price not loaded');
     
     return writeContract({
-      address: SMART_VAULT_ADDRESS,
+      address: CONTRACT_ADDRESSES.SMART_VAULT,
       abi: SMART_VAULT_ABI,
       functionName: 'mint',
-      value: parseEther('5'), // 5 RON mint price
+      value: mintPrice,
     });
   };
 
@@ -87,7 +101,7 @@ export function useSmartVault() {
     if (!address || !tokenId) throw new Error('Smart Vault not minted');
     
     return writeContract({
-      address: SMART_VAULT_ADDRESS,
+      address: CONTRACT_ADDRESSES.SMART_VAULT,
       abi: SMART_VAULT_ABI,
       functionName: 'addLPTokens',
       args: [tokenId, lpTokenAddress, amount],
@@ -98,7 +112,7 @@ export function useSmartVault() {
     if (!address || !tokenId) throw new Error('Smart Vault not minted');
     
     return writeContract({
-      address: SMART_VAULT_ADDRESS,
+      address: CONTRACT_ADDRESSES.SMART_VAULT,
       abi: SMART_VAULT_ABI,
       functionName: 'withdrawFees',
       args: [tokenId, feeTokenAddress],
@@ -108,6 +122,7 @@ export function useSmartVault() {
   return {
     hasMinted: !!hasMinted,
     tokenId,
+    mintPrice,
     mintSmartVault,
     addLPTokens,
     withdrawFees,

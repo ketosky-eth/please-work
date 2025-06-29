@@ -1,5 +1,6 @@
-import { useAccount, useWriteContract } from 'wagmi';
+import { useAccount, useWriteContract, useReadContract } from 'wagmi';
 import { parseEther } from 'viem';
+import { CONTRACT_ADDRESSES } from '../constants/contracts';
 
 // Meme Token Factory contract ABI (simplified)
 const MEME_TOKEN_FACTORY_ABI = [
@@ -12,9 +13,7 @@ const MEME_TOKEN_FACTORY_ABI = [
       {"internalType": "string", "name": "website", "type": "string"},
       {"internalType": "string", "name": "twitter", "type": "string"},
       {"internalType": "string", "name": "telegram", "type": "string"},
-      {"internalType": "string", "name": "discord", "type": "string"},
-      {"internalType": "bool", "name": "initialBuy", "type": "bool"},
-      {"internalType": "uint256", "name": "initialBuyAmount", "type": "uint256"}
+      {"internalType": "string", "name": "discord", "type": "string"}
     ],
     "name": "createMemeToken",
     "outputs": [],
@@ -27,14 +26,63 @@ const MEME_TOKEN_FACTORY_ABI = [
     "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "address", "name": "user", "type": "address"}],
+    "name": "canUseFreeDeployment",
+    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deploymentFee",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getAllTokens",
+    "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
+    "stateMutability": "view",
+    "type": "function"
   }
 ] as const;
-
-const MEME_TOKEN_FACTORY_ADDRESS = '0x0000000000000000000000000000000000000000'; // Replace with deployed address
 
 export function useMemeTokenFactory() {
   const { address } = useAccount();
   const { writeContract } = useWriteContract();
+
+  // Get deployment fee
+  const { data: deploymentFee } = useReadContract({
+    address: CONTRACT_ADDRESSES.MEME_TOKEN_FACTORY,
+    abi: MEME_TOKEN_FACTORY_ABI,
+    functionName: 'deploymentFee',
+  });
+
+  // Check if user can use free deployment
+  const { data: canUseFreeDeployment } = useReadContract({
+    address: CONTRACT_ADDRESSES.MEME_TOKEN_FACTORY,
+    abi: MEME_TOKEN_FACTORY_ABI,
+    functionName: 'canUseFreeDeployment',
+    args: address ? [address] : undefined,
+  });
+
+  // Get user's created tokens
+  const { data: creatorTokens } = useReadContract({
+    address: CONTRACT_ADDRESSES.MEME_TOKEN_FACTORY,
+    abi: MEME_TOKEN_FACTORY_ABI,
+    functionName: 'getCreatorTokens',
+    args: address ? [address] : undefined,
+  });
+
+  // Get all tokens
+  const { data: allTokens } = useReadContract({
+    address: CONTRACT_ADDRESSES.MEME_TOKEN_FACTORY,
+    abi: MEME_TOKEN_FACTORY_ABI,
+    functionName: 'getAllTokens',
+  });
 
   const createMemeToken = async (
     name: string,
@@ -44,18 +92,15 @@ export function useMemeTokenFactory() {
     website: string = '',
     twitter: string = '',
     telegram: string = '',
-    discord: string = '',
-    initialBuy: boolean = false,
-    initialBuyAmount: string = '0'
+    discord: string = ''
   ) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!deploymentFee) throw new Error('Deployment fee not loaded');
     
-    const deploymentFee = parseEther('0.5'); // 0.5 RON
-    const initialBuyValue = initialBuy ? parseEther(initialBuyAmount) : 0n;
-    const totalValue = deploymentFee + initialBuyValue;
+    const fee = canUseFreeDeployment ? 0n : deploymentFee;
 
     return writeContract({
-      address: MEME_TOKEN_FACTORY_ADDRESS,
+      address: CONTRACT_ADDRESSES.MEME_TOKEN_FACTORY,
       abi: MEME_TOKEN_FACTORY_ABI,
       functionName: 'createMemeToken',
       args: [
@@ -66,15 +111,17 @@ export function useMemeTokenFactory() {
         website,
         twitter,
         telegram,
-        discord,
-        initialBuy,
-        parseEther(initialBuyAmount || '0')
+        discord
       ],
-      value: totalValue,
+      value: fee,
     });
   };
 
   return {
     createMemeToken,
+    deploymentFee,
+    canUseFreeDeployment: !!canUseFreeDeployment,
+    creatorTokens: creatorTokens || [],
+    allTokens: allTokens || [],
   };
 }

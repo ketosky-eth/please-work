@@ -2,9 +2,14 @@ import React, { useState, useRef } from 'react';
 import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle, X, Image } from 'lucide-react';
 import { TokenData } from '../types';
 import { useWallet } from '../hooks/useWallet';
+import { useMemeTokenFactory } from '../hooks/useMemeTokenFactory';
+import { useSmartVault } from '../hooks/useSmartVault';
+import { ipfsService } from '../utils/ipfs';
 
 export default function LaunchMemePage() {
   const { isConnected, address, chainName, balance, balanceSymbol, connect } = useWallet();
+  const { createMemeToken, deploymentFee, canUseFreeDeployment } = useMemeTokenFactory();
+  const { hasMinted: hasSmartVault } = useSmartVault();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [tokenData, setTokenData] = useState<TokenData>({
@@ -84,23 +89,53 @@ export default function LaunchMemePage() {
     setIsLoading(true);
     
     try {
-      // Simulate IPFS upload if logo is provided
+      let logoIPFS = '';
+      
+      // Upload logo to IPFS if provided
       if (logoFile) {
-        console.log('Uploading logo to IPFS...', logoFile.name);
-        // Here you would upload to IPFS and get the hash
-        // const logoIPFS = await ipfsService.uploadFile(logoFile);
-        // setTokenData(prev => ({ ...prev, logo: logoIPFS }));
+        console.log('Uploading logo to IPFS...');
+        logoIPFS = await ipfsService.uploadFile(logoFile);
+        console.log('Logo uploaded to IPFS:', logoIPFS);
       }
 
-      // Simulate token creation with wallet interaction
-      setTimeout(() => {
-        setIsLoading(false);
-        alert(`Token "${tokenData.name}" (${tokenData.symbol}) launched successfully on Katana! 🚀\n\nTransaction will be sent to your wallet for confirmation.`);
-      }, 3000);
+      // Create token on blockchain
+      console.log('Creating token on blockchain...');
+      await createMemeToken(
+        tokenData.name,
+        tokenData.symbol,
+        tokenData.description,
+        logoIPFS,
+        tokenData.website,
+        tokenData.twitter,
+        tokenData.telegram,
+        tokenData.discord
+      );
+
+      alert(`Token "${tokenData.name}" (${tokenData.symbol}) launched successfully! 🚀\n\nYour token is now live on the bonding curve and ready for trading.`);
+      
+      // Reset form
+      setTokenData({
+        name: '',
+        symbol: '',
+        description: '',
+        logo: '',
+        website: '',
+        twitter: '',
+        telegram: '',
+        discord: '',
+        initialBuy: false,
+        initialBuyAmount: '',
+        selectedChain: 'Ronin Testnet',
+        selectedDEX: 'Katana'
+      });
+      setLogoFile(null);
+      setLogoPreview('');
+      
     } catch (error) {
-      setIsLoading(false);
-      alert('Failed to launch token. Please try again.');
       console.error('Launch error:', error);
+      alert('Failed to launch token. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -111,11 +146,11 @@ export default function LaunchMemePage() {
     { key: 'discord', icon: MessageCircle, placeholder: 'https://discord.gg/mytoken', label: 'Discord' }
   ];
 
-  const deploymentCost = '0.5';
+  const deploymentCost = deploymentFee ? (Number(deploymentFee) / 10**18).toString() : '0.5';
   const costSymbol = 'RON';
+  const actualCost = canUseFreeDeployment ? '0' : deploymentCost;
 
-  const hasInsufficientBalance = isConnected && parseFloat(balance) < parseFloat(deploymentCost);
-  const hasSmartVault = false; // This would be checked from the Smart Vault contract
+  const hasInsufficientBalance = isConnected && parseFloat(balance) < parseFloat(actualCost);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
@@ -131,7 +166,7 @@ export default function LaunchMemePage() {
             Launch Your Meme Token
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Create and deploy your own meme token on Ronin Testnet. Launch on Katana DEX for instant liquidity!
+            Create and deploy your own meme token on Ronin Testnet with bonding curve mechanics!
           </p>
         </div>
 
@@ -151,6 +186,19 @@ export default function LaunchMemePage() {
             >
               Connect Wallet Now
             </button>
+          </div>
+        )}
+
+        {/* Free Deployment Banner */}
+        {isConnected && canUseFreeDeployment && (
+          <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-6 mb-8">
+            <div className="flex items-center space-x-3 text-green-400 mb-2">
+              <Zap className="w-6 h-6" />
+              <span className="font-semibold">FREE Token Launch Available!</span>
+            </div>
+            <p className="text-green-300">
+              You have a Smart Vault NFT! Your first token launch is completely FREE. Take advantage of this exclusive benefit.
+            </p>
           </div>
         )}
 
@@ -192,15 +240,14 @@ export default function LaunchMemePage() {
                   </div>
                 </div>
 
-                {/* Network Info */}
+                {/* Bonding Curve Info */}
                 <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
                   <div className="flex items-center space-x-2 text-yellow-400 mb-2">
                     <ArrowRight className="w-4 h-4" />
-                    <span className="font-medium">Launch Information</span>
+                    <span className="font-medium">Bonding Curve Launch</span>
                   </div>
                   <p className="text-yellow-300 text-sm">
-                    Your token will be launched on <strong>Katana DEX</strong> on the <strong>Ronin Testnet</strong> network. 
-                    Liquidity will be automatically added and trading will begin immediately.
+                    Your token will launch on a bonding curve. When 108,800 RON is raised, your token graduates to <strong>Katana DEX</strong> with automatic liquidity. You'll earn <strong>500 RON</strong> as creator reward!
                   </p>
                 </div>
 
@@ -309,45 +356,6 @@ export default function LaunchMemePage() {
                     ))}
                   </div>
                 </div>
-
-                {/* Initial Buy Option */}
-                <div className="bg-gray-700/50 rounded-lg p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-semibold text-white flex items-center space-x-2">
-                        <DollarSign className="w-5 h-5 text-yellow-500" />
-                        <span>Initial Buy (Optional)</span>
-                      </h3>
-                      <p className="text-sm text-gray-400 mt-1">
-                        Be the first token holder before it reaches Katana
-                      </p>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={tokenData.initialBuy}
-                        onChange={(e) => handleInputChange('initialBuy', e.target.checked)}
-                        className="sr-only peer"
-                      />
-                      <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-yellow-300/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
-                    </label>
-                  </div>
-                  
-                  {tokenData.initialBuy && (
-                    <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Amount (RON)
-                      </label>
-                      <input
-                        type="text"
-                        value={tokenData.initialBuyAmount}
-                        onChange={(e) => handleInputChange('initialBuyAmount', e.target.value)}
-                        placeholder="0.001"
-                        className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
-                      />
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           </div>
@@ -383,6 +391,12 @@ export default function LaunchMemePage() {
                   <span className="text-gray-400">Smart Vault</span>
                   <span className={hasSmartVault ? "text-green-400" : "text-red-400"}>
                     {hasSmartVault ? "✓ Active" : "✗ Not Minted"}
+                  </span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Free Launch</span>
+                  <span className={canUseFreeDeployment ? "text-green-400" : "text-gray-400"}>
+                    {canUseFreeDeployment ? "✓ Available" : "✗ Used/Unavailable"}
                   </span>
                 </div>
                 {!hasSmartVault && (
@@ -423,10 +437,10 @@ export default function LaunchMemePage() {
                 </p>
                 <div className="flex items-center space-x-2 text-xs">
                   <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
-                    Ronin Testnet
+                    Bonding Curve
                   </span>
                   <span className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded">
-                    Katana
+                    Ronin Testnet
                   </span>
                 </div>
               </div>
@@ -441,35 +455,39 @@ export default function LaunchMemePage() {
                   <span className="text-white">1,000,000,000</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Tax</span>
-                  <span className="text-white">0%</span>
+                  <span className="text-gray-400">For Sale</span>
+                  <span className="text-white">800,000,000 (80%)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Network</span>
-                  <span className="text-white">Ronin Testnet</span>
+                  <span className="text-gray-400">For Liquidity</span>
+                  <span className="text-white">200,000,000 (20%)</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">DEX</span>
-                  <span className="text-white">Katana</span>
+                  <span className="text-gray-400">Graduation Target</span>
+                  <span className="text-white">108,800 RON</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-400">Creator Reward</span>
+                  <span className="text-green-400">500 RON</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-400">Deploy Cost</span>
-                  <span className={`text-white ${hasInsufficientBalance ? 'text-red-400' : ''}`}>
-                    ~{deploymentCost} {costSymbol}
+                  <span className={`${canUseFreeDeployment ? 'text-green-400' : hasInsufficientBalance ? 'text-red-400' : 'text-white'}`}>
+                    {canUseFreeDeployment ? 'FREE' : `${actualCost} ${costSymbol}`}
                   </span>
                 </div>
               </div>
             </div>
 
             {/* Insufficient Balance Warning */}
-            {hasInsufficientBalance && (
+            {hasInsufficientBalance && !canUseFreeDeployment && (
               <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
                 <div className="flex items-center space-x-2 text-red-400 mb-2">
                   <AlertTriangle className="w-5 h-5" />
                   <span className="font-medium">Insufficient Balance</span>
                 </div>
                 <p className="text-red-300 text-sm">
-                  You need at least {deploymentCost} {costSymbol} to deploy this token. 
+                  You need at least {actualCost} {costSymbol} to deploy this token. 
                   Your current balance is {balance} {balanceSymbol}.
                 </p>
               </div>
@@ -478,7 +496,7 @@ export default function LaunchMemePage() {
             {/* Launch Button */}
             <button
               onClick={handleLaunch}
-              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || hasInsufficientBalance || (isConnected && chainName !== 'Ronin Testnet')}
+              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || (hasInsufficientBalance && !canUseFreeDeployment) || (isConnected && chainName !== 'Ronin Testnet')}
               className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isLoading ? (
@@ -498,14 +516,11 @@ export default function LaunchMemePage() {
               )}
             </button>
             
-            {!hasInsufficientBalance && !hasSmartVault && (
+            {!hasInsufficientBalance && !hasSmartVault && !canUseFreeDeployment && (
               <>
-                <p className="text-m text-yellow-500 text-center">Warning:</p>
+                <p className="text-m text-yellow-500 text-center">Tip:</p>
                 <p className="text-s text-gray-400 text-center">
-                  Launching without a Smart Vault will not earn you liquidity rewards post-bonding curve.
-                </p>
-                <p className="text-xs text-yellow-500 text-center">
-                  Proceed with caution.
+                  Mint a Smart Vault NFT to get your first token launch for FREE and earn LP rewards!
                 </p>
               </>
             )}
