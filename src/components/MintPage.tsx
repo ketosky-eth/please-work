@@ -1,33 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Palette, Zap, Shield, Star, Crown, Unlock, Clock } from 'lucide-react';
 
 interface NFTCollection {
   id: string;
   name: string;
   description: string;
-  price: number;
+  price: number | null; // null for dynamic pricing
   totalSupply: number | null; // null for unlimited
-  minted: number;
+  minted: number | null; // null to hide minted count
   icon: React.ComponentType<any>;
   gradient: string;
   features: string[];
   rarity: string;
   comingSoon?: boolean;
+  isDynamicPrice?: boolean;
 }
 
 export default function MintPage() {
   const [selectedCollection, setSelectedCollection] = useState<string>('smart');
   const [mintQuantity, setMintQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
+  const [ronPrice, setRonPrice] = useState<number>(0);
+  const [smartVaultUsdPrice] = useState(5); // $5 USD
+
+  // Fetch RON price for Smart Vault dynamic pricing
+  useEffect(() => {
+    const fetchRonPrice = async () => {
+      try {
+        // Simulated price fetch - replace with actual API call
+        // Example: CoinGecko API for RON price
+        const response = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=ronin&vs_currencies=usd');
+        const data = await response.json();
+        setRonPrice(data.ronin?.usd || 0.5); // Fallback to $0.5 if API fails
+      } catch (error) {
+        console.error('Failed to fetch RON price:', error);
+        setRonPrice(0.5); // Fallback price
+      }
+    };
+
+    fetchRonPrice();
+    // Refresh price every 30 seconds
+    const interval = setInterval(fetchRonPrice, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const collections: NFTCollection[] = [
     {
       id: 'genesis',
       name: 'Genesis Vault Shard',
-      description: 'Exclusive limited edition NFTs for early supporters and founders. Only 350 pieces will ever exist, making each one a rare digital asset.',
-      price: 65,
-      totalSupply: 350,
-      minted: 0,
+      description: 'Exclusive limited edition NFTs for early supporters and founders. A rare digital asset with unique benefits and privileges.',
+      price: null, // No price shown
+      totalSupply: null, // No supply shown
+      minted: null, // No minted count shown
       icon: Crown,
       gradient: 'from-yellow-500 via-orange-500 to-red-500',
       features: ['Limited Edition', 'Founder Benefits', 'Exclusive Access', 'Premium Rewards'],
@@ -38,19 +62,20 @@ export default function MintPage() {
       id: 'smart',
       name: 'Smart Vault',
       description: 'Essential NFT for the VYTO ecosystem. Mint once per wallet to unlock advanced features like LP token management and fee harvesting.',
-      price: 5,
+      price: ronPrice > 0 ? smartVaultUsdPrice / ronPrice : null,
       totalSupply: null,
-      minted: 2847,
+      minted: null, // Hide minted count
       icon: Unlock,
       gradient: 'from-yellow-500 via-orange-500 to-blue-500',
       features: ['One Per Wallet', 'LP Management', 'Fee Harvesting', 'Non-Transferable'],
-      rarity: 'Essential'
+      rarity: 'Essential',
+      isDynamicPrice: true
     }
   ];
 
   const selectedNFT = collections.find(c => c.id === selectedCollection)!;
   const maxMintPerTx = selectedCollection === 'genesis' ? 5 : 1; // Smart Vault is 1 per wallet
-  const remainingSupply = selectedNFT.totalSupply ? selectedNFT.totalSupply - selectedNFT.minted : null;
+  const remainingSupply = selectedNFT.totalSupply ? selectedNFT.totalSupply - (selectedNFT.minted || 0) : null;
 
   const handleMint = async () => {
     if (selectedNFT.comingSoon) {
@@ -77,7 +102,7 @@ export default function MintPage() {
     }
   };
 
-  const totalCost = selectedNFT.price * (selectedCollection === 'smart' ? 1 : mintQuantity);
+  const totalCost = selectedNFT.price ? selectedNFT.price * (selectedCollection === 'smart' ? 1 : mintQuantity) : 0;
   const estimatedGas = 0.003;
 
   return (
@@ -143,11 +168,24 @@ export default function MintPage() {
                     </span>
                   </div>
                   <div className="flex items-center space-x-4 text-sm text-gray-400">
-                    <span>{collection.price} RON each</span>
-                    <span>•</span>
-                    <span>
-                      {collection.totalSupply ? `${collection.minted}/${collection.totalSupply} minted` : `${collection.minted} minted`}
-                    </span>
+                    {collection.price !== null && (
+                      <>
+                        <span>
+                          {collection.isDynamicPrice 
+                            ? `$${smartVaultUsdPrice} (${collection.price.toFixed(3)} RON)` 
+                            : `${collection.price} RON each`
+                          }
+                        </span>
+                        {collection.minted !== null && (
+                          <>
+                            <span>•</span>
+                            <span>
+                              {collection.totalSupply ? `${collection.minted}/${collection.totalSupply} minted` : `${collection.minted} minted`}
+                            </span>
+                          </>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
               </div>
@@ -165,7 +203,7 @@ export default function MintPage() {
                 ))}
               </div>
 
-              {collection.totalSupply && (
+              {collection.totalSupply && collection.minted !== null && (
                 <div className="mt-4">
                   <div className="flex justify-between text-xs text-gray-400 mb-1">
                     <span>Progress</span>
@@ -244,6 +282,13 @@ export default function MintPage() {
                       <li>• Non-transferable - permanently linked to your wallet</li>
                       <li>• Required for advanced VYTO ecosystem features</li>
                     </ul>
+                    {selectedNFT.isDynamicPrice && (
+                      <div className="mt-3 pt-3 border-t border-yellow-500/20">
+                        <p className="text-yellow-300 text-xs">
+                          Price updates automatically based on RON market value to maintain $5 USD equivalent.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -261,34 +306,41 @@ export default function MintPage() {
                 )}
 
                 {/* Cost Breakdown */}
-                <div className="bg-gray-700/50 rounded-xl p-6">
-                  <h3 className="text-lg font-semibold text-white mb-4">Cost Breakdown</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300">Price per NFT</span>
-                      <span className="text-white font-semibold">{selectedNFT.price} RON</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300">Quantity</span>
-                      <span className="text-white font-semibold">
-                        {selectedCollection === 'smart' ? 1 : mintQuantity}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300">Subtotal</span>
-                      <span className="text-white font-semibold">{totalCost} RON</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-300">Gas Fee (Est.)</span>
-                      <span className="text-white font-semibold">{estimatedGas} RON</span>
-                    </div>
-                    <hr className="border-gray-600 my-3" />
-                    <div className="flex justify-between items-center">
-                      <span className="text-white font-bold text-lg">Total</span>
-                      <span className="text-white font-bold text-lg">{totalCost} RON</span>
+                {selectedNFT.price !== null && (
+                  <div className="bg-gray-700/50 rounded-xl p-6">
+                    <h3 className="text-lg font-semibold text-white mb-4">Cost Breakdown</h3>
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">Price per NFT</span>
+                        <span className="text-white font-semibold">
+                          {selectedNFT.isDynamicPrice 
+                            ? `$${smartVaultUsdPrice} (${selectedNFT.price.toFixed(3)} RON)`
+                            : `${selectedNFT.price} RON`
+                          }
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">Quantity</span>
+                        <span className="text-white font-semibold">
+                          {selectedCollection === 'smart' ? 1 : mintQuantity}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">Subtotal</span>
+                        <span className="text-white font-semibold">{totalCost.toFixed(3)} RON</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-gray-300">Gas Fee (Est.)</span>
+                        <span className="text-white font-semibold">{estimatedGas} RON</span>
+                      </div>
+                      <hr className="border-gray-600 my-3" />
+                      <div className="flex justify-between items-center">
+                        <span className="text-white font-bold text-lg">Total</span>
+                        <span className="text-white font-bold text-lg">{totalCost.toFixed(3)} RON</span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
 
                 {/* Mint Button */}
                 <button
@@ -296,7 +348,8 @@ export default function MintPage() {
                   disabled={
                     isLoading || 
                     (remainingSupply !== null && remainingSupply <= 0) ||
-                    selectedNFT.comingSoon
+                    selectedNFT.comingSoon ||
+                    (selectedNFT.price === null && !selectedNFT.comingSoon)
                   }
                   className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
                 >
@@ -312,6 +365,8 @@ export default function MintPage() {
                     </>
                   ) : remainingSupply !== null && remainingSupply <= 0 ? (
                     <span>Sold Out</span>
+                  ) : selectedNFT.price === null ? (
+                    <span>Price Loading...</span>
                   ) : (
                     <>
                       <Zap className="w-5 h-5" />
@@ -350,7 +405,14 @@ export default function MintPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="bg-gray-600/50 rounded-lg p-3">
                       <div className="text-gray-400 text-xs mb-1">Price</div>
-                      <div className="text-white font-semibold">{selectedNFT.price} RON</div>
+                      <div className="text-white font-semibold">
+                        {selectedNFT.price !== null 
+                          ? selectedNFT.isDynamicPrice 
+                            ? `$${smartVaultUsdPrice}`
+                            : `${selectedNFT.price} RON`
+                          : 'TBA'
+                        }
+                      </div>
                     </div>
                     <div className="bg-gray-600/50 rounded-lg p-3">
                       <div className="text-gray-400 text-xs mb-1">Supply</div>

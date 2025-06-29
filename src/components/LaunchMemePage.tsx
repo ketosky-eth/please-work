@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
-import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle, X, Image } from 'lucide-react';
 import { TokenData } from '../types';
+import { useWallet } from '../hooks/useWallet';
 
 export default function LaunchMemePage() {
-  const [isConnected] = useState(false);
-  const [address] = useState('');
-  const [chainName] = useState('Ronin Testnet');
-  const [balance] = useState('0');
-  const [balanceSymbol] = useState('RON');
+  const { isConnected, address, chainName, balance, balanceSymbol, connect } = useWallet();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [tokenData, setTokenData] = useState<TokenData>({
     name: '',
@@ -24,24 +22,86 @@ export default function LaunchMemePage() {
     selectedDEX: 'Katana'
   });
 
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [logoPreview, setLogoPreview] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (field: keyof TokenData, value: string | boolean) => {
     setTokenData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handleFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+      if (!validTypes.includes(file.type)) {
+        alert('Please select a valid image file (PNG, JPG, or SVG)');
+        return;
+      }
+
+      // Validate file size (5MB max)
+      const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+      if (file.size > maxSize) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+
+      setLogoFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setLogoPreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeLogo = () => {
+    setLogoFile(null);
+    setLogoPreview('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   const handleLaunch = async () => {
     if (!isConnected) {
-      alert('Please connect your wallet first');
+      connect?.();
+      return;
+    }
+
+    if (!tokenData.name || !tokenData.symbol) {
+      alert('Please fill in the required fields (Name and Symbol)');
       return;
     }
 
     setIsLoading(true);
-    // Simulate token creation with wallet interaction
-    setTimeout(() => {
+    
+    try {
+      // Simulate IPFS upload if logo is provided
+      if (logoFile) {
+        console.log('Uploading logo to IPFS...', logoFile.name);
+        // Here you would upload to IPFS and get the hash
+        // const logoIPFS = await ipfsService.uploadFile(logoFile);
+        // setTokenData(prev => ({ ...prev, logo: logoIPFS }));
+      }
+
+      // Simulate token creation with wallet interaction
+      setTimeout(() => {
+        setIsLoading(false);
+        alert(`Token "${tokenData.name}" (${tokenData.symbol}) launched successfully on Katana! 🚀\n\nTransaction will be sent to your wallet for confirmation.`);
+      }, 3000);
+    } catch (error) {
       setIsLoading(false);
-      alert(`Token launched successfully on Katana (Ronin Testnet)! 🚀\n\nTransaction will be sent to your wallet for confirmation.`);
-    }, 3000);
+      alert('Failed to launch token. Please try again.');
+      console.error('Launch error:', error);
+    }
   };
 
   const socialLinks = [
@@ -85,7 +145,10 @@ export default function LaunchMemePage() {
             <p className="text-yellow-300 mb-4">
               You need to connect your wallet to launch tokens. This ensures secure deployment and ownership of your contracts.
             </p>
-            <button className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors">
+            <button
+              onClick={connect}
+              className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            >
               Connect Wallet Now
             </button>
           </div>
@@ -174,14 +237,55 @@ export default function LaunchMemePage() {
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Token Logo
                   </label>
-                  <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors">
-                    <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                    <p className="text-gray-400 mb-2">Upload your meme logo</p>
-                    <p className="text-sm text-gray-500">PNG, JPG, SVG up to 5MB</p>
-                    <button className="mt-3 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors">
-                      Choose File
-                    </button>
-                  </div>
+                  
+                  {logoPreview ? (
+                    <div className="relative bg-gray-700 rounded-lg p-4">
+                      <div className="flex items-center space-x-4">
+                        <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-600">
+                          <img 
+                            src={logoPreview} 
+                            alt="Logo preview" 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <p className="text-white font-medium">{logoFile?.name}</p>
+                          <p className="text-gray-400 text-sm">
+                            {logoFile && (logoFile.size / 1024 / 1024).toFixed(2)} MB
+                          </p>
+                        </div>
+                        <button
+                          onClick={removeLogo}
+                          className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                        >
+                          <X className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div 
+                      onClick={handleFileSelect}
+                      className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors cursor-pointer"
+                    >
+                      <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
+                      <p className="text-gray-400 mb-2">Upload your meme logo</p>
+                      <p className="text-sm text-gray-500">PNG, JPG, SVG up to 5MB</p>
+                      <button 
+                        type="button"
+                        className="mt-3 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+                      >
+                        Choose File
+                      </button>
+                    </div>
+                  )}
+                  
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
                 </div>
 
                 {/* Social Links */}
@@ -296,10 +400,14 @@ export default function LaunchMemePage() {
               <h3 className="text-lg font-semibold text-white mb-4">Token Preview</h3>
               <div className="bg-gray-700/50 rounded-lg p-4">
                 <div className="flex items-center space-x-3 mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-bold">
-                      {tokenData.symbol.charAt(0) || '?'}
-                    </span>
+                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center overflow-hidden">
+                    {logoPreview ? (
+                      <img src={logoPreview} alt="Token logo" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-white font-bold">
+                        {tokenData.symbol.charAt(0) || '?'}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <div className="text-white font-semibold">

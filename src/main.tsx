@@ -34,7 +34,7 @@ const roninTestnet = defineChain({
 
 const config = getDefaultConfig({
   appName: 'VYTO Protocol',
-  projectId: 'YOUR_PROJECT_ID', // Replace with your WalletConnect Cloud Project ID
+  projectId: 'zp1v56uxy8rdx5ypatb0ockcb9tr6a', // Your WalletConnect Cloud Project ID
   chains: [roninTestnet],
   ssr: false,
 });

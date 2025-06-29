@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDown, Wallet, BookOpen, Map } from 'lucide-react';
 import { SUPPORTED_CHAINS } from '../constants/chains';
 import { Chain } from '../types';
+import { useWallet } from '../hooks/useWallet';
 
 interface HeaderProps {
   currentPage: string;
@@ -12,10 +13,15 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
   const [selectedChain, setSelectedChain] = useState<Chain>(SUPPORTED_CHAINS[0]);
   const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
   const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  
+  const { isConnected, address, connect, disconnect } = useWallet();
 
   const handleConnectWallet = () => {
-    setIsWalletConnected(!isWalletConnected);
+    if (isConnected) {
+      disconnect();
+    } else {
+      connect();
+    }
   };
 
   const handleChainSelect = (chain: Chain) => {
@@ -137,14 +143,17 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
             <button
               onClick={handleConnectWallet}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all ${
-                isWalletConnected
+                isConnected
                   ? 'bg-green-600 hover:bg-green-700 text-white'
                   : 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white'
               }`}
             >
               <Wallet className="w-4 h-4" />
               <span className="hidden sm:block">
-                {isWalletConnected ? 'Connected' : 'Connect Wallet'}
+                {isConnected 
+                  ? `${address?.slice(0, 6)}...${address?.slice(-4)}` 
+                  : 'Connect Wallet'
+                }
               </span>
             </button>
           </div>
