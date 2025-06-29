@@ -90,7 +90,7 @@ export default function MintPage() {
       icon: Unlock,
       gradient: 'from-yellow-500 via-orange-500 to-blue-500',
       features: ['One Per Wallet', 'LP Management', 'Fee Harvesting', '1x FREE Meme Token Creation'],
-      rarity: 'Protocol',
+      rarity: 'Protocol Access',
       isDynamicPrice: true
     }
   ];
