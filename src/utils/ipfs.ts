@@ -122,6 +122,6 @@ export class IPFSService {
 
 // Default IPFS service instance (you'll need to set up Pinata API keys)
 export const ipfsService = new IPFSService(
-  process.env.VITE_PINATA_API_KEY || '',
-  process.env.VITE_PINATA_SECRET_KEY || ''
+  import.meta.env.VITE_PINATA_API_KEY || '',
+  import.meta.env.VITE_PINATA_SECRET_KEY || ''
 );
