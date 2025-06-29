@@ -111,7 +111,7 @@ export default function LaunchMemePage() {
     { key: 'discord', icon: MessageCircle, placeholder: 'https://discord.gg/mytoken', label: 'Discord' }
   ];
 
-  const deploymentCost = '0.05';
+  const deploymentCost = '0.5';
   const costSymbol = 'RON';
 
   const hasInsufficientBalance = isConnected && parseFloat(balance) < parseFloat(deploymentCost);
