@@ -50,7 +50,7 @@ export function useMemeTokenFactory() {
   ) => {
     if (!address) throw new Error('Wallet not connected');
     
-    const deploymentFee = parseEther('0.05'); // 0.05 RON
+    const deploymentFee = parseEther('0.5'); // 0.5 RON
     const initialBuyValue = initialBuy ? parseEther(initialBuyAmount) : 0n;
     const totalValue = deploymentFee + initialBuyValue;
 
