@@ -53,13 +53,13 @@ export default function RoadmapPage() {
     },
     {
       id: '4',
-      title: 'Protocol Strengthening',
+      title: 'Protocol Expansion',
       description: '',
       status: 'planned',
       quarter: 'Q4 2025',
       features: [
-        'IPFS metadata storage',
-        'Advanced token customization',
+        'VYTO Validator Node Launch',
+        'Begin Project C', // Cupid Protocol = DEX, Bridges, & etc
         'Social media integration',
         'Token analytics dashboard'
       ]
