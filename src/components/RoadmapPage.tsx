@@ -45,10 +45,10 @@ export default function RoadmapPage() {
       status: 'planned',
       quarter: 'Q3 2025',
       features: [
-        'Limited edition NFT collection',
-        'Founder exclusive benefits',
-        'Premium reward system',
-        'Governance participation'
+        'Limited Edition NFT Collection',
+        'Founder Exclusive Benefits',
+        'Official Secondary Market',
+        'Premium Status'
       ]
     },
     {
