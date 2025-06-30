@@ -86,6 +86,7 @@ export default function RoadmapPage() {
       features: [
         'Bridge Integrations',
         'Automatic Bridge Logic',
+        'VYTO Bridge SDK',
         'Protocol Support & Compatibility'
       ]
     }
