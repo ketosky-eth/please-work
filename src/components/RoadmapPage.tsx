@@ -53,10 +53,10 @@ export default function RoadmapPage() {
     },
     {
       id: '4',
-      title: 'Smart Vault Release',
-      description: 'Exclusive limited edition NFTs for early supporters and founders',
+      title: 'VYTO Validator',
+      description: '',
       status: 'planned',
-      quarter: 'Q2 2025',
+      quarter: 'Q4 2025',
       features: [
         'IPFS metadata storage',
         'Advanced token customization',
