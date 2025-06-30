@@ -47,7 +47,7 @@ export default function RoadmapPage() {
       features: [
         'Limited Edition NFT Collection',
         'Founder Exclusive Benefits',
-        'Official Secondary Market',
+        'Platform Opening',
         'Protocol Exclusive Access'
       ]
     },
