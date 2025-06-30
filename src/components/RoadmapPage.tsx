@@ -73,8 +73,8 @@ export default function RoadmapPage() {
       features: [
         'Ronin Validator Node',
         'Project S',
-        'Project F',
-        'Partnerships'
+        's',
+        'Project F'
       ]
     },
     {
