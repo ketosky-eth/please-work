@@ -60,15 +60,16 @@ export default function RoadmapPage() {
       features: [
         'VYTO Validator Node Launch',
         'Begin Project C Development', // Cupid Protocol = DEX, Bridges, & etc
-        'Token Analytics Dashboard'
+        'Token Analytics Dashboard',
+        'Base Mainnet Launch'
       ]
     },
     {
       id: '5',
-      title: 'Advanced Trading Tools',
+      title: 'Project C',
       description: 'Professional-grade trading and analytics tools',
       status: 'planned',
-      quarter: 'Q2 2024',
+      quarter: 'Q1 2025',
       features: [
         'Advanced charting tools',
         'Portfolio management',
