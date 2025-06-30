@@ -53,13 +53,13 @@ export default function RoadmapPage() {
     },
     {
       id: '4',
-      title: 'First Protocol Expansion',
+      title: 'Liquifying Transparency',
       description: 'Casting strategic stepping stones',
       status: 'planned',
       quarter: 'Q4 2025',
       features: [
-        'Base & Arbitrum Mainnet Launch',
-        'VYTO TGE',
+        'D',
+        'Official Token Generation Event',
         'Begin Project C Development', // Cupid Protocol = DEX, Bridges, & etc
         'Token Analytics Dashboard'
       ]
