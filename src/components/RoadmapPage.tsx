@@ -59,8 +59,8 @@ export default function RoadmapPage() {
       quarter: 'Q4 2025',
       features: [
         'VYTO Validator Node Launch',
-        'Project C Engineering', // Cupid Protocol = DEX, Bridges, & etc
-        'Token analytics dashboard'
+        'Begin Project C Development', // Cupid Protocol = DEX, Bridges, & etc
+        'Token Analytics Dashboard'
       ]
     },
     {
