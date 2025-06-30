@@ -22,7 +22,7 @@ export default function RoadmapPage() {
         'Smart Contract Engineering',
         'Social Exposure',
         'Architecture & Design',
-        'Community Building'
+        'Website Release'
       ]
     },
     {
