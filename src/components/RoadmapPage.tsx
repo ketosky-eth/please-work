@@ -58,7 +58,6 @@ export default function RoadmapPage() {
       status: 'planned',
       quarter: 'Q4 2025',
       features: [
-        'D',
         'Official Token Generation Event',
         'Begin Project C Development', // Cupid Protocol = DEX, Bridges, & etc
         'Token Analytics Dashboard'
