@@ -35,12 +35,12 @@ export default function RoadmapPage() {
         'Smart Vault - Soulbound NFT',
         'Genesis Vault Shard - Premium NFT',
         'Backend Logic Engineering',
-        'Whitelisting Event'
+        'Whitepaper Release'
       ]
     },
     {
       id: '3',
-      title: 'Premium Collection Release',
+      title: 'Collection Release',
       description: 'Onboarding & distribution of early(OG) supporter NFT',
       status: 'planned',
       quarter: 'Q3 2025',
@@ -53,10 +53,10 @@ export default function RoadmapPage() {
     },
     {
       id: '4',
-      title: 'Genesis Vault Shard',
+      title: 'Smart Vault Release',
       description: 'Exclusive limited edition NFTs for early supporters and founders',
       status: 'planned',
-      quarter: 'Q2 2024',
+      quarter: 'Q2 2025',
       features: [
         'IPFS metadata storage',
         'Advanced token customization',
