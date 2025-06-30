@@ -40,7 +40,7 @@ export default function RoadmapPage() {
     },
     {
       id: '3',
-      title: 'Collection Release',
+      title: 'Premium Collection Release',
       description: 'Onboarding & distribution of early(OG) supporter NFT',
       status: 'planned',
       quarter: 'Q3 2025',
@@ -48,7 +48,7 @@ export default function RoadmapPage() {
         'Limited Edition NFT Collection',
         'Founder Exclusive Benefits',
         'Official Secondary Market',
-        'Premium Status'
+        'Protocol Exclusive Access'
       ]
     },
     {
