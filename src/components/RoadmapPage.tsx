@@ -27,7 +27,7 @@ export default function RoadmapPage() {
     },
     {
       id: '2',
-      title: 'Genesis Vault Shards',
+      title: 'Introduction of the NFT Collections',
       description: 'Onboarding & distribution of early(OG) supporter NFT',
       status: 'planned',
       quarter: 'Q1 2024',
@@ -41,7 +41,7 @@ export default function RoadmapPage() {
     {
       id: '3',
       title: 'Enhanced Token Features',
-      description: 'Advanced token creation with IPFS integration and metadata support',
+      description: 'Onboarding & distribution of early(OG) supporter NFT',
       status: 'planned',
       quarter: 'Q1 2024',
       features: [
