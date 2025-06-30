@@ -32,10 +32,10 @@ export default function RoadmapPage() {
       status: 'planned',
       quarter: 'Q1 2024',
       features: [
-        'Smart Vault NFT minting',
-        'Automated LP token management',
-        'Fee harvesting mechanics',
-        'Non-transferable NFT system'
+        'Smart Vault - Soulbound NFT',
+        'Genesis Vault Shard - Premium NFT',
+        'Backend Logic Engineering',
+        'Transferable and non-transferable NFT system'
       ]
     },
     {
