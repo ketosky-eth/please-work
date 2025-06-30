@@ -27,8 +27,8 @@ export default function RoadmapPage() {
     },
     {
       id: '2',
-      title: 'Introduction of the NFT Collections',
-      description: 'Onboarding & distribution of early(OG) supporter NFT',
+      title: 'NFT Introduction',
+      description: 'The part where you get a partial idea of of this crap',
       status: 'planned',
       quarter: 'Q1 2024',
       features: [
