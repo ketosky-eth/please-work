@@ -71,7 +71,7 @@ export default function RoadmapPage() {
       status: 'planned',
       quarter: 'Q1 2026',
       features: [
-        'Ronin Validator Node',
+        'Validator Node',
         'Project S',
         'Bridge Node',
         'Project F'
