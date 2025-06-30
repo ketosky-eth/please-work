@@ -28,7 +28,7 @@ export default function RoadmapPage() {
     {
       id: '2',
       title: 'NFT Introduction',
-      description: 'The part where you get a partial idea of of this crap',
+      description: 'The part where you get a partial idea of the upcoming VYTO NFT Collections',
       status: 'planned',
       quarter: 'Q1 2024',
       features: [
