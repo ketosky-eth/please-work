@@ -17,7 +17,7 @@ export default function RoadmapPage() {
       title: 'Platform Foundation',
       description: 'Core infrastructure',
       status: 'in-progress',
-      quarter: 'Q2 2025',
+      quarter: 'Q3 2025',
       features: [
         'Smart Contract Engineering',
         'Social Exposure',
@@ -29,26 +29,26 @@ export default function RoadmapPage() {
       id: '2',
       title: 'NFT Introduction',
       description: 'The upcoming VYTO NFT Collections',
-      status: 'planned',
-      quarter: 'Q1 2024',
+      status: 'in-progress',
+      quarter: 'Q3 2025',
       features: [
         'Smart Vault - Soulbound NFT',
         'Genesis Vault Shard - Premium NFT',
         'Backend Logic Engineering',
-        'Transferable and non-transferable NFT system'
+        'Whitelisting Event'
       ]
     },
     {
       id: '3',
-      title: 'Enhanced Token Features',
+      title: 'Collection Release',
       description: 'Onboarding & distribution of early(OG) supporter NFT',
       status: 'planned',
-      quarter: 'Q1 2024',
+      quarter: 'Q3 2025',
       features: [
-        'IPFS metadata storage',
-        'Advanced token customization',
-        'Social media integration',
-        'Token analytics dashboard'
+        'Limited edition NFT collection',
+        'Founder exclusive benefits',
+        'Premium reward system',
+        'Governance participation'
       ]
     },
     {
@@ -58,10 +58,10 @@ export default function RoadmapPage() {
       status: 'planned',
       quarter: 'Q2 2024',
       features: [
-        'Limited edition NFT collection',
-        'Founder exclusive benefits',
-        'Premium reward system',
-        'Governance participation'
+        'IPFS metadata storage',
+        'Advanced token customization',
+        'Social media integration',
+        'Token analytics dashboard'
       ]
     },
     {
