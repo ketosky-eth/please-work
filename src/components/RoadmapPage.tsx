@@ -69,12 +69,12 @@ export default function RoadmapPage() {
       title: 'Batched Project Development',
       description: 'Validator Node Launch + Project Development',
       status: 'planned',
-      quarter: 'Q1 2025',
+      quarter: 'Q1 2026',
       features: [
         'Ronin Validator Node',
         'Project S',
         'Project F',
-        'Risk management features'
+        'Partnerships'
       ]
     },
     {
@@ -82,10 +82,11 @@ export default function RoadmapPage() {
       title: 'Multi-Chain Expansion',
       description: 'Expand beyond Ronin to other EVM and non-EVM chains',
       status: 'planned',
-      quarter: 'Q3 2024',
+      quarter: 'Q1 2026',
       features: [
         'Bridge Integrations',
-        'Automatic Bridge Logic'
+        'Automatic Bridge Logic',
+        'Protocol Support & Compatibility'
       ]
     }
   ];
