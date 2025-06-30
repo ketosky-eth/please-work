@@ -54,12 +54,12 @@ export default function RoadmapPage() {
     {
       id: '4',
       title: 'First Protocol Expansion',
-      description: 'VYTO starts exploring the first set of neighboring chains',
+      description: 'Casting strategic stepping stones',
       status: 'planned',
       quarter: 'Q4 2025',
       features: [
-        'Base Mainnet Launch',
-        'Arbitrum Mainnet Launch',
+        'Base & Arbitrum Mainnet Launch',
+        'VYTO TGE',
         'Begin Project C Development', // Cupid Protocol = DEX, Bridges, & etc
         'Token Analytics Dashboard'
       ]
