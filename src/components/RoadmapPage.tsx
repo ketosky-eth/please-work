@@ -28,7 +28,7 @@ export default function RoadmapPage() {
     {
       id: '2',
       title: 'Genesis Vault Shards',
-      description: 'Onboarding & distribution of early(OG) supporter NFTs',
+      description: 'Onboarding & distribution of early(OG) supporter NFT',
       status: 'planned',
       quarter: 'Q1 2024',
       features: [
