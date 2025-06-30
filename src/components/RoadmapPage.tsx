@@ -53,7 +53,7 @@ export default function RoadmapPage() {
     },
     {
       id: '4',
-      title: 'VYTO Validator',
+      title: 'Protocol Strengthening',
       description: '',
       status: 'planned',
       quarter: 'Q4 2025',
