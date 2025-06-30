@@ -54,7 +54,7 @@ export default function RoadmapPage() {
     {
       id: '4',
       title: 'First Protocol Expansion',
-      description: '',
+      description: 'VYTO starts exploring the neighboring chains',
       status: 'planned',
       quarter: 'Q4 2025',
       features: [
