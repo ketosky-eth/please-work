@@ -66,28 +66,26 @@ export default function RoadmapPage() {
     },
     {
       id: '5',
-      title: 'Project C',
-      description: 'Professional-grade trading and analytics tools',
+      title: 'Batched Project Development',
+      description: 'Validator Node Launch + Project Development',
       status: 'planned',
       quarter: 'Q1 2025',
       features: [
-        'Advanced charting tools',
-        'Portfolio management',
-        'Automated trading bots',
+        'Ronin Validator Node',
+        'Project S',
+        'Project F',
         'Risk management features'
       ]
     },
     {
       id: '6',
       title: 'Multi-Chain Expansion',
-      description: 'Expand beyond Ronin to other EVM-compatible chains',
+      description: 'Expand beyond Ronin to other EVM and non-EVM chains',
       status: 'planned',
       quarter: 'Q3 2024',
       features: [
-        'Ethereum mainnet support',
-        'Base network integration',
-        'Arbitrum compatibility',
-        'Cross-chain bridging'
+        'Bridge Integrations',
+        'Automatic Bridge Logic'
       ]
     }
   ];
