@@ -59,7 +59,7 @@ export default function RoadmapPage() {
       quarter: 'Q4 2025',
       features: [
         'Base Mainnet Launch',
-        'Arbitrum Mainnet Launch'
+        'Arbitrum Mainnet Launch',
         'Begin Project C Development', // Cupid Protocol = DEX, Bridges, & etc
         'Token Analytics Dashboard'
       ]
