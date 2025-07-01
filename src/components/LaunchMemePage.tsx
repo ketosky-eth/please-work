@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle, X, Image } from 'lucide-react';
+import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle, X, Image, CheckCircle } from 'lucide-react';
 import { TokenData } from '../types';
 import { useWallet } from '../hooks/useWallet';
 import { useMemeTokenFactory } from '../hooks/useMemeTokenFactory';
@@ -491,7 +491,7 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Creator Reward</span>
-                  <CheckCircle className="w-4 h-4" />
+                  <CheckCircle className="w-4 h-4 text-green-400" />
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Deploy Cost</span>
