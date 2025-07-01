@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Flame, Target, Search, Filter, ExternalLink, ArrowUpRight, ArrowDownRight, Clock, Users } from 'lucide-react';
+import { TrendingUp, Flame, Target, Search, Filter, ExternalLink, ArrowUpRight, ArrowDownRight, Clock, Users, Twitter, MessageCircle } from 'lucide-react';
 import { useAnalytics, formatCurrency, formatNumber } from '../hooks/useAnalytics';
 
 interface Token {
@@ -204,8 +204,44 @@ export default function HomePage() {
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Earn Rewards</h3>
               <p className="text-gray-300 text-sm">
-                Get 500 RON when your token graduates to Katana DEX
+                Get 250 RON when your token graduates to Katana DEX (Smart Vault holders only)
               </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer with Social Links */}
+        <div className="mt-16 pt-8 border-t border-gray-700">
+          <div className="flex flex-col md:flex-row justify-between items-center">
+            <div className="flex items-center space-x-3 mb-4 md:mb-0">
+              <div className="w-8 h-8 rounded-lg overflow-hidden">
+                <img 
+                  src="/Main Logo.jpg" 
+                  alt="VYTO Logo" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <span className="text-lg font-bold text-white">VYTO Protocol</span>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <span className="text-gray-400 text-sm">Follow us:</span>
+              <a
+                href="https://twitter.com/vyto_xyz"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <Twitter className="w-5 h-5 text-gray-400 hover:text-blue-400" />
+              </a>
+              <a
+                href="https://discord.gg/AQdEfUaV8x"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+              >
+                <MessageCircle className="w-5 h-5 text-gray-400 hover:text-purple-400" />
+              </a>
             </div>
           </div>
         </div>

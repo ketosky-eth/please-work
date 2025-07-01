@@ -2,14 +2,12 @@ import React, { useState, useRef } from 'react';
 import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle, X, Image, CheckCircle } from 'lucide-react';
 import { TokenData } from '../types';
 import { useWallet } from '../hooks/useWallet';
-import { useMemeTokenFactory } from '../hooks/useMemeTokenFactory';
-import { useSmartVault } from '../hooks/useSmartVault';
+import { useSmartVaultCore } from '../hooks/useSmartVaultCore';
 import { ipfsService } from '../utils/ipfs';
 
 export default function LaunchMemePage() {
   const { isConnected, address, chainName, balance, balanceSymbol, connect } = useWallet();
-  const { createMemeToken, deploymentFee, canUseFreeDeployment, isContractDeployed } = useMemeTokenFactory();
-  const { hasMinted: hasSmartVault, isContractDeployed: isSmartVaultDeployed } = useSmartVault();
+  const { createMemeToken, isContractDeployed } = useSmartVaultCore();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [tokenData, setTokenData] = useState<TokenData>({
@@ -111,11 +109,7 @@ export default function LaunchMemePage() {
         tokenData.discord
       );
 
-      const rewardMessage = hasSmartVault 
-        ? 'You can claim 250 RON when your token graduates!'
-        : 'Since you don\'t have a Smart Vault NFT, all rewards will go to the protocol when your token graduates.';
-
-      alert(`Token "${tokenData.name}" (${tokenData.symbol}) launched successfully! 🚀\n\nYour token is now live on the bonding curve and ready for trading.\n\n${rewardMessage}`);
+      alert(`Token "${tokenData.name}" (${tokenData.symbol}) launched successfully! 🚀\n\nYour token is now live on the bonding curve and ready for trading.`);
       
       // Reset form
       setTokenData({
@@ -150,12 +144,6 @@ export default function LaunchMemePage() {
     { key: 'discord', icon: MessageCircle, placeholder: 'https://discord.gg/mytoken', label: 'Discord' }
   ];
 
-  const deploymentCost = deploymentFee ? (Number(deploymentFee) / 10**18).toString() : '0.5';
-  const costSymbol = 'RON';
-  const actualCost = canUseFreeDeployment ? '0' : deploymentCost;
-
-  const hasInsufficientBalance = isConnected && parseFloat(balance) < parseFloat(actualCost);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -189,39 +177,6 @@ export default function LaunchMemePage() {
               className="bg-yellow-600 hover:bg-yellow-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
             >
               Connect Wallet Now
-            </button>
-          </div>
-        )}
-
-        {/* Free Deployment Banner */}
-        {isConnected && canUseFreeDeployment && (
-          <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-6 mb-8">
-            <div className="flex items-center space-x-3 text-green-400 mb-2">
-              <Zap className="w-6 h-6" />
-              <span className="font-semibold">FREE Token Launch Available!</span>
-            </div>
-            <p className="text-green-300">
-              You have a Smart Vault NFT! Your first token launch is completely FREE. Take advantage of this exclusive benefit.
-            </p>
-          </div>
-        )}
-
-        {/* Smart Vault Reward Info */}
-        {isConnected && !hasSmartVault && (
-          <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-6 mb-8">
-            <div className="flex items-center space-x-3 text-orange-400 mb-2">
-              <AlertTriangle className="w-6 h-6" />
-              <span className="font-semibold">No Smart Vault NFT Detected</span>
-            </div>
-            <p className="text-orange-300 mb-4">
-              Without a Smart Vault NFT, all creator rewards (250 RON) will go to the protocol when your token graduates. 
-              Mint a Smart Vault NFT to claim your creator rewards!
-            </p>
-            <button
-              onClick={() => window.location.href = '/mint'}
-              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
-            >
-              Mint Smart Vault NFT
             </button>
           </div>
         )}
@@ -271,11 +226,7 @@ export default function LaunchMemePage() {
                     <span className="font-medium">Bonding Curve Launch</span>
                   </div>
                   <p className="text-yellow-300 text-sm">
-                    Your token will launch on a bonding curve. When 69,420 RON is raised, your token graduates to <strong>Katana DEX</strong> with automatic liquidity. 
-                    {hasSmartVault 
-                      ? ' You\'ll earn 250 RON as creator reward!' 
-                      : ' Creator rewards go to protocol without Smart Vault NFT.'
-                    }
+                    Your token will launch on a bonding curve. When 69,420 RON is raised, your token graduates to <strong>Katana DEX</strong> with automatic liquidity. Smart Vault holders earn 250 RON creator reward!
                   </p>
                 </div>
 
@@ -411,38 +362,6 @@ export default function LaunchMemePage() {
               </div>
             )}
 
-            {/* Smart Vault Status */}
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Smart Vault Status</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Smart Vault</span>
-                  <span className={hasSmartVault ? "text-green-400" : "text-red-400"}>
-                    {hasSmartVault ? "✓ Active" : "✗ Not Minted"}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Free Launch</span>
-                  <span className={canUseFreeDeployment ? "text-green-400" : "text-gray-400"}>
-                    {canUseFreeDeployment ? "✓ Available" : "✗ Used/Unavailable"}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Creator Rewards</span>
-                  <span className={hasSmartVault ? "text-green-400" : "text-red-400"}>
-                    {hasSmartVault ? "✓ 250 RON" : "✗ Goes to Protocol"}
-                  </span>
-                </div>
-                {!hasSmartVault && isSmartVaultDeployed && (
-                  <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
-                    <p className="text-yellow-300 text-sm">
-                      Mint a Smart Vault to claim creator rewards and get free token launches.
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
             {/* Token Preview */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Token Preview</h3>
@@ -490,37 +409,19 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Creator Reward</span>
-                  <span className={`text-sm font-medium ${hasSmartVault ? 'text-green-400' : 'text-red-400'}`}>
-                    {hasSmartVault ? '250 RON' : 'Goes to Protocol'}
-                  </span>
+                  <span className="text-green-400 text-sm font-medium">250 RON (SV holders)</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Deploy Cost</span>
-                  <span className={`text-sm font-medium ${canUseFreeDeployment ? 'text-green-400' : hasInsufficientBalance ? 'text-red-400' : 'text-white'}`}>
-                    {canUseFreeDeployment ? 'FREE' : `${actualCost} ${costSymbol}`}
-                  </span>
+                  <span className="text-green-400 text-sm font-medium">FREE</span>
                 </div>
               </div>
             </div>
 
-            {/* Insufficient Balance Warning */}
-            {hasInsufficientBalance && !canUseFreeDeployment && (
-              <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
-                <div className="flex items-center space-x-2 text-red-400 mb-2">
-                  <AlertTriangle className="w-5 h-5" />
-                  <span className="font-medium">Insufficient Balance</span>
-                </div>
-                <p className="text-red-300 text-sm">
-                  You need at least {actualCost} {costSymbol} to deploy this token. 
-                  Your current balance is {balance} {balanceSymbol}.
-                </p>
-              </div>
-            )}
-
             {/* Launch Button */}
             <button
               onClick={handleLaunch}
-              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || (hasInsufficientBalance && !canUseFreeDeployment) || (isConnected && chainName !== 'Ronin Testnet')}
+              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || (isConnected && chainName !== 'Ronin Testnet')}
               className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isLoading ? (
@@ -539,15 +440,6 @@ export default function LaunchMemePage() {
                 </>
               )}
             </button>
-            
-            {!hasInsufficientBalance && !hasSmartVault && !canUseFreeDeployment && (
-              <>
-                <p className="text-sm text-yellow-500 text-center font-medium">💡 Pro Tip:</p>
-                <p className="text-xs text-gray-400 text-center">
-                  Mint a Smart Vault NFT to get your first token launch for FREE and claim creator rewards!
-                </p>
-              </>
-            )}
           </div>
         </div>
       </div>

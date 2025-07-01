@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useMemeTokenFactory } from './useMemeTokenFactory';
-import { useBondingCurve } from './useBondingCurve';
-import { useSmartVault } from './useSmartVault';
+import { useSmartVaultCore } from './useSmartVaultCore';
 
 interface AnalyticsData {
   totalTokens: number;
@@ -26,7 +24,7 @@ export function useAnalytics(): AnalyticsData {
     isLoading: true,
   });
 
-  const { allTokens } = useMemeTokenFactory();
+  const { allTokens } = useSmartVaultCore();
 
   useEffect(() => {
     const calculateAnalytics = async () => {
@@ -77,11 +75,10 @@ export function useTokenAnalytics(tokenAddress: string) {
     isLoading: true,
   });
 
-  const { useTokenInfo, useTokenProgress, useIsGraduated, useCurrentPrice } = useBondingCurve();
+  const { useTokenInfo, useTokenProgress, useCurrentPrice } = useSmartVaultCore();
   
   const { data: tokenInfo } = useTokenInfo(tokenAddress);
   const { data: progressData } = useTokenProgress(tokenAddress);
-  const { data: isGraduated } = useIsGraduated(tokenAddress);
   const { data: currentPrice } = useCurrentPrice(tokenAddress);
 
   useEffect(() => {
@@ -96,12 +93,12 @@ export function useTokenAnalytics(tokenAddress: string) {
         marketCap: 0, // Would calculate from price * circulating supply
         holders: 0, // Would need to query token transfer events
         bondingProgress,
-        isGraduated: !!isGraduated,
+        isGraduated: false, // Would check from tokenInfo
         feesEarned: 0, // Would come from Smart Vault data
         isLoading: false,
       });
     }
-  }, [tokenInfo, progressData, isGraduated, currentPrice]);
+  }, [tokenInfo, progressData, currentPrice]);
 
   return tokenData;
 }
@@ -117,8 +114,7 @@ export function useUserAnalytics(userAddress: string) {
     isLoading: true,
   });
 
-  const { creatorTokens, canUseFreeDeployment } = useMemeTokenFactory();
-  const { hasMinted } = useSmartVault();
+  const { creatorTokens } = useSmartVaultCore();
 
   useEffect(() => {
     if (userAddress) {
@@ -126,14 +122,14 @@ export function useUserAnalytics(userAddress: string) {
         tokensCreated: creatorTokens?.length || 0,
         totalFeesEarned: 0, // Would sum up fees from all user's tokens
         totalRewardsClaimed: 0, // Would check claimed rewards from graduated tokens
-        hasSmartVault: !!hasMinted,
-        canUseFreeDeployment: !!canUseFreeDeployment,
+        hasSmartVault: false, // Would check Smart Vault SBT ownership
+        canUseFreeDeployment: false, // Would check deployment eligibility
         isLoading: false,
       });
     } else {
       setUserData(prev => ({ ...prev, isLoading: false }));
     }
-  }, [userAddress, creatorTokens, hasMinted, canUseFreeDeployment]);
+  }, [userAddress, creatorTokens]);
 
   return userData;
 }
