@@ -4,7 +4,6 @@ import HomePage from './components/HomePage';
 import MintPage from './components/MintPage';
 import LaunchMemePage from './components/LaunchMemePage';
 import MyVaultPage from './components/MyVaultPage';
-import DocsPage from './components/DocsPage';
 import RoadmapPage from './components/RoadmapPage';
 
 function App() {
@@ -16,7 +15,7 @@ function App() {
     const page = path.substring(1) || 'home';
     
     // Valid pages
-    const validPages = ['home', 'mint', 'launch', 'vault', 'docs', 'roadmap'];
+    const validPages = ['home', 'mint', 'launch', 'vault', 'roadmap'];
     if (validPages.includes(page)) {
       setCurrentPage(page);
     } else {
@@ -53,8 +52,6 @@ function App() {
         return <LaunchMemePage />;
       case 'vault':
         return <MyVaultPage />;
-      case 'docs':
-        return <DocsPage />;
       case 'roadmap':
         return <RoadmapPage />;
       default:

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Wallet, BookOpen, Map } from 'lucide-react';
+import { ChevronDown, Wallet, Map } from 'lucide-react';
 import { SUPPORTED_CHAINS } from '../constants/chains';
 import { Chain } from '../types';
 import { useWallet } from '../hooks/useWallet';
@@ -12,7 +12,6 @@ interface HeaderProps {
 export default function Header({ currentPage, onPageChange }: HeaderProps) {
   const [selectedChain, setSelectedChain] = useState<Chain>(SUPPORTED_CHAINS[0]);
   const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
-  const [isAboutDropdownOpen, setIsAboutDropdownOpen] = useState(false);
   
   const { isConnected, address, connect, disconnect } = useWallet();
 
@@ -33,12 +32,8 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
     { id: 'home', label: 'Home' },
     { id: 'mint', label: 'NFT Mint' },
     { id: 'launch', label: 'Launch Meme' },
-    { id: 'vault', label: 'My Vault' }
-  ];
-
-  const aboutItems = [
-    { id: 'docs', label: 'Docs', icon: BookOpen },
-    { id: 'roadmap', label: 'Roadmap', icon: Map }
+    { id: 'vault', label: 'My Vault' },
+    { id: 'roadmap', label: 'Roadmap' }
   ];
 
   return (
@@ -72,39 +67,6 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
                 {item.label}
               </button>
             ))}
-            
-            {/* About Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setIsAboutDropdownOpen(!isAboutDropdownOpen)}
-                className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                  currentPage === 'docs' || currentPage === 'roadmap'
-                    ? 'text-yellow-400 bg-yellow-400/10'
-                    : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
-                }`}
-              >
-                <span>About</span>
-                <ChevronDown className="w-4 h-4" />
-              </button>
-
-              {isAboutDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-10">
-                  {aboutItems.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        onPageChange(item.id);
-                        setIsAboutDropdownOpen(false);
-                      }}
-                      className="w-full flex items-center space-x-3 px-4 py-3 hover:bg-gray-700 first:rounded-t-lg last:rounded-b-lg transition-colors text-left"
-                    >
-                      <item.icon className="w-4 h-4 text-yellow-400" />
-                      <span className="text-white text-sm">{item.label}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
           </nav>
 
           {/* Chain Selector & Wallet */}

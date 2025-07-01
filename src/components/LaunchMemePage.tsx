@@ -81,11 +81,6 @@ export default function LaunchMemePage() {
       return;
     }
 
-    if (!isContractDeployed) {
-      alert('Smart contracts are not deployed yet. Please deploy the contracts first using the deployment script.');
-      return;
-    }
-
     if (!tokenData.name || !tokenData.symbol) {
       alert('Please fill in the required fields (Name and Symbol)');
       return;
@@ -175,24 +170,6 @@ export default function LaunchMemePage() {
           </p>
         </div>
 
-        {/* Contract Deployment Warning */}
-        {!isContractDeployed && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-6 mb-8">
-            <div className="flex items-center space-x-3 text-red-400 mb-2">
-              <AlertTriangle className="w-6 h-6" />
-              <span className="font-semibold">Contracts Not Deployed</span>
-            </div>
-            <p className="text-red-300 mb-4">
-              The smart contracts haven't been deployed yet. You need to deploy them first before you can launch tokens.
-            </p>
-            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3">
-              <p className="text-red-300 text-sm font-mono">
-                Run: <strong>npm run deploy</strong>
-              </p>
-            </div>
-          </div>
-        )}
-
         {/* Wallet Connection Warning */}
         {!isConnected && (
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-6 mb-8">
@@ -213,7 +190,7 @@ export default function LaunchMemePage() {
         )}
 
         {/* Free Deployment Banner */}
-        {isConnected && canUseFreeDeployment && isContractDeployed && (
+        {isConnected && canUseFreeDeployment && (
           <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-6 mb-8">
             <div className="flex items-center space-x-3 text-green-400 mb-2">
               <Zap className="w-6 h-6" />
@@ -469,21 +446,13 @@ export default function LaunchMemePage() {
               </div>
             </div>
 
-            {/* Launch Details - Fixed Alignment */}
+            {/* Launch Details */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-semibold text-white mb-4">Launch Details</h3>
               <div className="space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Total Supply</span>
                   <span className="text-white text-sm font-medium">1,000,000,000</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">For Sale</span>
-                  <span className="text-white text-sm font-medium">800M (80%)</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">For Liquidity</span>
-                  <span className="text-white text-sm font-medium">200M (20%)</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Graduation Target</span>
@@ -519,7 +488,7 @@ export default function LaunchMemePage() {
             {/* Launch Button */}
             <button
               onClick={handleLaunch}
-              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || !isContractDeployed || (hasInsufficientBalance && !canUseFreeDeployment) || (isConnected && chainName !== 'Ronin Testnet')}
+              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || (hasInsufficientBalance && !canUseFreeDeployment) || (isConnected && chainName !== 'Ronin Testnet')}
               className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isLoading ? (
@@ -531,10 +500,6 @@ export default function LaunchMemePage() {
                 <>
                   <span>Connect Wallet to Launch</span>
                 </>
-              ) : !isContractDeployed ? (
-                <>
-                  <span>Deploy Contracts First</span>
-                </>
               ) : (
                 <>
                   <Zap className="w-5 h-5" />
@@ -543,7 +508,7 @@ export default function LaunchMemePage() {
               )}
             </button>
             
-            {!hasInsufficientBalance && !hasSmartVault && !canUseFreeDeployment && isContractDeployed && (
+            {!hasInsufficientBalance && !hasSmartVault && !canUseFreeDeployment && (
               <>
                 <p className="text-sm text-yellow-500 text-center font-medium">💡 Pro Tip:</p>
                 <p className="text-xs text-gray-400 text-center">
