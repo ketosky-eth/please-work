@@ -52,7 +52,7 @@ export default function MyVaultPage() {
     // Simulate reward claiming process
     setTimeout(() => {
       setIsClaimingReward(null);
-      alert('Creator reward claimed successfully! 🎉\n500 RON has been sent to your wallet.');
+      alert('Creator reward claimed successfully! 🎉\n250 RON has been sent to your wallet.');
     }, 2000);
   };
 
@@ -199,7 +199,7 @@ export default function MyVaultPage() {
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Creator Rewards</h3>
               <p className="text-gray-300 text-sm">
-                Earn 500 RON when your token graduates to Katana DEX
+                Earn 250 RON when your token graduates to Katana DEX (Smart Vault holders only)
               </p>
             </div>
             <div className="text-center">

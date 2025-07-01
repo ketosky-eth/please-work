@@ -9,9 +9,9 @@ export const CONTRACT_ADDRESSES = {
 export const PROTOCOL_ADDRESS = '0x1A4edf1D0F2a2e7dbe86479A7a95f86b87205802';
 
 export const BONDING_CURVE_CONFIG = {
-  GRADUATION_TARGET: '108800', // 108,800 RON
-  CREATOR_REWARD: '500', // 500 RON
-  PROTOCOL_REWARD: '100', // 100 RON
+  GRADUATION_TARGET: '69420', // 69,420 RON
+  CREATOR_REWARD: '250', // 250 RON (only for Smart Vault holders)
+  PROTOCOL_REWARD: '100', // 100 RON (+ creator reward if no Smart Vault)
   TOKENS_FOR_SALE_PERCENTAGE: 80, // 80% for bonding curve
   TOKENS_FOR_LIQUIDITY_PERCENTAGE: 20, // 20% for liquidity
 } as const;

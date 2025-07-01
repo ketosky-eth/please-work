@@ -19,6 +19,10 @@ interface IKatanaRouter {
     function WETH() external pure returns (address);
 }
 
+interface ISmartVault {
+    function hasMinted(address user) external view returns (bool);
+}
+
 contract BondingCurve is Ownable, ReentrancyGuard {
     using SafeERC20 for IERC20;
 
@@ -34,11 +38,12 @@ contract BondingCurve is Ownable, ReentrancyGuard {
     }
 
     IKatanaRouter public immutable katanaRouter;
+    ISmartVault public immutable smartVault;
     address public constant PROTOCOL_ADDRESS = 0x1A4edf1D0F2a2e7dbe86479A7a95f86b87205802;
     
-    uint256 public constant GRADUATION_TARGET = 108800 ether; // 108,800 RON
-    uint256 public constant CREATOR_REWARD = 500 ether; // 500 RON
-    uint256 public constant PROTOCOL_REWARD = 100 ether; // 100 RON
+    uint256 public constant GRADUATION_TARGET = 69420 ether; // 69,420 RON
+    uint256 public constant CREATOR_REWARD = 250 ether; // 250 RON (only for Smart Vault holders)
+    uint256 public constant PROTOCOL_REWARD = 100 ether; // 100 RON (+ creator reward if no Smart Vault)
     uint256 public constant TOKENS_FOR_SALE = 800000000 * 10**18; // 80% of supply for bonding curve
     uint256 public constant TOKENS_FOR_LIQUIDITY = 200000000 * 10**18; // 20% for liquidity
     
@@ -76,8 +81,9 @@ contract BondingCurve is Ownable, ReentrancyGuard {
         uint256 amount
     );
 
-    constructor(address _katanaRouter) {
+    constructor(address _katanaRouter, address _smartVault) {
         katanaRouter = IKatanaRouter(_katanaRouter);
+        smartVault = ISmartVault(_smartVault);
     }
 
     function initializeToken(
@@ -164,8 +170,18 @@ contract BondingCurve is Ownable, ReentrancyGuard {
         
         token.graduated = true;
         
-        // Calculate liquidity amounts
-        uint256 liquidityETH = token.collectedETH - CREATOR_REWARD - PROTOCOL_REWARD;
+        // Check if creator has Smart Vault for reward eligibility
+        bool creatorHasSmartVault = smartVault.hasMinted(token.creator);
+        
+        uint256 liquidityETH;
+        if (creatorHasSmartVault) {
+            // Creator gets reward, protocol gets standard fee
+            liquidityETH = token.collectedETH - CREATOR_REWARD - PROTOCOL_REWARD;
+        } else {
+            // All rewards go to protocol (creator reward + protocol fee)
+            liquidityETH = token.collectedETH - CREATOR_REWARD - PROTOCOL_REWARD;
+        }
+        
         uint256 liquidityTokens = TOKENS_FOR_LIQUIDITY;
         
         // Approve router to spend tokens
@@ -181,8 +197,9 @@ contract BondingCurve is Ownable, ReentrancyGuard {
             block.timestamp + 300
         );
         
-        // Send protocol reward
-        payable(PROTOCOL_ADDRESS).transfer(PROTOCOL_REWARD);
+        // Send protocol reward (includes creator reward if no Smart Vault)
+        uint256 protocolAmount = creatorHasSmartVault ? PROTOCOL_REWARD : PROTOCOL_REWARD + CREATOR_REWARD;
+        payable(PROTOCOL_ADDRESS).transfer(protocolAmount);
         
         emit TokenGraduated(tokenAddress, token.creator, amountETH, amountToken, address(0));
     }
@@ -192,6 +209,7 @@ contract BondingCurve is Ownable, ReentrancyGuard {
         require(token.creator == msg.sender, "Not token creator");
         require(token.graduated, "Token not graduated");
         require(!token.rewardClaimed, "Reward already claimed");
+        require(smartVault.hasMinted(msg.sender), "Must have Smart Vault to claim reward");
         
         token.rewardClaimed = true;
         payable(msg.sender).transfer(CREATOR_REWARD);
@@ -239,7 +257,10 @@ contract BondingCurve is Ownable, ReentrancyGuard {
 
     function canClaimReward(address tokenAddress, address creator) external view returns (bool) {
         TokenInfo memory token = tokenInfo[tokenAddress];
-        return token.creator == creator && token.graduated && !token.rewardClaimed;
+        return token.creator == creator && 
+               token.graduated && 
+               !token.rewardClaimed && 
+               smartVault.hasMinted(creator);
     }
 
     function getAllTokens() external view returns (address[] memory) {

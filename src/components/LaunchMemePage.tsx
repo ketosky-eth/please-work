@@ -42,10 +42,10 @@ export default function LaunchMemePage() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file type
-      const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml'];
+      // Validate file type (now includes GIF)
+      const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/svg+xml', 'image/gif'];
       if (!validTypes.includes(file.type)) {
-        alert('Please select a valid image file (PNG, JPG, or SVG)');
+        alert('Please select a valid image file (PNG, JPG, GIF, or SVG)');
         return;
       }
 
@@ -111,7 +111,11 @@ export default function LaunchMemePage() {
         tokenData.discord
       );
 
-      alert(`Token "${tokenData.name}" (${tokenData.symbol}) launched successfully! 🚀\n\nYour token is now live on the bonding curve and ready for trading.`);
+      const rewardMessage = hasSmartVault 
+        ? 'You can claim 250 RON when your token graduates!'
+        : 'Since you don\'t have a Smart Vault NFT, all rewards will go to the protocol when your token graduates.';
+
+      alert(`Token "${tokenData.name}" (${tokenData.symbol}) launched successfully! 🚀\n\nYour token is now live on the bonding curve and ready for trading.\n\n${rewardMessage}`);
       
       // Reset form
       setTokenData({
@@ -202,6 +206,26 @@ export default function LaunchMemePage() {
           </div>
         )}
 
+        {/* Smart Vault Reward Info */}
+        {isConnected && !hasSmartVault && (
+          <div className="bg-orange-500/10 border border-orange-500/20 rounded-xl p-6 mb-8">
+            <div className="flex items-center space-x-3 text-orange-400 mb-2">
+              <AlertTriangle className="w-6 h-6" />
+              <span className="font-semibold">No Smart Vault NFT Detected</span>
+            </div>
+            <p className="text-orange-300 mb-4">
+              Without a Smart Vault NFT, all creator rewards (250 RON) will go to the protocol when your token graduates. 
+              Mint a Smart Vault NFT to claim your creator rewards!
+            </p>
+            <button
+              onClick={() => window.location.href = '/mint'}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+            >
+              Mint Smart Vault NFT
+            </button>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Token Creation Form */}
           <div className="lg:col-span-2">
@@ -247,7 +271,11 @@ export default function LaunchMemePage() {
                     <span className="font-medium">Bonding Curve Launch</span>
                   </div>
                   <p className="text-yellow-300 text-sm">
-                    Your token will launch on a bonding curve. When 108,800 RON is raised, your token graduates to <strong>Katana DEX</strong> with automatic liquidity. You'll earn <strong>500 RON</strong> as creator reward!
+                    Your token will launch on a bonding curve. When 69,420 RON is raised, your token graduates to <strong>Katana DEX</strong> with automatic liquidity. 
+                    {hasSmartVault 
+                      ? ' You\'ll earn 250 RON as creator reward!' 
+                      : ' Creator rewards go to protocol without Smart Vault NFT.'
+                    }
                   </p>
                 </div>
 
@@ -316,7 +344,7 @@ export default function LaunchMemePage() {
                     >
                       <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                       <p className="text-gray-400 mb-2">Upload your meme logo</p>
-                      <p className="text-sm text-gray-500">PNG, JPG, SVG up to 5MB</p>
+                      <p className="text-sm text-gray-500">PNG, JPG, GIF, SVG up to 5MB</p>
                       <button 
                         type="button"
                         className="mt-3 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
@@ -329,7 +357,7 @@ export default function LaunchMemePage() {
                   <input
                     ref={fileInputRef}
                     type="file"
-                    accept="image/png,image/jpeg,image/jpg,image/svg+xml"
+                    accept="image/png,image/jpeg,image/jpg,image/svg+xml,image/gif"
                     onChange={handleFileChange}
                     className="hidden"
                   />
@@ -399,10 +427,16 @@ export default function LaunchMemePage() {
                     {canUseFreeDeployment ? "✓ Available" : "✗ Used/Unavailable"}
                   </span>
                 </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Creator Rewards</span>
+                  <span className={hasSmartVault ? "text-green-400" : "text-red-400"}>
+                    {hasSmartVault ? "✓ 250 RON" : "✗ Goes to Protocol"}
+                  </span>
+                </div>
                 {!hasSmartVault && isSmartVaultDeployed && (
                   <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
                     <p className="text-yellow-300 text-sm">
-                      Mint a Smart Vault to automatically receive LP tokens and earn fees from your launched tokens.
+                      Mint a Smart Vault to claim creator rewards and get free token launches.
                     </p>
                   </div>
                 )}
@@ -455,12 +489,10 @@ export default function LaunchMemePage() {
                   <span className="text-white text-sm font-medium">1,000,000,000</span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">Graduation Target</span>
-                  <span className="text-white text-sm font-medium">108,800 RON</span>
-                </div>
-                <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Creator Reward</span>
-                  <CheckCircle className="w-4 h-4 text-green-400" />
+                  <span className={`text-sm font-medium ${hasSmartVault ? 'text-green-400' : 'text-red-400'}`}>
+                    {hasSmartVault ? '250 RON' : 'Goes to Protocol'}
+                  </span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Deploy Cost</span>
@@ -512,7 +544,7 @@ export default function LaunchMemePage() {
               <>
                 <p className="text-sm text-yellow-500 text-center font-medium">💡 Pro Tip:</p>
                 <p className="text-xs text-gray-400 text-center">
-                  Mint a Smart Vault NFT to get your first token launch for FREE and earn LP rewards!
+                  Mint a Smart Vault NFT to get your first token launch for FREE and claim creator rewards!
                 </p>
               </>
             )}
