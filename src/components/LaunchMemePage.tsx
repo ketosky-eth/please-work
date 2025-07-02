@@ -451,7 +451,7 @@ export default function LaunchMemePage() {
                 <div>
                   <div className="text-orange-400 font-medium text-sm mb-1">Notice</div>
                   <p className="text-orange-300 text-sm leading-relaxed">
-                    Launching without a Smart Vault will not grant you Creator Rewards and fee earnings. <br><strong>This is irreversible.</strong></br>
+                    Launching without a Smart Vault will not grant you Creator Rewards and fee earnings. <strong>This is irreversible.</strong>
                   </p>
                 </div>
               </div>
