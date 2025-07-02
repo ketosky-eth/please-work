@@ -237,17 +237,6 @@ export default function LaunchMemePage() {
                   </div>
                 </div>
 
-                {/* Bonding Curve Info */}
-                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-                  <div className="flex items-center space-x-2 text-yellow-400 mb-2">
-                    <ArrowRight className="w-4 h-4" />
-                    <span className="font-medium">Bonding Curve Launch</span>
-                  </div>
-                  <p className="text-yellow-300 text-sm">
-                    Your token will launch on a bonding curve. When 69,420 RON is raised, your token graduates to <strong>Katana DEX</strong> with automatic liquidity. Smart Vault holders earn 250 RON creator reward!
-                  </p>
-                </div>
-
                 {/* Network Mismatch Warning */}
                 {isConnected && chainName !== 'Ronin Testnet' && (
                   <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
@@ -330,6 +319,17 @@ export default function LaunchMemePage() {
                     onChange={handleFileChange}
                     className="hidden"
                   />
+                </div>
+
+                {/* Bonding Curve Info - Moved below Logo Upload */}
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
+                  <div className="flex items-center space-x-2 text-yellow-400 mb-2">
+                    <ArrowRight className="w-4 h-4" />
+                    <span className="font-medium">Bonding Curve Launch</span>
+                  </div>
+                  <p className="text-yellow-300 text-sm">
+                    Your token will launch on a bonding curve. When 69,420 RON is raised, your token graduates to <strong>Katana DEX</strong> with automatic liquidity. Smart Vault holders earn 250 RON creator reward!
+                  </p>
                 </div>
 
                 {/* Social Links */}
@@ -561,8 +561,9 @@ export default function LaunchMemePage() {
 
         {/* Footer */}
         <div className="mt-16 pt-8 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-            <div className="flex items-center space-x-3 mb-4 md:mb-0">
+          <div className="flex flex-col lg:flex-row justify-between items-center py-4">
+            {/* Left: Logo & Copyright */}
+            <div className="flex items-center space-x-3 mb-4 lg:mb-0">
               <div className="w-8 h-8 rounded-lg overflow-hidden">
                 <img 
                   src="/Main Logo.jpg" 
@@ -571,8 +572,25 @@ export default function LaunchMemePage() {
                 />
               </div>
               <span className="text-lg font-bold text-white">VYTO Protocol</span>
+              <span className="text-gray-400 text-sm hidden md:inline">
+                © VYTO Protocol - Powered by the Ronin Network
+              </span>
+            </div>
+
+            {/* Middle: Legal Links */}
+            <div className="flex items-center space-x-6 mb-4 lg:mb-0">
+              <button className="text-gray-400 hover:text-white text-sm transition-colors">
+                Terms of Service
+              </button>
+              <button className="text-gray-400 hover:text-white text-sm transition-colors">
+                Privacy Policy
+              </button>
+              <button className="text-gray-400 hover:text-white text-sm transition-colors">
+                Contact
+              </button>
             </div>
             
+            {/* Right: Social Links */}
             <div className="flex items-center space-x-4">
               <span className="text-gray-400 text-sm">Follow us:</span>
               <a
@@ -596,23 +614,9 @@ export default function LaunchMemePage() {
                 </svg>
               </a>
             </div>
-          </div>
 
-          {/* Footer Links */}
-          <div className="flex flex-col md:flex-row justify-between items-center py-4 border-t border-gray-800">
-            <div className="flex items-center space-x-6 mb-4 md:mb-0">
-              <button className="text-gray-400 hover:text-white text-sm transition-colors">
-                Terms of Service
-              </button>
-              <button className="text-gray-400 hover:text-white text-sm transition-colors">
-                Privacy Policy
-              </button>
-              <button className="text-gray-400 hover:text-white text-sm transition-colors">
-                Contact
-              </button>
-            </div>
-            
-            <div className="text-gray-400 text-sm text-center md:text-right">
+            {/* Mobile Copyright */}
+            <div className="text-gray-400 text-sm text-center md:hidden mt-4">
               © VYTO Protocol - Powered by the Ronin Network
             </div>
           </div>

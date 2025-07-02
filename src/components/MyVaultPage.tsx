@@ -225,8 +225,9 @@ export default function MyVaultPage() {
 
         {/* Footer */}
         <div className="mt-16 pt-8 border-t border-gray-700">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6">
-            <div className="flex items-center space-x-3 mb-4 md:mb-0">
+          <div className="flex flex-col lg:flex-row justify-between items-center py-4">
+            {/* Left: Logo & Copyright */}
+            <div className="flex items-center space-x-3 mb-4 lg:mb-0">
               <div className="w-8 h-8 rounded-lg overflow-hidden">
                 <img 
                   src="/Main Logo.jpg" 
@@ -235,8 +236,25 @@ export default function MyVaultPage() {
                 />
               </div>
               <span className="text-lg font-bold text-white">VYTO Protocol</span>
+              <span className="text-gray-400 text-sm hidden md:inline">
+                © VYTO Protocol - Powered by the Ronin Network
+              </span>
+            </div>
+
+            {/* Middle: Legal Links */}
+            <div className="flex items-center space-x-6 mb-4 lg:mb-0">
+              <button className="text-gray-400 hover:text-white text-sm transition-colors">
+                Terms of Service
+              </button>
+              <button className="text-gray-400 hover:text-white text-sm transition-colors">
+                Privacy Policy
+              </button>
+              <button className="text-gray-400 hover:text-white text-sm transition-colors">
+                Contact
+              </button>
             </div>
             
+            {/* Right: Social Links */}
             <div className="flex items-center space-x-4">
               <span className="text-gray-400 text-sm">Follow us:</span>
               <a
@@ -260,23 +278,9 @@ export default function MyVaultPage() {
                 </svg>
               </a>
             </div>
-          </div>
 
-          {/* Footer Links */}
-          <div className="flex flex-col md:flex-row justify-between items-center py-4 border-t border-gray-800">
-            <div className="flex items-center space-x-6 mb-4 md:mb-0">
-              <button className="text-gray-400 hover:text-white text-sm transition-colors">
-                Terms of Service
-              </button>
-              <button className="text-gray-400 hover:text-white text-sm transition-colors">
-                Privacy Policy
-              </button>
-              <button className="text-gray-400 hover:text-white text-sm transition-colors">
-                Contact
-              </button>
-            </div>
-            
-            <div className="text-gray-400 text-sm text-center md:text-right">
+            {/* Mobile Copyright */}
+            <div className="text-gray-400 text-sm text-center md:hidden mt-4">
               © VYTO Protocol - Powered by the Ronin Network
             </div>
           </div>
