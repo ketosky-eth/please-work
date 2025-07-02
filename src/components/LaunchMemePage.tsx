@@ -409,7 +409,10 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Creator Reward</span>
-                  <span className="text-green-400 text-sm font-medium">250 RON (SV holders)</span>
+                  <div className="flex items-center space-x-2">
+                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <span className="text-green-400 text-sm font-medium">(SV holders)</span>
+                  </div>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Deploy Cost</span>
@@ -440,6 +443,19 @@ export default function LaunchMemePage() {
                 </>
               )}
             </button>
+
+            {/* Notice Message */}
+            <div className="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <AlertTriangle className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="text-orange-400 font-medium text-sm mb-1">Notice</div>
+                  <p className="text-orange-300 text-sm leading-relaxed">
+                    Launching without a Smart Vault will not grant you Creator Rewards and fee earnings. This is irreversible!
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
