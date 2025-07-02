@@ -235,7 +235,6 @@ export default function MyVaultPage() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="text-lg font-bold text-white">VYTO Protocol</span>
               <span className="text-gray-400 text-sm hidden md:inline">
                 © VYTO Protocol - Powered by the Ronin Network
               </span>
