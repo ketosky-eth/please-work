@@ -410,8 +410,8 @@ export default function LaunchMemePage() {
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Creator Reward</span>
                   <div className="flex items-center space-x-2">
+                  <span className="text-green-400 text-sm font-medium">(SV holders)</span>
                     <CheckCircle className="w-4 h-4 text-green-400" />
-                    <span className="text-green-400 text-sm font-medium">(SV holders)</span>
                   </div>
                 </div>
                 <div className="flex justify-between items-center">
