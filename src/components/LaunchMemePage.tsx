@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle, X, Image, CheckCircle } from 'lucide-react';
+import { Upload, Rocket, Twitter, Globe, MessageCircle, DollarSign, Zap, TrendingUp, ArrowRight, AlertTriangle, X, Image, CheckCircle, ShoppingCart } from 'lucide-react';
 import { TokenData } from '../types';
 import { useWallet } from '../hooks/useWallet';
 import { useSmartVaultCore } from '../hooks/useSmartVaultCore';
@@ -28,6 +28,7 @@ export default function LaunchMemePage() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [buyAmount, setBuyAmount] = useState<string>('');
 
   const handleInputChange = (field: keyof TokenData, value: string | boolean) => {
     setTokenData(prev => ({ ...prev, [field]: value }));
@@ -128,6 +129,7 @@ export default function LaunchMemePage() {
       });
       setLogoFile(null);
       setLogoPreview('');
+      setBuyAmount('');
       
     } catch (error) {
       console.error('Launch error:', error);
@@ -137,12 +139,28 @@ export default function LaunchMemePage() {
     }
   };
 
+  const handleBuyTokens = async () => {
+    if (!buyAmount || parseFloat(buyAmount) <= 0) {
+      alert('Please enter a valid buy amount');
+      return;
+    }
+
+    // This would integrate with the bonding curve buy function
+    alert(`Buy function would purchase ${buyAmount} RON worth of tokens`);
+  };
+
   const socialLinks = [
     { key: 'website', icon: Globe, placeholder: 'https://mytoken.com', label: 'Website' },
     { key: 'twitter', icon: Twitter, placeholder: 'https://twitter.com/mytoken', label: 'Twitter' },
     { key: 'telegram', icon: MessageCircle, placeholder: 'https://t.me/mytoken', label: 'Telegram' },
     { key: 'discord', icon: MessageCircle, placeholder: 'https://discord.gg/mytoken', label: 'Discord' }
   ];
+
+  // Format balance to 6 decimals
+  const formatBalance = (balance: string): string => {
+    const num = parseFloat(balance);
+    return num.toFixed(6);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
@@ -356,7 +374,7 @@ export default function LaunchMemePage() {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-400">Balance</span>
-                    <span className="text-white">{balance} {balanceSymbol}</span>
+                    <span className="text-white">{formatBalance(balance)} {balanceSymbol}</span>
                   </div>
                 </div>
               </div>
@@ -388,6 +406,53 @@ export default function LaunchMemePage() {
                 <p className="text-gray-300 text-sm mb-3">
                   {tokenData.description || 'Token description will appear here...'}
                 </p>
+                
+                {/* Social Links Icons */}
+                {(tokenData.website || tokenData.twitter || tokenData.telegram || tokenData.discord) && (
+                  <div className="flex items-center space-x-2 mb-3">
+                    {tokenData.website && (
+                      <a
+                        href={tokenData.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors"
+                      >
+                        <Globe className="w-4 h-4 text-gray-300 hover:text-white" />
+                      </a>
+                    )}
+                    {tokenData.twitter && (
+                      <a
+                        href={tokenData.twitter}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors"
+                      >
+                        <Twitter className="w-4 h-4 text-gray-300 hover:text-blue-400" />
+                      </a>
+                    )}
+                    {tokenData.telegram && (
+                      <a
+                        href={tokenData.telegram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors"
+                      >
+                        <MessageCircle className="w-4 h-4 text-gray-300 hover:text-blue-400" />
+                      </a>
+                    )}
+                    {tokenData.discord && (
+                      <a
+                        href={tokenData.discord}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition-colors"
+                      >
+                        <MessageCircle className="w-4 h-4 text-gray-300 hover:text-purple-400" />
+                      </a>
+                    )}
+                  </div>
+                )}
+                
                 <div className="flex items-center space-x-2 text-xs">
                   <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
                     Bonding Curve
@@ -410,7 +475,7 @@ export default function LaunchMemePage() {
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Creator Reward</span>
                   <div className="flex items-center space-x-2">
-                  <span className="text-green-400 text-sm font-medium">SV holders</span>
+                    <span className="text-green-400 text-sm font-medium">SV holders</span>
                     <CheckCircle className="w-4 h-4 text-green-400" />
                   </div>
                 </div>
@@ -454,6 +519,41 @@ export default function LaunchMemePage() {
                     Launching without a Smart Vault will disable Creator Rewards and fee earnings. <strong>This is irreversible.</strong>
                   </p>
                 </div>
+              </div>
+            </div>
+
+            {/* Optional Buy Function */}
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4 flex items-center space-x-2">
+                <ShoppingCart className="w-5 h-5 text-green-400" />
+                <span>Buy Tokens (Optional)</span>
+              </h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    RON Amount
+                  </label>
+                  <input
+                    type="number"
+                    value={buyAmount}
+                    onChange={(e) => setBuyAmount(e.target.value)}
+                    placeholder="0.0"
+                    min="0"
+                    step="0.001"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  />
+                </div>
+                <button
+                  onClick={handleBuyTokens}
+                  disabled={!buyAmount || parseFloat(buyAmount) <= 0 || !isConnected}
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>Buy Tokens</span>
+                </button>
+                <p className="text-gray-400 text-xs text-center">
+                  Purchase tokens immediately after launch
+                </p>
               </div>
             </div>
           </div>
