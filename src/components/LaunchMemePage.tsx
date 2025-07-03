@@ -514,7 +514,7 @@ export default function LaunchMemePage() {
               <div className="flex items-start space-x-3">
                 <AlertTriangle className="w-5 h-5 text-orange-400 mt-0.5 flex-shrink-0" />
                 <div>
-                  <div className="text-orange-400 font-medium text-sm mb-1"><strong> Notice </strong>(Irreversible)</div>
+                  <div className="text-orange-400 font-medium text-sm mb-1"><strong> Notice: </strong>Irreversible</div>
                   <p className="text-orange-300 text-sm leading-relaxed">
                     Launching without a Smart Vault will disable Creator Rewards and fee earnings.
                   </p>
