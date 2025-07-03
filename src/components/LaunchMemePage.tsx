@@ -455,7 +455,7 @@ export default function LaunchMemePage() {
                 
                 <div className="flex items-center space-x-2 text-xs">
                   <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
-                    Bonding Curve
+                    Katana DEX
                   </span>
                   <span className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded">
                     Ronin Testnet
