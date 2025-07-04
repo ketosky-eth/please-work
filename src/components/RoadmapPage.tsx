@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map, CheckCircle, Clock, Zap, Target, Rocket, Twitter, MessageCircle } from 'lucide-react';
+import { Map, CheckCircle, Clock, Zap, Target, Rocket } from 'lucide-react';
 
 interface RoadmapItem {
   id: string;
@@ -15,78 +15,79 @@ export default function RoadmapPage() {
     {
       id: '1',
       title: 'Platform Foundation',
-      description: 'Core infrastructure',
+      description: 'Core infrastructure and meme token factory',
       status: 'in-progress',
-      quarter: 'Q3 2025',
+      quarter: 'Q1 2025',
       features: [
-        'Smart Contract Engineering',
-        'Social Exposure',
-        'Architecture & Design',
-        'Website Release'
+        'Multi-chain Smart Contracts (Ronin + Base)',
+        'Bonding Curve Mechanics',
+        'Token Factory Implementation',
+        'Website & UI Development'
       ]
     },
     {
       id: '2',
-      title: 'NFT Introduction',
-      description: 'The upcoming VYTO NFT Collections',
-      status: 'in-progress',
-      quarter: 'Q3 2025',
+      title: 'Launch & Optimization',
+      description: 'Public launch and platform optimization',
+      status: 'planned',
+      quarter: 'Q1 2025',
       features: [
-        'Smart Vault - Soulbound NFT',
-        'Genesis Vault Shard - Premium NFT',
-        'Backend Logic Engineering',
-        'Whitepaper Release'
+        'Mainnet Deployment',
+        'Community Building',
+        'Bug Fixes & Improvements',
+        'Trading Volume Incentives'
       ]
     },
     {
       id: '3',
-      title: 'Collection Release',
-      description: 'Onboarding & distribution of early(OG) supporter NFT',
+      title: 'Advanced Features',
+      description: 'Enhanced functionality and user experience',
       status: 'planned',
-      quarter: 'Q3 2025',
+      quarter: 'Q2 2025',
       features: [
-        'Limited Edition NFT Collection',
-        'Founder Exclusive Benefits',
-        'Official Platform Launch',
-        'Protocol Exclusive Access'
+        'Advanced Analytics Dashboard',
+        'Token Portfolio Tracking',
+        'Social Features & Comments',
+        'Mobile App Development'
       ]
     },
     {
       id: '4',
-      title: 'Liquifying Transparency',
-      description: 'Casting strategic stepping stones',
+      title: 'NFT Integration (Phase 2)',
+      description: 'Premium NFT collections with exclusive benefits',
       status: 'planned',
-      quarter: 'Q4 2025',
+      quarter: 'Q2 2025',
       features: [
-        'Official Token Generation Event',
-        'Begin Project C Development', // Cupid Protocol = DEX, Bridges, & etc
-        'Token Analytics Dashboard'
+        'Smart Vault NFTs',
+        'Genesis Vault Shards',
+        'Enhanced LP Management',
+        'Exclusive Creator Benefits'
       ]
     },
     {
       id: '5',
-      title: 'Batched Project Development',
-      description: 'Validator Node Launch + Project Development',
+      title: 'Ecosystem Expansion',
+      description: 'Multi-chain expansion and partnerships',
       status: 'planned',
-      quarter: 'Q1 2026',
+      quarter: 'Q3 2025',
       features: [
-        'Validator Node',
-        'Project S',
-        'Bridge Node',
-        'Project F'
+        'Additional Chain Support',
+        'DEX Partnerships',
+        'Cross-chain Bridge Integration',
+        'Institutional Features'
       ]
     },
     {
       id: '6',
-      title: 'Multi-Chain Expansion',
-      description: 'Expand beyond Ronin to other EVM and non-EVM chains',
+      title: 'DeFi Integration',
+      description: 'Advanced DeFi features and yield farming',
       status: 'planned',
-      quarter: 'Q1 2026',
+      quarter: 'Q4 2025',
       features: [
-        'Bridge Integrations',
-        'Automatic Bridge Logic',
-        'VYTO Bridge SDK',
-        'Protocol Support & Compatibility'
+        'Yield Farming Pools',
+        'Staking Mechanisms',
+        'Governance Token Launch',
+        'DAO Implementation'
       ]
     }
   ];
@@ -131,7 +132,7 @@ export default function RoadmapPage() {
             Roadmap
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Our journey to revolutionize DeFi, token creations, and token liquidity management on the Ronin Network starts here
+            Our journey to revolutionize meme token creation and trading across multiple blockchains
           </p>
         </div>
 
@@ -140,15 +141,15 @@ export default function RoadmapPage() {
           <h2 className="text-xl font-bold text-white mb-4">Development Progress</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-400 mb-1">1</div>
+              <div className="text-2xl font-bold text-green-400 mb-1">0</div>
               <div className="text-sm text-gray-400">Completed</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-yellow-400 mb-1">2</div>
+              <div className="text-2xl font-bold text-yellow-400 mb-1">1</div>
               <div className="text-sm text-gray-400">In Progress</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-gray-400 mb-1">3</div>
+              <div className="text-2xl font-bold text-gray-400 mb-1">5</div>
               <div className="text-sm text-gray-400">Planned</div>
             </div>
           </div>
@@ -204,22 +205,24 @@ export default function RoadmapPage() {
             <Rocket className="w-12 h-12 text-yellow-400" />
           </div>
           <h2 className="text-2xl font-bold text-white mb-4">
-            Ready to build your DeFi Footprint?
+            Ready to Launch Your Meme Token?
           </h2>
           <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-            Join us on this exciting journey as we revolutionize token creation and management. 
-            Your feedback and participation help shape our roadmap.
+            Join the revolution! Launch your meme token today with our bonding curve system. 
+            No limits, no gatekeeping - just pure meme magic.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-semibold transition-all">
-            <a href="https://www.x.com/vyto_xyz" target="_blank">
-              Follow Us on X
-            </a>
+            <button 
+              onClick={() => window.location.href = '/launch'}
+              className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-semibold transition-all"
+            >
+              Launch Token Now
             </button>
-            <button className="border border-gray-600 text-white hover:bg-gray-800 px-6 py-3 rounded-lg font-semibold transition-all">
-              <a href="https://discord.gg/AQdEfUaV8x" target="_blank">
-              Join Community
-              </a>
+            <button 
+              onClick={() => window.location.href = '/tokens'}
+              className="border border-gray-600 text-white hover:bg-gray-800 px-6 py-3 rounded-lg font-semibold transition-all"
+            >
+              Explore Tokens
             </button>
           </div>
         </div>
@@ -236,7 +239,7 @@ export default function RoadmapPage() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <span className="text-gray-400 text-sm hidden md:inline">
+              <span className="text-gray-400 text-sm">
                 © VYTO Protocol - Powered by the Ronin Network
               </span>
             </div>
@@ -278,19 +281,7 @@ export default function RoadmapPage() {
                 </svg>
               </a>
             </div>
-
-            {/* Mobile Copyright */}
-            <div className="text-gray-400 text-sm text-center md:hidden mt-4">
-              © VYTO Protocol - Powered by the Ronin Network
-            </div>
           </div>
-        </div>
-
-        {/* Note for Manual Editing */}
-        <div className="mt-8 bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
-          <p className="text-yellow-300 text-sm text-center">
-            <strong>Note:</strong> This roadmap is ready is a work in progress. Stay tuned for more updates!
-          </p>
         </div>
       </div>
     </div>

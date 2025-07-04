@@ -9,8 +9,10 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run scripts/deploy.ts --network roninTestnet",
-    "verify": "npx hardhat verify --network roninTestnet",
+    "deploy:ronin": "npx hardhat run scripts/deploy-ronin.ts --network roninTestnet",
+    "deploy:base": "npx hardhat run scripts/deploy-base.ts --network baseSepolia",
+    "verify:ronin": "npx hardhat verify --network roninTestnet",
+    "verify:base": "npx hardhat verify --network baseSepolia",
     "test": "npx hardhat test"
   },
   "dependencies": {

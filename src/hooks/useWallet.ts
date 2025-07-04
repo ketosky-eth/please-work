@@ -19,6 +19,7 @@ export function useWallet() {
   return {
     address,
     isConnected,
+    chainId: chain?.id,
     chainName: chain?.name || 'Unknown',
     balance: balanceData?.formatted || '0',
     balanceSymbol: balanceData?.symbol || 'ETH',

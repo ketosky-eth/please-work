@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TrendingUp, Flame, Target, Search, Filter, Clock, Users, Rocket, Zap, DollarSign, BarChart3 } from 'lucide-react';
+import { TrendingUp, Flame, Target, Search, Filter, Clock, Users, ExternalLink, ArrowUpRight, ArrowDownRight, Globe, MessageCircle } from 'lucide-react';
 import { useAnalytics, formatCurrency, formatNumber } from '../hooks/useAnalytics';
 
 interface Token {
@@ -19,11 +19,16 @@ interface Token {
   category: 'new' | 'trending' | 'graduating';
   chainId: number;
   graduated: boolean;
+  website?: string;
+  twitter?: string;
+  telegram?: string;
+  discord?: string;
 }
 
-export default function HomePage() {
+export default function AllTokensPage() {
   const [selectedCategory, setSelectedCategory] = useState<'all' | 'new' | 'trending' | 'graduating'>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   
   const analytics = useAnalytics();
 
@@ -44,29 +49,48 @@ export default function HomePage() {
     return matchesCategory && matchesSearch;
   });
 
+  const getProgressColor = (progress: number) => {
+    if (progress >= 80) return 'bg-red-500';
+    if (progress >= 60) return 'bg-orange-500';
+    if (progress >= 40) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
+
+  const getChainName = (chainId: number) => {
+    switch (chainId) {
+      case 2021: return 'Ronin';
+      case 84532: return 'Base';
+      default: return 'Unknown';
+    }
+  };
+
+  const getChainColor = (chainId: number) => {
+    switch (chainId) {
+      case 2021: return 'bg-yellow-500/20 text-yellow-400';
+      case 84532: return 'bg-blue-500/20 text-blue-400';
+      default: return 'bg-gray-500/20 text-gray-400';
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-yellow-900/10 to-gray-900 pt-8 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="flex justify-center mb-6">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden">
-              <img 
-                src="/Main Logo.jpg" 
-                alt="VYTO Logo" 
-                className="w-full h-full object-cover"
-              />
+            <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center">
+              <TrendingUp className="w-8 h-8 text-white" />
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Meme Token Factory
+            All Tokens
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Launch, trade, and discover the hottest meme tokens with bonding curves. No limits, no gatekeeping - just pure meme magic! 🚀
+            Discover, trade, and track all meme tokens launched on VYTO Protocol
           </p>
         </div>
 
-        {/* Stats Overview - Live Analytics */}
+        {/* Stats Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
             <div className="text-2xl font-bold text-white mb-1">
@@ -129,7 +153,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Empty State - Fresh Platform */}
+        {/* Empty State */}
         <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden">
           <div className="p-6 border-b border-gray-700">
             <h2 className="text-2xl font-bold text-white">
@@ -141,9 +165,9 @@ export default function HomePage() {
             <div className="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
               <Flame className="w-10 h-10 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Ready to Launch!</h3>
+            <h3 className="text-2xl font-bold text-white mb-4">No Tokens Yet!</h3>
             <p className="text-gray-400 mb-8 max-w-md mx-auto">
-              The VYTO Meme Token Factory is live and ready for action. Be the first to launch a meme token with our revolutionary bonding curve system.
+              Be the first to launch a meme token on VYTO Protocol. Your token could be the next big thing!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
@@ -153,103 +177,11 @@ export default function HomePage() {
                 Launch First Token 🚀
               </button>
               <button 
-                onClick={() => window.location.href = '/tokens'}
+                onClick={() => window.location.href = '/'}
                 className="border border-gray-600 text-white hover:bg-gray-800 px-8 py-3 rounded-lg font-semibold transition-all"
               >
-                Explore Tokens
+                Back to Home
               </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Features Overview */}
-        <div className="mt-12 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">
-            Why Choose VYTO?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Instant Launch</h3>
-              <p className="text-gray-300 text-sm">
-                Launch your meme token in seconds with just 0.5 RON or 0.0001 ETH. No gatekeeping, no limits.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Bonding Curves</h3>
-              <p className="text-gray-300 text-sm">
-                Fair launch mechanism with automatic price discovery and graduation to major DEXs.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-6 h-6 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Earn Fees</h3>
-              <p className="text-gray-300 text-sm">
-                Creators earn 50% of LP trading fees automatically. No manual claiming required.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Launch Costs */}
-        <div className="mt-12 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">
-            Multi-Chain Support
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500"></div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">Ronin Network</h3>
-                  <p className="text-gray-400 text-sm">Gaming-focused blockchain</p>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Launch Cost:</span>
-                  <span className="text-yellow-400 font-semibold">0.5 RON</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Graduation Target:</span>
-                  <span className="text-white font-semibold">69,420 RON</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">DEX:</span>
-                  <span className="text-white font-semibold">Katana</span>
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl p-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"></div>
-                <div>
-                  <h3 className="text-lg font-bold text-white">Base Network</h3>
-                  <p className="text-gray-400 text-sm">Coinbase's L2 solution</p>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Launch Cost:</span>
-                  <span className="text-blue-400 font-semibold">0.0001 ETH</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">Graduation Target:</span>
-                  <span className="text-white font-semibold">24 ETH</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-300">DEX:</span>
-                  <span className="text-white font-semibold">Uniswap V2</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>

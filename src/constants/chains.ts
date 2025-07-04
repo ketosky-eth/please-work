@@ -7,5 +7,12 @@ export const SUPPORTED_CHAINS: Chain[] = [
     symbol: 'RON',
     rpcUrl: 'https://site1.moralis-nodes.com/ronin-testnet/22d6b97153ed4427b60914f349b2336c',
     blockExplorer: 'https://saigon-explorer.roninchain.com'
+  },
+  {
+    id: '84532',
+    name: 'Base Sepolia',
+    symbol: 'ETH',
+    rpcUrl: 'https://sepolia.base.org',
+    blockExplorer: 'https://sepolia-explorer.base.org'
   }
 ];

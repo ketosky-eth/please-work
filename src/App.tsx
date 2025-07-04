@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import HomePage from './components/HomePage';
+import AllTokensPage from './components/AllTokensPage';
 import MintPage from './components/MintPage';
 import LaunchMemePage from './components/LaunchMemePage';
 import MyVaultPage from './components/MyVaultPage';
@@ -14,8 +15,8 @@ function App() {
     const path = window.location.pathname;
     const page = path.substring(1) || 'home';
     
-    // Valid pages
-    const validPages = ['home', 'mint', 'launch', 'vault', 'roadmap'];
+    // Valid pages (removed 'mint' from visible navigation)
+    const validPages = ['home', 'launch', 'tokens', 'vault', 'roadmap', 'mint'];
     if (validPages.includes(page)) {
       setCurrentPage(page);
     } else {
@@ -46,14 +47,16 @@ function App() {
     switch (currentPage) {
       case 'home':
         return <HomePage />;
-      case 'mint':
-        return <MintPage />;
       case 'launch':
         return <LaunchMemePage />;
+      case 'tokens':
+        return <AllTokensPage />;
       case 'vault':
         return <MyVaultPage />;
       case 'roadmap':
         return <RoadmapPage />;
+      case 'mint':
+        return <MintPage />; // Hidden but still accessible via direct URL
       default:
         return <HomePage />;
     }

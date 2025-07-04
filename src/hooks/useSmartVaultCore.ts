@@ -1,6 +1,6 @@
 import { useAccount, useReadContract, useWriteContract } from 'wagmi';
 import { parseEther } from 'viem';
-import { CONTRACT_ADDRESSES } from '../constants/contracts';
+import { CONTRACT_ADDRESSES, NETWORK_CONFIG } from '../constants/contracts';
 
 // SmartVaultCore contract ABI (simplified)
 const SMART_VAULT_CORE_ABI = [
@@ -17,17 +17,16 @@ const SMART_VAULT_CORE_ABI = [
     ],
     "name": "createMemeToken",
     "outputs": [{"internalType": "address", "name": "", "type": "address"}],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
     "inputs": [
-      {"internalType": "address", "name": "tokenAddress", "type": "address"},
-      {"internalType": "uint256", "name": "ronAmount", "type": "uint256"}
+      {"internalType": "address", "name": "tokenAddress", "type": "address"}
     ],
     "name": "buyTokens",
     "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -41,24 +40,18 @@ const SMART_VAULT_CORE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [{"internalType": "address", "name": "tokenAddress", "type": "address"}],
-    "name": "claimCreatorReward",
+    "inputs": [
+      {"internalType": "address", "name": "tokenAddress", "type": "address"}
+    ],
+    "name": "processLPFees",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
-      {"internalType": "address", "name": "lpToken", "type": "address"},
-      {"internalType": "bool", "name": "isRenounced", "type": "bool"}
+      {"internalType": "address", "name": "tokenAddress", "type": "address"}
     ],
-    "name": "addLPPair",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{"internalType": "address", "name": "lpToken", "type": "address"}],
     "name": "claimFees",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -73,8 +66,9 @@ const SMART_VAULT_CORE_ABI = [
           {"internalType": "address", "name": "tokenAddress", "type": "address"},
           {"internalType": "address", "name": "creator", "type": "address"},
           {"internalType": "uint256", "name": "totalSupply", "type": "uint256"},
-          {"internalType": "bool", "name": "creatorHasSmartVault", "type": "bool"},
-          {"internalType": "bool", "name": "rewardClaimed", "type": "bool"}
+          {"internalType": "bool", "name": "graduated", "type": "bool"},
+          {"internalType": "uint256", "name": "lpTokenBalance", "type": "uint256"},
+          {"internalType": "uint256", "name": "accumulatedFees", "type": "uint256"}
         ],
         "internalType": "struct SmartVaultCore.TokenInfo",
         "name": "",
@@ -102,16 +96,6 @@ const SMART_VAULT_CORE_ABI = [
     "type": "function"
   },
   {
-    "inputs": [
-      {"internalType": "address", "name": "tokenAddress", "type": "address"},
-      {"internalType": "address", "name": "creator", "type": "address"}
-    ],
-    "name": "canClaimReward",
-    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [{"internalType": "address", "name": "creator", "type": "address"}],
     "name": "getCreatorTokens",
     "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
@@ -124,19 +108,51 @@ const SMART_VAULT_CORE_ABI = [
     "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}],
     "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getLaunchCost",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
   }
 ] as const;
 
 export function useSmartVaultCore() {
-  const { address } = useAccount();
+  const { address, chain } = useAccount();
   const { writeContract } = useWriteContract();
 
+  // Get contract address based on current chain
+  const getContractAddress = () => {
+    if (!chain) return null;
+    
+    if (chain.id === 2021) {
+      return CONTRACT_ADDRESSES.RONIN_TESTNET.SMART_VAULT_CORE;
+    } else if (chain.id === 84532) {
+      return CONTRACT_ADDRESSES.BASE_SEPOLIA.SMART_VAULT_CORE;
+    }
+    
+    return null;
+  };
+
+  const contractAddress = getContractAddress();
+  
   // Check if contracts are deployed (not zero address)
-  const isContractDeployed = CONTRACT_ADDRESSES.SMART_VAULT_CORE !== '0x0000000000000000000000000000000000000000';
+  const isContractDeployed = contractAddress !== '0x0000000000000000000000000000000000000000' && contractAddress !== null;
+
+  // Get launch cost
+  const { data: launchCost } = useReadContract({
+    address: contractAddress,
+    abi: SMART_VAULT_CORE_ABI,
+    functionName: 'getLaunchCost',
+    query: {
+      enabled: isContractDeployed,
+    },
+  });
 
   // Get user's created tokens
   const { data: creatorTokens } = useReadContract({
-    address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+    address: contractAddress,
     abi: SMART_VAULT_CORE_ABI,
     functionName: 'getCreatorTokens',
     args: address ? [address] : undefined,
@@ -147,7 +163,7 @@ export function useSmartVaultCore() {
 
   // Get all tokens
   const { data: allTokens } = useReadContract({
-    address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+    address: contractAddress,
     abi: SMART_VAULT_CORE_ABI,
     functionName: 'getAllTokens',
     query: {
@@ -166,10 +182,15 @@ export function useSmartVaultCore() {
     discord: string = ''
   ) => {
     if (!address) throw new Error('Wallet not connected');
-    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
+    if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
+    if (!chain) throw new Error('Chain not detected');
+
+    // Get launch cost from network config
+    const networkConfig = NETWORK_CONFIG[chain.id as keyof typeof NETWORK_CONFIG];
+    const cost = networkConfig?.launchCost || '0.5';
 
     return writeContract({
-      address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+      address: contractAddress,
       abi: SMART_VAULT_CORE_ABI,
       functionName: 'createMemeToken',
       args: [
@@ -182,41 +203,55 @@ export function useSmartVaultCore() {
         telegram,
         discord
       ],
+      value: parseEther(cost),
     });
   };
 
-  const buyTokens = async (tokenAddress: string, ronAmount: string) => {
+  const buyTokens = async (tokenAddress: string, nativeAmount: string) => {
     if (!address) throw new Error('Wallet not connected');
-    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
+    if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
     
     return writeContract({
-      address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+      address: contractAddress,
       abi: SMART_VAULT_CORE_ABI,
       functionName: 'buyTokens',
-      args: [tokenAddress, parseEther(ronAmount)],
+      args: [tokenAddress],
+      value: parseEther(nativeAmount),
     });
   };
 
   const sellTokens = async (tokenAddress: string, tokenAmount: bigint) => {
     if (!address) throw new Error('Wallet not connected');
-    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
+    if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
     
     return writeContract({
-      address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+      address: contractAddress,
       abi: SMART_VAULT_CORE_ABI,
       functionName: 'sellTokens',
       args: [tokenAddress, tokenAmount],
     });
   };
 
-  const claimCreatorReward = async (tokenAddress: string) => {
+  const processLPFees = async (tokenAddress: string) => {
     if (!address) throw new Error('Wallet not connected');
-    if (!isContractDeployed) throw new Error('Contracts not deployed yet');
+    if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
     
     return writeContract({
-      address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+      address: contractAddress,
       abi: SMART_VAULT_CORE_ABI,
-      functionName: 'claimCreatorReward',
+      functionName: 'processLPFees',
+      args: [tokenAddress],
+    });
+  };
+
+  const claimFees = async (tokenAddress: string) => {
+    if (!address) throw new Error('Wallet not connected');
+    if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
+    
+    return writeContract({
+      address: contractAddress,
+      abi: SMART_VAULT_CORE_ABI,
+      functionName: 'claimFees',
       args: [tokenAddress],
     });
   };
@@ -224,63 +259,59 @@ export function useSmartVaultCore() {
   // Read functions
   const useTokenInfo = (tokenAddress: string) => {
     return useReadContract({
-      address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+      address: contractAddress,
       abi: SMART_VAULT_CORE_ABI,
       functionName: 'getTokenInfo',
       args: [tokenAddress],
       query: {
-        enabled: isContractDeployed && !!tokenAddress,
+        enabled: isContractDeployed && !!tokenAddress && !!contractAddress,
       },
     });
   };
 
   const useTokenProgress = (tokenAddress: string) => {
     return useReadContract({
-      address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+      address: contractAddress,
       abi: SMART_VAULT_CORE_ABI,
       functionName: 'getBondingCurveProgress',
       args: [tokenAddress],
       query: {
-        enabled: isContractDeployed && !!tokenAddress,
+        enabled: isContractDeployed && !!tokenAddress && !!contractAddress,
       },
     });
   };
 
   const useCurrentPrice = (tokenAddress: string) => {
     return useReadContract({
-      address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
+      address: contractAddress,
       abi: SMART_VAULT_CORE_ABI,
       functionName: 'getCurrentPrice',
       args: [tokenAddress],
       query: {
-        enabled: isContractDeployed && !!tokenAddress,
+        enabled: isContractDeployed && !!tokenAddress && !!contractAddress,
       },
     });
   };
 
-  const useCanClaimReward = (tokenAddress: string) => {
-    return useReadContract({
-      address: CONTRACT_ADDRESSES.SMART_VAULT_CORE,
-      abi: SMART_VAULT_CORE_ABI,
-      functionName: 'canClaimReward',
-      args: [tokenAddress, address || '0x0'],
-      query: {
-        enabled: isContractDeployed && !!address && !!tokenAddress,
-      },
-    });
+  const getLaunchCost = () => {
+    if (!chain) return '0.5';
+    const networkConfig = NETWORK_CONFIG[chain.id as keyof typeof NETWORK_CONFIG];
+    return networkConfig?.launchCost || '0.5';
   };
 
   return {
     createMemeToken,
     buyTokens,
     sellTokens,
-    claimCreatorReward,
+    processLPFees,
+    claimFees,
     useTokenInfo,
     useTokenProgress,
     useCurrentPrice,
-    useCanClaimReward,
     creatorTokens: creatorTokens || [],
     allTokens: allTokens || [],
     isContractDeployed,
+    launchCost: launchCost ? Number(launchCost) / 10**18 : null,
+    getLaunchCost,
   };
 }

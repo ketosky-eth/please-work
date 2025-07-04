@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronDown, Wallet, Map } from 'lucide-react';
+import { ChevronDown, Wallet } from 'lucide-react';
 import { SUPPORTED_CHAINS } from '../constants/chains';
 import { Chain } from '../types';
 import { useWallet } from '../hooks/useWallet';
@@ -30,8 +30,8 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'mint', label: 'NFT Mint' },
-    { id: 'launch', label: 'Launch Meme' },
+    { id: 'launch', label: 'Launch Token' },
+    { id: 'tokens', label: 'All Tokens' },
     { id: 'vault', label: 'My Vault' },
     { id: 'roadmap', label: 'Roadmap' }
   ];

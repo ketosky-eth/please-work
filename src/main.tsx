@@ -32,10 +32,34 @@ const roninTestnet = defineChain({
   testnet: true,
 });
 
+// Define Base Sepolia
+const baseSepolia = defineChain({
+  id: 84532,
+  name: 'Base Sepolia',
+  network: 'base-sepolia',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ETH',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://sepolia.base.org'],
+    },
+    public: {
+      http: ['https://sepolia.base.org'],
+    },
+  },
+  blockExplorers: {
+    default: { name: 'Base Sepolia Explorer', url: 'https://sepolia-explorer.base.org' },
+  },
+  testnet: true,
+});
+
 const config = getDefaultConfig({
-  appName: 'VYTO Protocol',
+  appName: 'VYTO Protocol - Meme Token Factory',
   projectId: 'zp1v56uxy8rdx5ypatb0ockcb9tr6a', // Your WalletConnect Cloud Project ID
-  chains: [roninTestnet],
+  chains: [roninTestnet, baseSepolia],
   ssr: false,
 });
 
