@@ -31,9 +31,11 @@ export default function LaunchMemePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [buyAmount, setBuyAmount] = useState<string>('');
 
-  // Get network configuration
+  // Get network configuration based on current chain
   const networkConfig = chainId ? NETWORK_CONFIG[chainId as keyof typeof NETWORK_CONFIG] : null;
   const launchCost = networkConfig?.launchCost || '0.5';
+  const dexName = networkConfig?.dexName || 'DEX';
+  const graduationTarget = networkConfig?.graduationTarget || '69420';
 
   const handleInputChange = (field: keyof TokenData, value: string | boolean) => {
     setTokenData(prev => ({ ...prev, [field]: value }));
@@ -204,6 +206,35 @@ export default function LaunchMemePage() {
           </div>
         )}
 
+        {/* Network Info */}
+        {isConnected && (
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-white mb-2">Network: {chainName}</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-400">Launch Cost: </span>
+                    <span className="text-blue-400 font-semibold">{launchCost} {balanceSymbol}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Graduation Target: </span>
+                    <span className="text-white font-semibold">{graduationTarget} {balanceSymbol}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">DEX: </span>
+                    <span className="text-white font-semibold">{dexName}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400">Your Balance: </span>
+                    <span className="text-green-400 font-semibold">{formatBalance(balance)} {balanceSymbol}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Token Creation Form */}
           <div className="lg:col-span-2">
@@ -319,7 +350,7 @@ export default function LaunchMemePage() {
                     <span className="font-medium">Bonding Curve Launch</span>
                   </div>
                   <p className="text-yellow-300 text-sm">
-                    Your token will launch on a bonding curve. When the graduation target is reached, your token automatically gets liquidity on {networkConfig?.dexName || 'DEX'} and you earn LP trading fees!
+                    Your token will launch on a bonding curve. When the graduation target is reached, your token automatically gets liquidity on {dexName} and you earn LP trading fees!
                   </p>
                 </div>
 
@@ -483,7 +514,11 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Graduation Target</span>
-                  <span className="text-white text-sm font-medium">{networkConfig?.graduationTarget} {balanceSymbol}</span>
+                  <span className="text-white text-sm font-medium">{graduationTarget} {balanceSymbol}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400 text-sm">DEX</span>
+                  <span className="text-white text-sm font-medium">{dexName}</span>
                 </div>
               </div>
             </div>
@@ -510,19 +545,6 @@ export default function LaunchMemePage() {
                 </>
               )}
             </button>
-
-            {/* Notice Message */}
-            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-              <div className="flex items-start space-x-3">
-                <AlertTriangle className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" />
-                <div>
-                  <div className="text-blue-400 font-medium text-sm mb-1">Notice: No Gatekeeping</div>
-                  <p className="text-blue-300 text-sm leading-relaxed">
-                    Anyone can launch tokens instantly. No limits, no wallet requirements, just pure meme magic!
-                  </p>
-                </div>
-              </div>
-            </div>
 
             {/* Optional Buy Function */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
