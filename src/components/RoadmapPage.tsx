@@ -17,7 +17,7 @@ export default function RoadmapPage() {
       title: 'Platform Foundation',
       description: 'Core infrastructure and meme token factory',
       status: 'in-progress',
-      quarter: 'Q1 2025',
+      quarter: 'Q3 2025',
       features: [
         'Multi-chain Smart Contracts (Ronin & Base)',
         'Bonding Curve Mechanics',
@@ -30,7 +30,7 @@ export default function RoadmapPage() {
       title: 'Launch & Optimization',
       description: 'Public launch and platform optimization',
       status: 'planned',
-      quarter: 'Q1 2025',
+      quarter: 'Q3 2025',
       features: [
         'Mainnet Deployment',
         'Community Building',
