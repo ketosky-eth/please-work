@@ -35,7 +35,7 @@ export default function RoadmapPage() {
         'Mainnet Deployment',
         'Community Building',
         'Bug Fixes & Improvements',
-        'Trading Volume Incentives'
+        'Phase 2 Development'
       ]
     },
     {
