@@ -19,7 +19,7 @@ export default function RoadmapPage() {
       status: 'in-progress',
       quarter: 'Q1 2025',
       features: [
-        'Multi-chain Smart Contracts (Ronin + Base)',
+        'Multi-chain Smart Contracts (Ronin & Base)',
         'Bonding Curve Mechanics',
         'Token Factory Implementation',
         'Website & UI Development'
