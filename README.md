@@ -164,7 +164,7 @@ Update these after deployment:
 - **Blockchain**: Solidity, Hardhat, OpenZeppelin
 - **Web3**: Wagmi, RainbowKit, Viem
 - **Storage**: IPFS (Pinata)
-- **Networks**: Ronin Testnet, Base Sepolia
+- **Networks**: Saigon Testnet, Base Sepolia
 
 ## Configuration
 
