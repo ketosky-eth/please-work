@@ -168,7 +168,7 @@ export default function MyVaultPage() {
               <span className="text-gray-400 text-sm">Total Fees Earned</span>
             </div>
             <div className="text-2xl font-bold text-white">
-              {userAnalytics.isLoading ? '...' : formatCurrency(userAnalytics.totalFeesEarned, 'RON')}
+              {userAnalytics.isLoading ? '...' : formatCurrency(userAnalytics.totalFeesEarned, 'USD')}
             </div>
           </div>
           
