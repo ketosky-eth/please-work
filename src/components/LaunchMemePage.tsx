@@ -234,7 +234,7 @@ export default function LaunchMemePage() {
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold text-white mb-2">
-                  Network: {networkConfig?.symbol === 'RON' ? 'Ronin Testnet' : 'Base Sepolia'}
+                  Network: {networkConfig?.symbol === 'RON' ? 'Saigon Testnet' : 'Base Sepolia'}
                 </h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
