@@ -21,7 +21,7 @@ export const PROTOCOL_ADDRESS = '0x1A4edf1D0F2a2e7dbe86479A7a95f86b87205802';
 export const NETWORK_CONFIG = {
   // Ronin Network
   2021: {
-    graduationTarget: '69420', // 69,420 RON
+    graduationTarget: '69,420', // 69,420 RON
     startingPrice: '0.0001', // 0.0001 RON
     protocolReward: '250', // 250 RON
     launchCost: '0.5', // 0.5 RON
