@@ -92,7 +92,7 @@ export default function LaunchMemePage() {
     }
 
     if (!isSupported) {
-      alert('Please switch to a supported network (Ronin Testnet or Base Sepolia) to launch tokens.');
+      alert('Please switch to a supported network (Saigon Testnet or Base Sepolia) to launch tokens.');
       return;
     }
 
