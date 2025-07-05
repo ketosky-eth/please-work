@@ -364,7 +364,7 @@ export default function MyVaultPage() {
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">Renounced LP Vaults</h3>
               <p className="text-gray-300 text-sm">
-                Lock LP tokens permanently while continuing to earn rewards with 99.7% going to you
+                Lock LP tokens permanently while continuing to earn rewards forever
               </p>
             </div>
             <div className="text-center">
