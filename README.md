@@ -187,7 +187,7 @@ BASESCAN_API_KEY=your_basescan_api_key
 ### Network Configuration
 
 The app supports multiple networks:
-- **Ronin Testnet**: Chain ID 2021
+- **Saigon Testnet**: Chain ID 2021
 - **Base Sepolia**: Chain ID 84532
 
 ## Security Features
