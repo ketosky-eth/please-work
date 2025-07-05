@@ -392,7 +392,7 @@ export default function MyVaultPage() {
                 />
               </div>
               <span className="text-gray-400 text-sm">
-                © VYTO Protocol
+                © VYTO Protocol 2025
               </span>
             </div>
 
