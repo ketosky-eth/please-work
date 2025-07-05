@@ -19,7 +19,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 31337,
     },
-    roninTestnet: {
+    saigon: {
       url: "https://site1.moralis-nodes.com/ronin-testnet/22d6b97153ed4427b60914f349b2336c",
       accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
       chainId: 2021,
@@ -34,12 +34,12 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      roninTestnet: "no-api-key-needed",
+      saigon: "no-api-key-needed",
       baseSepolia: process.env.BASESCAN_API_KEY || "",
     },
     customChains: [
       {
-        network: "roninTestnet",
+        network: "saigon",
         chainId: 2021,
         urls: {
           apiURL: "https://saigon-explorer.roninchain.com/api",
