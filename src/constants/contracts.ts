@@ -1,6 +1,6 @@
 // Contract addresses - Update these after deployment
 export const CONTRACT_ADDRESSES = {
-  // Ronin Testnet
+  // Saigon Testnet
   RONIN_TESTNET: {
     SMART_VAULT_CORE: '0x0000000000000000000000000000000000000000' as `0x${string}`,
     DEX_ROUTER: '0x7D02c116b98d0965ba7B642ace0183ad8b8D2196', // Katana Router
