@@ -392,7 +392,7 @@ export default function MyVaultPage() {
                 />
               </div>
               <span className="text-gray-400 text-sm">
-                © VYTO Protocol - Powered by the Ronin Network
+                © VYTO Protocol
               </span>
             </div>
 
