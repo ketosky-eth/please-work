@@ -11,8 +11,8 @@ import '@rainbow-me/rainbowkit/styles.css';
 // Define Saigon Testnet
 const saigon = defineChain({
   id: 2021,
-  name: 'Ronin Testnet',
-  network: 'ronin-testnet',
+  name: 'Saigon Testnet',
+  network: 'saigon-testnet',
   nativeCurrency: {
     decimals: 18,
     name: 'RON',
