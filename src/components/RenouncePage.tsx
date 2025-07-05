@@ -384,7 +384,7 @@ export default function RenouncePage() {
                 />
               </div>
               <span className="text-gray-400 text-sm">
-                © VYTO Protocol - Powered by the Ronin Network
+                © VYTO Protocol 2025 - All Rights Reserved
               </span>
             </div>
 
