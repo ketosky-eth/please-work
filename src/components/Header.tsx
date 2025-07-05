@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { ChevronDown, Wallet, Network } from 'lucide-react';
+import { ChevronDown, Wallet, Network, AlertTriangle } from 'lucide-react';
 import { SUPPORTED_CHAINS } from '../constants/chains';
 import { Chain } from '../types';
 import { useWallet } from '../hooks/useWallet';
+import { useNetworkDetection } from '../hooks/useNetworkDetection';
+import NetworkStatusIndicator from './NetworkStatusIndicator';
 
 interface HeaderProps {
   currentPage: string;
@@ -10,10 +12,18 @@ interface HeaderProps {
 }
 
 export default function Header({ currentPage, onPageChange }: HeaderProps) {
-  const [selectedChain, setSelectedChain] = useState<Chain>(SUPPORTED_CHAINS[0]);
   const [isChainDropdownOpen, setIsChainDropdownOpen] = useState(false);
   
-  const { isConnected, address, connect, disconnect, chainName, chainId } = useWallet();
+  const { address, connect, disconnect } = useWallet();
+  const { 
+    isConnected, 
+    isSupported, 
+    currentChain, 
+    switchToNetwork, 
+    getServiceCompatibility 
+  } = useNetworkDetection();
+
+  const compatibility = getServiceCompatibility();
 
   const handleConnectWallet = () => {
     if (isConnected) {
@@ -23,30 +33,23 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
     }
   };
 
-  const handleChainSelect = (chain: Chain) => {
-    setSelectedChain(chain);
+  const handleChainSelect = async (chain: Chain) => {
     setIsChainDropdownOpen(false);
+    try {
+      await switchToNetwork(chain.id);
+    } catch (error) {
+      console.error('Failed to switch network:', error);
+    }
   };
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'launch', label: 'Launch Token' },
+    { id: 'launch', label: 'Launch Token', disabled: !compatibility.memeTokenFactory },
     { id: 'vault', label: 'My Vault' },
-    { id: 'renounce', label: 'Renounce LPs' },
-    { id: 'claim', label: 'Claim Rewards' },
+    { id: 'renounce', label: 'Renounce LPs', disabled: !compatibility.lpVaults },
+    { id: 'claim', label: 'Claim Rewards', disabled: !compatibility.lpVaults },
     { id: 'roadmap', label: 'Roadmap' }
   ];
-
-  // Get current chain info
-  const getCurrentChain = () => {
-    if (isConnected && chainId) {
-      const chain = SUPPORTED_CHAINS.find(c => parseInt(c.id) === chainId);
-      return chain || selectedChain;
-    }
-    return selectedChain;
-  };
-
-  const currentChain = getCurrentChain();
 
   const getChainColor = (chainId: string) => {
     switch (chainId) {
@@ -77,38 +80,63 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
             {navItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => onPageChange(item.id)}
-                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                onClick={() => !item.disabled && onPageChange(item.id)}
+                disabled={item.disabled}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors relative ${
                   currentPage === item.id
                     ? 'text-yellow-400 bg-yellow-400/10'
+                    : item.disabled
+                    ? 'text-gray-500 cursor-not-allowed'
                     : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
                 }`}
               >
                 {item.label}
+                {item.disabled && isConnected && (
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                )}
               </button>
             ))}
           </nav>
 
           {/* Chain Selector & Wallet */}
           <div className="flex items-center space-x-3">
+            {/* Network Status */}
+            <NetworkStatusIndicator showDetails={false} />
+
             {/* Chain Selector */}
             <div className="relative">
               <button
                 onClick={() => setIsChainDropdownOpen(!isChainDropdownOpen)}
-                className="flex items-center space-x-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg border border-gray-700 transition-colors group"
+                className={`flex items-center space-x-2 px-3 py-2 rounded-lg border transition-colors group ${
+                  isSupported 
+                    ? 'bg-gray-800 hover:bg-gray-700 border-gray-700' 
+                    : 'bg-red-500/10 hover:bg-red-500/20 border-red-500/30'
+                }`}
               >
-                <div className={`w-5 h-5 rounded-full bg-gradient-to-r ${getChainColor(currentChain.id)}`}></div>
+                <div className={`w-5 h-5 rounded-full bg-gradient-to-r ${
+                  currentChain ? getChainColor(currentChain.id) : 'from-gray-500 to-gray-600'
+                }`}></div>
                 <div className="hidden sm:flex flex-col items-start">
-                  <span className="text-sm text-white font-medium">{currentChain.name}</span>
+                  <span className={`text-sm font-medium ${
+                    isSupported ? 'text-white' : 'text-red-400'
+                  }`}>
+                    {currentChain?.name || 'Unknown'}
+                  </span>
                   {isConnected && (
-                    <span className="text-xs text-gray-400">Connected</span>
+                    <span className={`text-xs ${
+                      isSupported ? 'text-gray-400' : 'text-red-300'
+                    }`}>
+                      {isSupported ? 'Supported' : 'Unsupported'}
+                    </span>
                   )}
                 </div>
-                <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                <ChevronDown className={`w-4 h-4 transition-colors ${
+                  isSupported ? 'text-gray-400 group-hover:text-white' : 'text-red-400'
+                }`} />
               </button>
 
               {isChainDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-10">
+                <div className="absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-10">
                   <div className="p-2">
                     <div className="text-xs text-gray-400 px-3 py-2 font-medium">Available Networks</div>
                     {SUPPORTED_CHAINS.map((chain) => (
@@ -116,15 +144,17 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
                         key={chain.id}
                         onClick={() => handleChainSelect(chain)}
                         className={`w-full flex items-center space-x-3 px-3 py-3 hover:bg-gray-700 rounded-lg transition-colors ${
-                          currentChain.id === chain.id ? 'bg-gray-700' : ''
+                          currentChain?.id === chain.id ? 'bg-gray-700' : ''
                         }`}
                       >
                         <div className={`w-5 h-5 rounded-full bg-gradient-to-r ${getChainColor(chain.id)}`}></div>
                         <div className="text-left flex-1">
                           <div className="text-white text-sm font-medium">{chain.name}</div>
-                          <div className="text-gray-400 text-xs">{chain.symbol} • {chain.id === '2021' ? 'Testnet' : 'Testnet'}</div>
+                          <div className="text-gray-400 text-xs">
+                            {chain.symbol} • Testnet • Meme Tokens + LP Vaults
+                          </div>
                         </div>
-                        {isConnected && chainId === parseInt(chain.id) && (
+                        {isConnected && currentChain?.id === chain.id && (
                           <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                         )}
                       </button>
@@ -132,7 +162,15 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
                   </div>
                   <div className="border-t border-gray-700 p-2">
                     <div className="text-xs text-gray-400 px-3 py-1">
-                      Switch networks in your wallet to change chains
+                      {isConnected && !isSupported && (
+                        <div className="flex items-center space-x-1 text-red-400">
+                          <AlertTriangle className="w-3 h-3" />
+                          <span>Current network not supported</span>
+                        </div>
+                      )}
+                      {!isConnected && (
+                        <span>Connect wallet to switch networks</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -143,8 +181,10 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
             <button
               onClick={handleConnectWallet}
               className={`flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all transform hover:scale-105 ${
-                isConnected
+                isConnected && isSupported
                   ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : isConnected && !isSupported
+                  ? 'bg-red-600 hover:bg-red-700 text-white'
                   : 'bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white'
               }`}
             >
@@ -165,14 +205,20 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
             {navItems.map((item) => (
               <button
                 key={item.id}
-                onClick={() => onPageChange(item.id)}
-                className={`px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors ${
+                onClick={() => !item.disabled && onPageChange(item.id)}
+                disabled={item.disabled}
+                className={`px-3 py-2 rounded-md text-sm font-medium whitespace-nowrap transition-colors relative ${
                   currentPage === item.id
                     ? 'text-yellow-400 bg-yellow-400/10'
+                    : item.disabled
+                    ? 'text-gray-500 cursor-not-allowed'
                     : 'text-gray-300 hover:text-white hover:bg-gray-700/50'
                 }`}
               >
                 {item.label}
+                {item.disabled && isConnected && (
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+                )}
               </button>
             ))}
           </div>

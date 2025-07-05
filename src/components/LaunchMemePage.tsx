@@ -3,12 +3,14 @@ import { Upload, Rocket, Globe, MessageCircle, DollarSign, Zap, TrendingUp, Arro
 import { TokenData } from '../types';
 import { useWallet } from '../hooks/useWallet';
 import { useSmartVaultCore } from '../hooks/useSmartVaultCore';
+import { useNetworkDetection } from '../hooks/useNetworkDetection';
 import { ipfsService } from '../utils/ipfs';
-import { NETWORK_CONFIG } from '../constants/contracts';
+import NetworkCompatibilityBanner from './NetworkCompatibilityBanner';
 
 export default function LaunchMemePage() {
-  const { isConnected, address, chainName, balance, balanceSymbol, connect, chainId } = useWallet();
-  const { createMemeToken, isContractDeployed, getLaunchCost } = useSmartVaultCore();
+  const { isConnected, address, connect } = useWallet();
+  const { createMemeToken } = useSmartVaultCore();
+  const { isSupported, networkConfig, getServiceCompatibility } = useNetworkDetection();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [tokenData, setTokenData] = useState<TokenData>({
@@ -31,11 +33,13 @@ export default function LaunchMemePage() {
   const [isLoading, setIsLoading] = useState(false);
   const [buyAmount, setBuyAmount] = useState<string>('');
 
-  // Get network configuration based on current chain
-  const networkConfig = chainId ? NETWORK_CONFIG[chainId as keyof typeof NETWORK_CONFIG] : null;
+  const compatibility = getServiceCompatibility();
+
+  // Get network configuration with fallbacks
   const launchCost = networkConfig?.launchCost || '0.5';
   const dexName = networkConfig?.dexName || 'DEX';
   const graduationTarget = networkConfig?.graduationTarget || '69420';
+  const symbol = networkConfig?.symbol || 'RON';
 
   const handleInputChange = (field: keyof TokenData, value: string | boolean) => {
     setTokenData(prev => ({ ...prev, [field]: value }));
@@ -84,6 +88,16 @@ export default function LaunchMemePage() {
   const handleLaunch = async () => {
     if (!isConnected) {
       connect?.();
+      return;
+    }
+
+    if (!isSupported) {
+      alert('Please switch to a supported network (Ronin Testnet or Base Sepolia) to launch tokens.');
+      return;
+    }
+
+    if (!compatibility.memeTokenFactory) {
+      alert('Meme token factory is not available on the current network.');
       return;
     }
 
@@ -152,8 +166,13 @@ export default function LaunchMemePage() {
       return;
     }
 
+    if (!isSupported) {
+      alert('Please switch to a supported network to buy tokens.');
+      return;
+    }
+
     // This would integrate with the bonding curve buy function
-    alert(`Buy function would purchase ${buyAmount} ${balanceSymbol} worth of tokens`);
+    alert(`Buy function would purchase ${buyAmount} ${symbol} worth of tokens`);
   };
 
   const socialLinks = [
@@ -187,6 +206,9 @@ export default function LaunchMemePage() {
           </p>
         </div>
 
+        {/* Network Compatibility Banner */}
+        <NetworkCompatibilityBanner />
+
         {/* Wallet Connection Warning */}
         {!isConnected && (
           <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-6 mb-8">
@@ -207,27 +229,29 @@ export default function LaunchMemePage() {
         )}
 
         {/* Network Info */}
-        {isConnected && (
+        {isConnected && isSupported && (
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-white mb-2">Network: {chainName}</h3>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Network: {networkConfig?.symbol === 'RON' ? 'Ronin Testnet' : 'Base Sepolia'}
+                </h3>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-400">Launch Cost: </span>
-                    <span className="text-blue-400 font-semibold">{launchCost} {balanceSymbol}</span>
+                    <span className="text-blue-400 font-semibold">{launchCost} {symbol}</span>
                   </div>
                   <div>
                     <span className="text-gray-400">Graduation Target: </span>
-                    <span className="text-white font-semibold">{graduationTarget} {balanceSymbol}</span>
+                    <span className="text-white font-semibold">{graduationTarget} {symbol}</span>
                   </div>
                   <div>
                     <span className="text-gray-400">DEX: </span>
                     <span className="text-white font-semibold">{dexName}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400">Your Balance: </span>
-                    <span className="text-green-400 font-semibold">{formatBalance(balance)} {balanceSymbol}</span>
+                    <span className="text-gray-400">Status: </span>
+                    <span className="text-green-400 font-semibold">Ready to Launch</span>
                   </div>
                 </div>
               </div>
@@ -256,7 +280,8 @@ export default function LaunchMemePage() {
                       value={tokenData.name}
                       onChange={(e) => handleInputChange('name', e.target.value)}
                       placeholder="My Awesome Token"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      disabled={!compatibility.memeTokenFactory}
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                   <div>
@@ -268,7 +293,8 @@ export default function LaunchMemePage() {
                       value={tokenData.symbol}
                       onChange={(e) => handleInputChange('symbol', e.target.value.toUpperCase())}
                       placeholder="MAT"
-                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                      disabled={!compatibility.memeTokenFactory}
+                      className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -283,7 +309,8 @@ export default function LaunchMemePage() {
                     onChange={(e) => handleInputChange('description', e.target.value)}
                     placeholder="The most awesome meme token ever created! 🚀"
                     rows={4}
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none"
+                    disabled={!compatibility.memeTokenFactory}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
 
@@ -311,7 +338,8 @@ export default function LaunchMemePage() {
                         </div>
                         <button
                           onClick={removeLogo}
-                          className="p-2 text-gray-400 hover:text-red-400 transition-colors"
+                          disabled={!compatibility.memeTokenFactory}
+                          className="p-2 text-gray-400 hover:text-red-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           <X className="w-5 h-5" />
                         </button>
@@ -319,15 +347,20 @@ export default function LaunchMemePage() {
                     </div>
                   ) : (
                     <div 
-                      onClick={handleFileSelect}
-                      className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-yellow-500 transition-colors cursor-pointer"
+                      onClick={compatibility.memeTokenFactory ? handleFileSelect : undefined}
+                      className={`border-2 border-dashed border-gray-600 rounded-lg p-6 text-center transition-colors ${
+                        compatibility.memeTokenFactory 
+                          ? 'hover:border-yellow-500 cursor-pointer' 
+                          : 'opacity-50 cursor-not-allowed'
+                      }`}
                     >
                       <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                       <p className="text-gray-400 mb-2">Upload your meme logo</p>
                       <p className="text-sm text-gray-500">PNG, JPG, GIF, SVG up to 5MB</p>
                       <button 
                         type="button"
-                        className="mt-3 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors"
+                        disabled={!compatibility.memeTokenFactory}
+                        className="mt-3 bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Choose File
                       </button>
@@ -369,7 +402,8 @@ export default function LaunchMemePage() {
                           value={tokenData[social.key as keyof TokenData] as string}
                           onChange={(e) => handleInputChange(social.key as keyof TokenData, e.target.value)}
                           placeholder={social.placeholder}
-                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
+                          disabled={!compatibility.memeTokenFactory}
+                          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                         />
                       </div>
                     ))}
@@ -381,26 +415,30 @@ export default function LaunchMemePage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Wallet Status */}
-            {isConnected && (
-              <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">Wallet Status</h3>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Connected</span>
-                    <span className="text-green-400">✓ {address?.slice(0, 6)}...{address?.slice(-4)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Network</span>
-                    <span className="text-white">{chainName}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Balance</span>
-                    <span className="text-white">{formatBalance(balance)} {balanceSymbol}</span>
-                  </div>
+            {/* Network Status */}
+            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-white mb-4">Network Status</h3>
+              <div className="space-y-3">
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Connected</span>
+                  <span className={`${isConnected ? 'text-green-400' : 'text-red-400'}`}>
+                    {isConnected ? '✓ Connected' : '✗ Not Connected'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Network</span>
+                  <span className={`${isSupported ? 'text-green-400' : 'text-red-400'}`}>
+                    {isSupported ? '✓ Supported' : '✗ Unsupported'}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Services</span>
+                  <span className={`${compatibility.memeTokenFactory ? 'text-green-400' : 'text-red-400'}`}>
+                    {compatibility.memeTokenFactory ? '✓ Available' : '✗ Unavailable'}
+                  </span>
                 </div>
               </div>
-            )}
+            </div>
 
             {/* Token Preview */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
@@ -485,8 +523,12 @@ export default function LaunchMemePage() {
                   <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
                     Bonding Curve
                   </span>
-                  <span className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded">
-                    {chainName}
+                  <span className={`px-2 py-1 rounded ${
+                    isSupported 
+                      ? 'bg-green-500/20 text-green-400' 
+                      : 'bg-red-500/20 text-red-400'
+                  }`}>
+                    {networkConfig?.symbol === 'RON' ? 'Ronin' : 'Base'}
                   </span>
                 </div>
               </div>
@@ -510,11 +552,11 @@ export default function LaunchMemePage() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Launch Cost</span>
-                  <span className="text-green-400 text-sm font-medium">{launchCost} {balanceSymbol}</span>
+                  <span className="text-green-400 text-sm font-medium">{launchCost} {symbol}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">Graduation Target</span>
-                  <span className="text-white text-sm font-medium">{graduationTarget} {balanceSymbol}</span>
+                  <span className="text-white text-sm font-medium">{graduationTarget} {symbol}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-gray-400 text-sm">DEX</span>
@@ -526,7 +568,7 @@ export default function LaunchMemePage() {
             {/* Launch Button */}
             <button
               onClick={handleLaunch}
-              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected}
+              disabled={!tokenData.name || !tokenData.symbol || isLoading || !isConnected || !compatibility.memeTokenFactory}
               className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-4 rounded-xl font-semibold transition-all transform hover:scale-105 disabled:transform-none flex items-center justify-center space-x-2"
             >
               {isLoading ? (
@@ -537,6 +579,10 @@ export default function LaunchMemePage() {
               ) : !isConnected ? (
                 <>
                   <span>Connect Wallet to Launch</span>
+                </>
+              ) : !compatibility.memeTokenFactory ? (
+                <>
+                  <span>Switch to Supported Network</span>
                 </>
               ) : (
                 <>
@@ -555,7 +601,7 @@ export default function LaunchMemePage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
-                    {balanceSymbol} Amount
+                    {symbol} Amount
                   </label>
                   <input
                     type="number"
@@ -564,12 +610,13 @@ export default function LaunchMemePage() {
                     placeholder="0.0"
                     min="0"
                     step="0.001"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    disabled={!compatibility.memeTokenFactory}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <button
                   onClick={handleBuyTokens}
-                  disabled={!buyAmount || parseFloat(buyAmount) <= 0 || !isConnected}
+                  disabled={!buyAmount || parseFloat(buyAmount) <= 0 || !isConnected || !compatibility.memeTokenFactory}
                   className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-all flex items-center justify-center space-x-2"
                 >
                   <ShoppingCart className="w-4 h-4" />

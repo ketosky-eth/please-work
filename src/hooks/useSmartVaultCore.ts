@@ -1,6 +1,7 @@
-import { useAccount, useReadContract, useWriteContract } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useChainId } from 'wagmi';
 import { parseEther } from 'viem';
 import { CONTRACT_ADDRESSES, NETWORK_CONFIG } from '../constants/contracts';
+import { useNetworkDetection } from './useNetworkDetection';
 
 // SmartVaultCore contract ABI (simplified)
 const SMART_VAULT_CORE_ABI = [
@@ -119,16 +120,18 @@ const SMART_VAULT_CORE_ABI = [
 ] as const;
 
 export function useSmartVaultCore() {
-  const { address, chain } = useAccount();
+  const { address } = useAccount();
+  const chainId = useChainId();
   const { writeContract } = useWriteContract();
+  const { isSupported, networkConfig } = useNetworkDetection();
 
   // Get contract address based on current chain
   const getContractAddress = () => {
-    if (!chain) return null;
+    if (!chainId || !isSupported) return null;
     
-    if (chain.id === 2021) {
+    if (chainId === 2021) {
       return CONTRACT_ADDRESSES.RONIN_TESTNET.SMART_VAULT_CORE;
-    } else if (chain.id === 84532) {
+    } else if (chainId === 84532) {
       return CONTRACT_ADDRESSES.BASE_SEPOLIA.SMART_VAULT_CORE;
     }
     
@@ -137,8 +140,10 @@ export function useSmartVaultCore() {
 
   const contractAddress = getContractAddress();
   
-  // Check if contracts are deployed (not zero address)
-  const isContractDeployed = contractAddress !== '0x0000000000000000000000000000000000000000' && contractAddress !== null;
+  // Check if contracts are deployed (not zero address) and network is supported
+  const isContractDeployed = isSupported && 
+    contractAddress !== '0x0000000000000000000000000000000000000000' && 
+    contractAddress !== null;
 
   // Get launch cost
   const { data: launchCost } = useReadContract({
@@ -182,12 +187,11 @@ export function useSmartVaultCore() {
     discord: string = ''
   ) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isSupported) throw new Error('Unsupported network');
     if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
-    if (!chain) throw new Error('Chain not detected');
+    if (!networkConfig) throw new Error('Network configuration not found');
 
-    // Get launch cost from network config
-    const networkConfig = NETWORK_CONFIG[chain.id as keyof typeof NETWORK_CONFIG];
-    const cost = networkConfig?.launchCost || '0.5';
+    const cost = networkConfig.launchCost;
 
     return writeContract({
       address: contractAddress,
@@ -209,6 +213,7 @@ export function useSmartVaultCore() {
 
   const buyTokens = async (tokenAddress: string, nativeAmount: string) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isSupported) throw new Error('Unsupported network');
     if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
     
     return writeContract({
@@ -222,6 +227,7 @@ export function useSmartVaultCore() {
 
   const sellTokens = async (tokenAddress: string, tokenAmount: bigint) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isSupported) throw new Error('Unsupported network');
     if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
     
     return writeContract({
@@ -234,6 +240,7 @@ export function useSmartVaultCore() {
 
   const processLPFees = async (tokenAddress: string) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isSupported) throw new Error('Unsupported network');
     if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
     
     return writeContract({
@@ -246,6 +253,7 @@ export function useSmartVaultCore() {
 
   const claimFees = async (tokenAddress: string) => {
     if (!address) throw new Error('Wallet not connected');
+    if (!isSupported) throw new Error('Unsupported network');
     if (!isContractDeployed || !contractAddress) throw new Error('Contracts not deployed yet');
     
     return writeContract({
@@ -294,9 +302,8 @@ export function useSmartVaultCore() {
   };
 
   const getLaunchCost = () => {
-    if (!chain) return '0.5';
-    const networkConfig = NETWORK_CONFIG[chain.id as keyof typeof NETWORK_CONFIG];
-    return networkConfig?.launchCost || '0.5';
+    if (!networkConfig) return '0.5';
+    return networkConfig.launchCost;
   };
 
   return {
@@ -311,6 +318,7 @@ export function useSmartVaultCore() {
     creatorTokens: creatorTokens || [],
     allTokens: allTokens || [],
     isContractDeployed,
+    isSupported,
     launchCost: launchCost ? Number(launchCost) / 10**18 : null,
     getLaunchCost,
   };

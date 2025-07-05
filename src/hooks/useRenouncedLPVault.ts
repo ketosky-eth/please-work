@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useWallet } from './useWallet';
+import { useNetworkDetection } from './useNetworkDetection';
 
 export interface UseRenouncedLPVaultReturn {
   createVault: (lpToken: string) => Promise<string>;
@@ -8,15 +9,21 @@ export interface UseRenouncedLPVaultReturn {
   autoClaim: (vaultAddress: string, rewardToken: string, amount: string) => Promise<void>;
   getUserVaults: () => Promise<any[]>;
   isLoading: boolean;
+  isSupported: boolean;
 }
 
 export function useRenouncedLPVault(): UseRenouncedLPVaultReturn {
   const [isLoading, setIsLoading] = useState(false);
-  const { address, provider } = useWallet();
+  const { address } = useWallet();
+  const { isSupported, networkConfig } = useNetworkDetection();
 
   const createVault = async (lpToken: string): Promise<string> => {
-    if (!address || !provider) {
+    if (!address) {
       throw new Error('Wallet not connected');
+    }
+
+    if (!isSupported) {
+      throw new Error('Unsupported network. Please switch to Ronin Testnet or Base Sepolia.');
     }
 
     setIsLoading(true);
@@ -40,8 +47,12 @@ export function useRenouncedLPVault(): UseRenouncedLPVaultReturn {
   };
 
   const depositLP = async (vaultAddress: string, amount: string): Promise<void> => {
-    if (!address || !provider) {
+    if (!address) {
       throw new Error('Wallet not connected');
+    }
+
+    if (!isSupported) {
+      throw new Error('Unsupported network');
     }
 
     setIsLoading(true);
@@ -61,8 +72,12 @@ export function useRenouncedLPVault(): UseRenouncedLPVaultReturn {
   };
 
   const manualClaim = async (vaultAddress: string, rewardToken: string, amount: string): Promise<void> => {
-    if (!address || !provider) {
+    if (!address) {
       throw new Error('Wallet not connected');
+    }
+
+    if (!isSupported) {
+      throw new Error('Unsupported network');
     }
 
     setIsLoading(true);
@@ -82,8 +97,12 @@ export function useRenouncedLPVault(): UseRenouncedLPVaultReturn {
   };
 
   const autoClaim = async (vaultAddress: string, rewardToken: string, amount: string): Promise<void> => {
-    if (!address || !provider) {
+    if (!address) {
       throw new Error('Wallet not connected');
+    }
+
+    if (!isSupported) {
+      throw new Error('Unsupported network');
     }
 
     // Check if amount meets auto-claim threshold ($250)
@@ -109,7 +128,7 @@ export function useRenouncedLPVault(): UseRenouncedLPVaultReturn {
   };
 
   const getUserVaults = async (): Promise<any[]> => {
-    if (!address) {
+    if (!address || !isSupported) {
       return [];
     }
 
@@ -129,6 +148,7 @@ export function useRenouncedLPVault(): UseRenouncedLPVaultReturn {
     manualClaim,
     autoClaim,
     getUserVaults,
-    isLoading
+    isLoading,
+    isSupported
   };
 }
