@@ -240,7 +240,7 @@ export default function RoadmapPage() {
                 />
               </div>
               <span className="text-gray-400 text-sm">
-                © VYTO Protocol 2025 - All Rights Reserved
+                © VYTO Protocol 2025 - All Rights Reserved.
               </span>
             </div>
 
