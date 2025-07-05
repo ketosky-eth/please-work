@@ -116,7 +116,7 @@ npm run verify:base <contract-address>
 
 Update these after deployment:
 
-**Ronin Testnet:**
+**Saigon Testnet:**
 - SmartVaultCore: `TBD`
 - Katana Router: `0x7D02c116b98d0965ba7B642ace0183ad8b8D2196`
 
