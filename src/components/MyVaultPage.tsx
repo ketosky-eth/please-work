@@ -373,7 +373,7 @@ export default function MyVaultPage() {
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">No Rug Pulls</h3>
               <p className="text-gray-300 text-sm">
-                LP tokens are automatically burned, preventing rug pulls and ensuring fair trading
+                LP Tokens are automatically locked to an immutable unique vault, preventing rug pulls and ensuring fair trading
               </p>
             </div>
           </div>
