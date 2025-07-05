@@ -1,7 +1,7 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  console.log("Deploying SmartVaultCore to Ronin Testnet...");
+  console.log("Deploying SmartVaultCore to Saigon Testnet...");
 
   // Get the contract factory
   const SmartVaultCore = await ethers.getContractFactory("SmartVaultCore");
