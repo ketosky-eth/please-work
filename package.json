@@ -11,7 +11,7 @@
     "compile": "npx hardhat compile",
     "deploy:ronin": "npx hardhat run scripts/deploy-saigon --network roninTestnet",
     "deploy:base": "npx hardhat run scripts/deploy-base.ts --network baseSepolia",
-    "verify:ronin": "npx hardhat verify --network roninTestnet",
+    "verify:ronin": "npx hardhat verify --network saigon",
     "verify:base": "npx hardhat verify --network baseSepolia",
     "test": "npx hardhat test"
   },
