@@ -415,30 +415,6 @@ export default function LaunchMemePage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Network Status */}
-            <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4">Network Status</h3>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Connected</span>
-                  <span className={`${isConnected ? 'text-green-400' : 'text-red-400'}`}>
-                    {isConnected ? '✓ Connected' : '✗ Not Connected'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Network</span>
-                  <span className={`${isSupported ? 'text-green-400' : 'text-red-400'}`}>
-                    {isSupported ? '✓ Supported' : '✗ Unsupported'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400">Services</span>
-                  <span className={`${compatibility.memeTokenFactory ? 'text-green-400' : 'text-red-400'}`}>
-                    {compatibility.memeTokenFactory ? '✓ Available' : '✗ Unavailable'}
-                  </span>
-                </div>
-              </div>
-            </div>
 
             {/* Token Preview */}
             <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
