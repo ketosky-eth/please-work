@@ -45,7 +45,7 @@ export default function NetworkCompatibilityBanner() {
             <div className="flex items-center space-x-4 text-xs text-red-300">
               <span>Supported networks:</span>
               <div className="flex space-x-2">
-                <span className="bg-red-500/20 px-2 py-1 rounded">Ronin Testnet</span>
+                <span className="bg-red-500/20 px-2 py-1 rounded">Saigon Testnet</span>
                 <span className="bg-red-500/20 px-2 py-1 rounded">Base Sepolia</span>
               </div>
             </div>
