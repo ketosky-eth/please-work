@@ -244,7 +244,7 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-sm font-semibold text-white mb-1">Keep Earning</h3>
                 <p className="text-gray-300 text-xs">
-                  99.7% of rewards
+                  Manual & Auto Claiming
                 </p>
               </div>
               <div className="text-center">
