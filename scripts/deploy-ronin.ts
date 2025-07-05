@@ -6,7 +6,7 @@ async function main() {
   // Get the contract factory
   const SmartVaultCore = await ethers.getContractFactory("SmartVaultCore");
 
-  // Ronin Testnet configuration
+  // Saigon Testnet configuration
   const KATANA_ROUTER = "0x7D02c116b98d0965ba7B642ace0183ad8b8D2196"; // Katana Router on Ronin
   const TREASURY_WALLET = "0x1A4edf1D0F2a2e7dbe86479A7a95f86b87205802"; // Protocol treasury
 
