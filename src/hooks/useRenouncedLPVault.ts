@@ -23,7 +23,7 @@ export function useRenouncedLPVault(): UseRenouncedLPVaultReturn {
     }
 
     if (!isSupported) {
-      throw new Error('Unsupported network. Please switch to Ronin Testnet or Base Sepolia.');
+      throw new Error('Unsupported network. Please switch to Saigon Testnet or Base Sepolia.');
     }
 
     setIsLoading(true);
