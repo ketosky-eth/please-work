@@ -270,7 +270,7 @@ export default function RenouncePage() {
                   </div>
                   <p className="text-red-300 text-sm">
                     Once renounced, your LP tokens cannot be withdrawn. You will continue to earn rewards, 
-                    but the tokens are permanently locked in the vault. VYTO will not be able to reverse this irreversible action.
+                    but the tokens are permanently locked in the vault. <em>VYTO will not be able to reverse this irreversible action.</em>
                   </p>
                 </div>
 
