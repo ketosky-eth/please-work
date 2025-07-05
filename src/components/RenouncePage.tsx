@@ -313,10 +313,6 @@ export default function RenouncePage() {
                   <span className="text-gray-400 text-sm">Protocol Fee</span>
                   <span className="text-green-400 text-sm font-medium">0.3%</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-sm">Your Share</span>
-                  <span className="text-green-400 text-sm font-medium">99.7%</span>
-                </div>
               </div>
             </div>
 
