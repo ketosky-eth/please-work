@@ -284,7 +284,7 @@ export default function RenouncePage() {
                     <li>• Continue earning LP trading fees</li>
                     <li>• Auto-claim when rewards exceed $250</li>
                     <li>• Manual claim available anytime</li>
-                    <li>• 0.3% protocol fee</li>
+                    <li>• 0.3% Protocol Fee Only</li>
                   </ul>
                 </div>
               </div>
