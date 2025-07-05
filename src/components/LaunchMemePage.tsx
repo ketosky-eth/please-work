@@ -24,7 +24,7 @@ export default function LaunchMemePage() {
     discord: '',
     initialBuy: false,
     initialBuyAmount: '',
-    selectedChain: 'Ronin Testnet',
+    selectedChain: 'Saigon Testnet',
     selectedDEX: 'Katana'
   });
 
