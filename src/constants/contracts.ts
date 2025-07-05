@@ -4,11 +4,15 @@ export const CONTRACT_ADDRESSES = {
   RONIN_TESTNET: {
     SMART_VAULT_CORE: '0x0000000000000000000000000000000000000000' as `0x${string}`,
     DEX_ROUTER: '0x7D02c116b98d0965ba7B642ace0183ad8b8D2196', // Katana Router
+    LP_VAULT_FACTORY: '0x0000000000000000000000000000000000000000' as `0x${string}`,
+    REWARD_ROUTER_BASIC: '0x0000000000000000000000000000000000000000' as `0x${string}`,
   },
   // Base Sepolia
   BASE_SEPOLIA: {
     SMART_VAULT_CORE: '0x0000000000000000000000000000000000000000' as `0x${string}`,
     DEX_ROUTER: '0x4752ba5dbc23f44d87826276bf6fd6b1c372ad24', // Uniswap V2 Router
+    LP_VAULT_FACTORY: '0x0000000000000000000000000000000000000000' as `0x${string}`,
+    REWARD_ROUTER_BASIC: '0x0000000000000000000000000000000000000000' as `0x${string}`,
   }
 } as const;
 
@@ -29,7 +33,7 @@ export const NETWORK_CONFIG = {
     graduationTarget: '24', // 24 ETH
     startingPrice: '0.00000001', // 0.00000001 ETH
     protocolReward: '0.05', // 0.05 ETH
-    launchCost: '0.0001', // 0.0001 ETH
+    launchCost: '0.0002', // 0.0002 ETH
     symbol: 'ETH',
     dexName: 'Uniswap V2'
   }
@@ -40,4 +44,9 @@ export const BONDING_CURVE_CONFIG = {
   TOKENS_FOR_LIQUIDITY_PERCENTAGE: 20, // 20% for liquidity
   PROTOCOL_FEE_BPS: 50, // 0.5%
   LP_FEE_THRESHOLD_USD: 200, // $200 threshold for auto-processing
+} as const;
+
+export const LP_VAULT_CONFIG = {
+  PROTOCOL_FEE_BPS: 30, // 0.3%
+  AUTO_CLAIM_THRESHOLD_USD: 250, // $250 threshold for auto-claim
 } as const;

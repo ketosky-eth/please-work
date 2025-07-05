@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import HomePage from './components/HomePage';
-import AllTokensPage from './components/AllTokensPage';
 import MintPage from './components/MintPage';
 import LaunchMemePage from './components/LaunchMemePage';
 import MyVaultPage from './components/MyVaultPage';
 import RoadmapPage from './components/RoadmapPage';
+import RenouncePage from './components/RenouncePage';
+import ClaimPage from './components/ClaimPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -15,8 +16,8 @@ function App() {
     const path = window.location.pathname;
     const page = path.substring(1) || 'home';
     
-    // Valid pages (removed 'mint' from visible navigation)
-    const validPages = ['home', 'launch', 'tokens', 'vault', 'roadmap', 'mint'];
+    // Valid pages (removed 'tokens' and added new LP vault pages)
+    const validPages = ['home', 'launch', 'vault', 'roadmap', 'mint', 'renounce', 'claim'];
     if (validPages.includes(page)) {
       setCurrentPage(page);
     } else {
@@ -49,14 +50,16 @@ function App() {
         return <HomePage />;
       case 'launch':
         return <LaunchMemePage />;
-      case 'tokens':
-        return <AllTokensPage />;
       case 'vault':
         return <MyVaultPage />;
       case 'roadmap':
         return <RoadmapPage />;
       case 'mint':
         return <MintPage />; // Hidden but still accessible via direct URL
+      case 'renounce':
+        return <RenouncePage />;
+      case 'claim':
+        return <ClaimPage />;
       default:
         return <HomePage />;
     }

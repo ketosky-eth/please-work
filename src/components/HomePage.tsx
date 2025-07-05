@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { TrendingUp, Flame, Target, Search, Filter, Clock, Users, Rocket, Zap, DollarSign, BarChart3 } from 'lucide-react';
+import { TrendingUp, Flame, Target, Search, Filter, Clock, Users, Rocket, Zap, DollarSign, BarChart3, Lock, Shield } from 'lucide-react';
 import { useAnalytics, formatCurrency, formatNumber } from '../hooks/useAnalytics';
+import TokenCard from './TokenCard';
 
 interface Token {
   id: string;
@@ -19,6 +20,10 @@ interface Token {
   category: 'new' | 'trending' | 'graduating';
   chainId: number;
   graduated: boolean;
+  website?: string;
+  twitter?: string;
+  telegram?: string;
+  discord?: string;
 }
 
 export default function HomePage() {
@@ -59,10 +64,10 @@ export default function HomePage() {
             </div>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Meme Token Factory
+            VYTO Protocol
           </h1>
           <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-            Launch, trade, and discover the hottest meme tokens with bonding curves. No limits, no gatekeeping - just pure meme magic! 🚀
+            Launch meme tokens with bonding curves and renounce LP tokens while keeping rewards. No limits, no gatekeeping! 🚀
           </p>
         </div>
 
@@ -130,7 +135,7 @@ export default function HomePage() {
         </div>
 
         {/* Empty State - Fresh Platform */}
-        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden">
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden mb-12">
           <div className="p-6 border-b border-gray-700">
             <h2 className="text-2xl font-bold text-white">
               Token Marketplace
@@ -143,7 +148,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-2xl font-bold text-white mb-4">Ready to Launch!</h3>
             <p className="text-gray-400 mb-8 max-w-md mx-auto">
-              The VYTO Meme Token Factory is live and ready for action. Be the first to launch a meme token with our revolutionary bonding curve system.
+              The VYTO Protocol is live and ready for action. Be the first to launch a meme token with our revolutionary bonding curve system.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button 
@@ -153,53 +158,116 @@ export default function HomePage() {
                 Launch First Token 🚀
               </button>
               <button 
-                onClick={() => window.location.href = '/tokens'}
-                className="border border-gray-600 text-white hover:bg-gray-800 px-8 py-3 rounded-lg font-semibold transition-all"
+                onClick={() => window.location.href = '/renounce'}
+                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105"
               >
-                Explore Tokens
+                Renounce LPs 🔒
               </button>
             </div>
           </div>
         </div>
 
         {/* Features Overview */}
-        <div className="mt-12 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-6 text-center">
-            Why Choose VYTO?
-          </h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Zap className="w-6 h-6 text-white" />
+        <div className="grid md:grid-cols-2 gap-8 mb-12">
+          {/* Meme Token Factory */}
+          <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
+                <Rocket className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Instant Launch</h3>
-              <p className="text-gray-300 text-sm">
-                Launch your meme token in seconds with just 0.5 RON or 0.0001 ETH. No gatekeeping, no limits.
-              </p>
+              <h2 className="text-2xl font-bold text-white">Meme Token Factory</h2>
             </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="w-6 h-6 text-white" />
+            <p className="text-gray-300 mb-6">
+              Launch your own meme tokens with bonding curves. Fair launch mechanism with automatic price discovery and graduation to major DEXs.
+            </p>
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              <div className="text-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Zap className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="text-sm font-semibold text-white mb-1">Instant Launch</h3>
+                <p className="text-gray-300 text-xs">
+                  0.5 RON or 0.0002 ETH
+                </p>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Bonding Curves</h3>
-              <p className="text-gray-300 text-sm">
-                Fair launch mechanism with automatic price discovery and graduation to major DEXs.
-              </p>
-            </div>
-            <div className="text-center">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="w-6 h-6 text-white" />
+              <div className="text-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <BarChart3 className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="text-sm font-semibold text-white mb-1">Bonding Curves</h3>
+                <p className="text-gray-300 text-xs">
+                  Fair price discovery
+                </p>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Earn Fees</h3>
-              <p className="text-gray-300 text-sm">
-                Creators earn 50% of LP trading fees automatically. No manual claiming required.
-              </p>
+              <div className="text-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <DollarSign className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="text-sm font-semibold text-white mb-1">Earn Fees</h3>
+                <p className="text-gray-300 text-xs">
+                  50% of LP trading fees
+                </p>
+              </div>
             </div>
+            <button 
+              onClick={() => window.location.href = '/launch'}
+              className="w-full bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white py-3 rounded-lg font-semibold transition-all"
+            >
+              Launch Token
+            </button>
+          </div>
+
+          {/* Renounced LP Vault */}
+          <div className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-8">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center">
+                <Lock className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-white">Renounced LP Vault</h2>
+            </div>
+            <p className="text-gray-300 mb-6">
+              Permanently lock your LP tokens while continuing to earn trading fees and rewards. Trustless and secure.
+            </p>
+            <div className="grid md:grid-cols-3 gap-4 mb-6">
+              <div className="text-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Shield className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="text-sm font-semibold text-white mb-1">Permanent Lock</h3>
+                <p className="text-gray-300 text-xs">
+                  LPs locked forever
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <DollarSign className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="text-sm font-semibold text-white mb-1">Keep Earning</h3>
+                <p className="text-gray-300 text-xs">
+                  99.7% of rewards
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="w-8 h-8 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <Target className="w-4 h-4 text-white" />
+                </div>
+                <h3 className="text-sm font-semibold text-white mb-1">Auto-Claim</h3>
+                <p className="text-gray-300 text-xs">
+                  $250+ threshold
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={() => window.location.href = '/renounce'}
+              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white py-3 rounded-lg font-semibold transition-all"
+            >
+              Renounce LPs
+            </button>
           </div>
         </div>
 
         {/* Launch Costs */}
-        <div className="mt-12 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-8">
+        <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-8">
           <h2 className="text-2xl font-bold text-white mb-6 text-center">
             Multi-Chain Support
           </h2>
@@ -239,7 +307,7 @@ export default function HomePage() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-300">Launch Cost:</span>
-                  <span className="text-blue-400 font-semibold">0.0001 ETH</span>
+                  <span className="text-blue-400 font-semibold">0.0002 ETH</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-300">Graduation Target:</span>
