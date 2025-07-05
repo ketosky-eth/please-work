@@ -73,7 +73,7 @@ npm run dev
 npm run compile
 ```
 
-2. **Deploy to Ronin Testnet**
+2. **Deploy to Saigon Testnet**
 ```bash
 npm run deploy:ronin
 ```
