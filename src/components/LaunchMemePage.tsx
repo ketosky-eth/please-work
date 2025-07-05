@@ -38,7 +38,7 @@ export default function LaunchMemePage() {
   // Get network configuration with fallbacks
   const launchCost = networkConfig?.launchCost || '0.5';
   const dexName = networkConfig?.dexName || 'DEX';
-  const graduationTarget = networkConfig?.graduationTarget || '69420';
+  const graduationTarget = networkConfig?.graduationTarget || '69,420';
   const symbol = networkConfig?.symbol || 'RON';
 
   const handleInputChange = (field: keyof TokenData, value: string | boolean) => {
