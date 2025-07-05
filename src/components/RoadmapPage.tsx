@@ -48,7 +48,7 @@ export default function RoadmapPage() {
         'Advanced Analytics Dashboard',
         'Token Portfolio Tracking',
         'Social Features & Comments',
-        'Mobile App Development'
+        'LP Renounce & Earn Tool'
       ]
     },
     {
