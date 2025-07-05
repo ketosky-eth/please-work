@@ -8,7 +8,7 @@ import App from './App.tsx';
 import './index.css';
 import '@rainbow-me/rainbowkit/styles.css';
 
-// Define Ronin Testnet
+// Define Saigon Testnet
 const saigon = defineChain({
   id: 2021,
   name: 'Ronin Testnet',
