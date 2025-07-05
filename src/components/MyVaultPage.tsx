@@ -355,7 +355,7 @@ export default function MyVaultPage() {
               </div>
               <h3 className="text-lg font-semibold text-white mb-2">LP Trading Fees</h3>
               <p className="text-gray-300 text-sm">
-                Earn 50% of LP trading fees automatically when your token graduates to DEX
+                Earn 50% of LP trading fees automatically when your Meme Token graduates to DEX
               </p>
             </div>
             <div className="text-center">
