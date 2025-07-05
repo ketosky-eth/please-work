@@ -9,7 +9,7 @@ import './index.css';
 import '@rainbow-me/rainbowkit/styles.css';
 
 // Define Ronin Testnet
-const roninTestnet = defineChain({
+const saigon = defineChain({
   id: 2021,
   name: 'Ronin Testnet',
   network: 'ronin-testnet',
@@ -59,7 +59,7 @@ const baseSepolia = defineChain({
 const config = getDefaultConfig({
   appName: 'VYTO Protocol - Meme Token Factory',
   projectId: 'zp1v56uxy8rdx5ypatb0ockcb9tr6a', // Your WalletConnect Cloud Project ID
-  chains: [roninTestnet, baseSepolia],
+  chains: [saigon, baseSepolia],
   ssr: false,
 });
 
