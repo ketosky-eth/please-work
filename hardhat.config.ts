@@ -42,8 +42,8 @@ const config: HardhatUserConfig = {
         network: "saigon",
         chainId: 2021,
         urls: {
-          apiURL: "https://saigon-explorer.roninchain.com/api",
-          browserURL: "https://saigon-explorer.roninchain.com",
+          apiURL: "https://saigon-app.roninchain.com/api",
+          browserURL: "https://saigon-app.roninchain.com",
         },
       },
       {
