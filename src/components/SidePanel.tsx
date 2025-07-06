@@ -72,7 +72,7 @@ export default function SidePanel({ currentPage, onPageChange }: SidePanelProps)
     
     switch (currentChain.id) {
       case '2021':
-        return `https://saigon-explorer.roninchain.com/address/${address}`;
+        return `https://saigon-app.roninchain.com/address/${address}`;
       case '84532':
         return `https://sepolia-explorer.base.org/address/${address}`;
       default:
