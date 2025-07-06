@@ -1,5 +1,6 @@
 import React from 'react';
 import { TrendingUp, Users, Clock, ExternalLink, ArrowUpRight, ArrowDownRight, Target, CheckCircle } from 'lucide-react';
+import NetworkLogo from './NetworkLogo';
 
 interface TokenCardProps {
   token: {
@@ -32,14 +33,6 @@ export default function TokenCard({ token, onClick }: TokenCardProps) {
       case 2021: return 'Ronin';
       case 84532: return 'Base';
       default: return 'Unknown';
-    }
-  };
-
-  const getChainColor = (chainId: number) => {
-    switch (chainId) {
-      case 2021: return 'bg-yellow-500/20 text-yellow-400';
-      case 84532: return 'bg-blue-500/20 text-blue-400';
-      default: return 'bg-gray-500/20 text-gray-400';
     }
   };
 
@@ -101,9 +94,10 @@ export default function TokenCard({ token, onClick }: TokenCardProps) {
             </h3>
             <div className="flex items-center space-x-2">
               <span className="text-gray-400 text-sm">${token.symbol}</span>
-              <span className={`px-2 py-1 rounded text-xs font-medium ${getChainColor(token.chainId)}`}>
-                {getChainName(token.chainId)}
-              </span>
+              <div className="flex items-center space-x-1 bg-gray-700/50 px-2 py-1 rounded text-xs font-medium">
+                <NetworkLogo chainId={token.chainId} size="sm" />
+                <span className="text-gray-300">{getChainName(token.chainId)}</span>
+              </div>
             </div>
           </div>
         </div>

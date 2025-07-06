@@ -6,6 +6,7 @@ import { useSmartVaultCore } from '../hooks/useSmartVaultCore';
 import { useNetworkDetection } from '../hooks/useNetworkDetection';
 import { ipfsService } from '../utils/ipfs';
 import NetworkCompatibilityBanner from './NetworkCompatibilityBanner';
+import NetworkLogo from './NetworkLogo';
 
 export default function LaunchMemePage() {
   const { isConnected, address, connect } = useWallet();
@@ -233,9 +234,15 @@ export default function LaunchMemePage() {
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6 mb-8">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Network: {networkConfig?.symbol === 'RON' ? 'Saigon Testnet' : 'Base Sepolia'}
-                </h3>
+                <div className="flex items-center space-x-3 mb-2">
+                  <NetworkLogo 
+                    chainId={networkConfig?.symbol === 'RON' ? '2021' : '84532'} 
+                    size="lg" 
+                  />
+                  <h3 className="text-lg font-semibold text-white">
+                    Network: {networkConfig?.symbol === 'RON' ? 'Saigon Testnet' : 'Base Sepolia'}
+                  </h3>
+                </div>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-gray-400">Launch Cost: </span>
@@ -499,13 +506,17 @@ export default function LaunchMemePage() {
                   <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
                     Bonding Curve
                   </span>
-                  <span className={`px-2 py-1 rounded ${
+                  <div className={`flex items-center space-x-1 px-2 py-1 rounded ${
                     isSupported 
                       ? 'bg-green-500/20 text-green-400' 
                       : 'bg-red-500/20 text-red-400'
                   }`}>
-                    {networkConfig?.symbol === 'RON' ? 'Ronin' : 'Base'}
-                  </span>
+                    <NetworkLogo 
+                      chainId={networkConfig?.symbol === 'RON' ? '2021' : '84532'} 
+                      size="sm" 
+                    />
+                    <span>{networkConfig?.symbol === 'RON' ? 'Ronin' : 'Base'}</span>
+                  </div>
                 </div>
               </div>
             </div>

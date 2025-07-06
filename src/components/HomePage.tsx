@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TrendingUp, Flame, Target, Search, Filter, Clock, Users, Rocket, Zap, DollarSign, BarChart3, Lock, Shield } from 'lucide-react';
 import { useAnalytics, formatCurrency, formatNumber } from '../hooks/useAnalytics';
 import TokenCard from './TokenCard';
+import NetworkLogo from './NetworkLogo';
 
 interface Token {
   id: string;
@@ -272,9 +273,9 @@ export default function HomePage() {
             Multi-Chain Support
           </h2>
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl p-6">
+            <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 border border-blue-500/20 rounded-xl p-6">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500"></div>
+                <NetworkLogo chainId="2021" size="xl" />
                 <div>
                   <h3 className="text-lg font-bold text-white">Ronin Network</h3>
                   <p className="text-gray-400 text-sm">Gaming-focused blockchain</p>
@@ -283,7 +284,7 @@ export default function HomePage() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-300">Launch Cost:</span>
-                  <span className="text-yellow-400 font-semibold">0.5 RON</span>
+                  <span className="text-blue-400 font-semibold">0.5 RON</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-300">Graduation Target:</span>
@@ -298,7 +299,7 @@ export default function HomePage() {
             
             <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl p-6">
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-500"></div>
+                <NetworkLogo chainId="84532" size="xl" />
                 <div>
                   <h3 className="text-lg font-bold text-white">Base Network</h3>
                   <p className="text-gray-400 text-sm">Coinbase's L2 solution</p>
