@@ -27,7 +27,7 @@ const saigon = defineChain({
     },
   },
   blockExplorers: {
-    default: { name: 'Ronin Explorer', url: 'https://saigon-explorer.roninchain.com' },
+    default: { name: 'Saigon Explorer', url: 'https://saigon-app.roninchain.com' },
   },
   testnet: true,
 });
