@@ -10,6 +10,7 @@ import ClaimPage from './components/ClaimPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Handle URL routing
   useEffect(() => {
@@ -65,10 +66,20 @@ function App() {
     }
   };
 
+  // Listen for sidebar collapse state changes
+  useEffect(() => {
+    const handleSidebarToggle = (event: CustomEvent) => {
+      setSidebarCollapsed(event.detail.collapsed);
+    };
+
+    window.addEventListener('sidebarToggle', handleSidebarToggle as EventListener);
+    return () => window.removeEventListener('sidebarToggle', handleSidebarToggle as EventListener);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-900 flex">
       <SidePanel currentPage={currentPage} onPageChange={handlePageChange} />
-      <div className="flex-1 ml-64">
+      <div className={`flex-1 transition-all duration-300 ${sidebarCollapsed ? 'ml-16' : 'ml-64'}`}>
         {renderPage()}
       </div>
     </div>
