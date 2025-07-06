@@ -5,6 +5,7 @@ import { Chain } from '../types';
 import { useWallet } from '../hooks/useWallet';
 import { useNetworkDetection } from '../hooks/useNetworkDetection';
 import NetworkStatusIndicator from './NetworkStatusIndicator';
+import NetworkLogo from './NetworkLogo';
 
 interface HeaderProps {
   currentPage: string;
@@ -50,14 +51,6 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
     { id: 'claim', label: 'Claim Rewards', disabled: !compatibility.lpVaults },
     { id: 'roadmap', label: 'Roadmap' }
   ];
-
-  const getChainColor = (chainId: string) => {
-    switch (chainId) {
-      case '2021': return 'from-yellow-500 to-orange-500';
-      case '84532': return 'from-blue-500 to-purple-500';
-      default: return 'from-gray-500 to-gray-600';
-    }
-  };
 
   return (
     <header className="bg-gray-900/95 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
@@ -113,9 +106,10 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
                     : 'bg-red-500/10 hover:bg-red-500/20 border-red-500/30'
                 }`}
               >
-                <div className={`w-5 h-5 rounded-full bg-gradient-to-r ${
-                  currentChain ? getChainColor(currentChain.id) : 'from-gray-500 to-gray-600'
-                }`}></div>
+                <NetworkLogo 
+                  chainId={currentChain?.id || '2021'} 
+                  size="md"
+                />
                 <div className="hidden sm:flex flex-col items-start">
                   <span className={`text-sm font-medium ${
                     isSupported ? 'text-white' : 'text-red-400'
@@ -147,7 +141,7 @@ export default function Header({ currentPage, onPageChange }: HeaderProps) {
                           currentChain?.id === chain.id ? 'bg-gray-700' : ''
                         }`}
                       >
-                        <div className={`w-5 h-5 rounded-full bg-gradient-to-r ${getChainColor(chain.id)}`}></div>
+                        <NetworkLogo chainId={chain.id} size="md" />
                         <div className="text-left flex-1">
                           <div className="text-white text-sm font-medium">{chain.name}</div>
                           <div className="text-gray-400 text-xs">
