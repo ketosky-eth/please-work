@@ -503,9 +503,6 @@ export default function LaunchMemePage() {
                 )}
                 
                 <div className="flex items-center space-x-2 text-xs">
-                  <span className="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
-                    Bonding Curve
-                  </span>
                   <div className={`flex items-center space-x-1 px-2 py-1 rounded ${
                     isSupported 
                       ? 'bg-green-500/20 text-green-400' 

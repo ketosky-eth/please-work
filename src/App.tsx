@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Header from './components/Header';
+import SidePanel from './components/SidePanel';
 import HomePage from './components/HomePage';
 import MintPage from './components/MintPage';
 import LaunchMemePage from './components/LaunchMemePage';
@@ -66,9 +66,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <Header currentPage={currentPage} onPageChange={handlePageChange} />
-      {renderPage()}
+    <div className="min-h-screen bg-gray-900 flex">
+      <SidePanel currentPage={currentPage} onPageChange={handlePageChange} />
+      <div className="flex-1 ml-64">
+        {renderPage()}
+      </div>
     </div>
   );
 }

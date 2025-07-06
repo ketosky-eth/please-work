@@ -4,7 +4,7 @@ import { useWallet } from '../hooks/useWallet';
 import { useRenouncedLPVault } from '../hooks/useRenouncedLPVault';
 
 export default function RenouncePage() {
-  const { isConnected, address, connect } = useWallet();
+  const { isConnected, address, connect, balance } = useWallet();
   const { createVault, depositLP, isLoading } = useRenouncedLPVault();
   
   const [lpTokenAddress, setLpTokenAddress] = useState('');
@@ -16,6 +16,12 @@ export default function RenouncePage() {
     amount: string;
     timestamp: string;
   } | null>(null);
+
+  const handleMaxClick = () => {
+    // In a real implementation, this would fetch the user's LP token balance
+    // For now, we'll simulate setting a max amount
+    setAmount('100.0'); // This would be the actual LP token balance
+  };
 
   const handleRenounce = async () => {
     if (!isConnected) {
@@ -243,20 +249,29 @@ export default function RenouncePage() {
                   </p>
                 </div>
 
-                {/* Amount */}
+                {/* Amount with MAX button */}
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-2">
                     Amount to Renounce *
                   </label>
-                  <input
-                    type="number"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="0.0"
-                    min="0"
-                    step="0.000001"
-                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                  />
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                      placeholder="0.0"
+                      min="0"
+                      step="0.000001"
+                      className="w-full px-4 py-3 pr-16 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleMaxClick}
+                      className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium transition-colors"
+                    >
+                      MAX
+                    </button>
+                  </div>
                   <p className="text-gray-400 text-sm mt-1">
                     Amount of LP tokens to permanently lock
                   </p>
