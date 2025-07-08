@@ -7,6 +7,8 @@ import MyVaultPage from './components/MyVaultPage';
 import RoadmapPage from './components/RoadmapPage';
 import RenouncePage from './components/RenouncePage';
 import ClaimPage from './components/ClaimPage';
+import FlamenizePage from './components/FlamenizePage';
+import AnalyticsPage from './components/AnalyticsPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
@@ -18,7 +20,7 @@ function App() {
     const page = path.substring(1) || 'home';
     
     // Valid pages (removed 'tokens' and added new LP vault pages)
-    const validPages = ['home', 'launch', 'vault', 'roadmap', 'mint', 'renounce', 'claim'];
+    const validPages = ['home', 'flamenize', 'launch', 'vault', 'roadmap', 'mint', 'renounce', 'claim', 'analytics'];
     if (validPages.includes(page)) {
       setCurrentPage(page);
     } else {
@@ -49,6 +51,10 @@ function App() {
     switch (currentPage) {
       case 'home':
         return <HomePage />;
+      case 'flamenize':
+        return <FlamenizePage />;
+      case 'analytics':
+        return <AnalyticsPage />;
       case 'launch':
         return <LaunchMemePage />;
       case 'vault':

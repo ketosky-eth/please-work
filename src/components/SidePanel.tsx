@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Home, Rocket, Lock, Vault, DollarSign, FileText, ChevronDown, ChevronLeft, ChevronRight, Wallet, Network, AlertTriangle, Copy, ExternalLink, LogOut } from 'lucide-react';
+import { Home, Rocket, Lock, Vault, DollarSign, FileText, ChevronDown, ChevronLeft, ChevronRight, Wallet, Network, AlertTriangle, Copy, ExternalLink, LogOut, Flame, BarChart3 } from 'lucide-react';
 import { SUPPORTED_CHAINS } from '../constants/chains';
 import { Chain } from '../types';
 import { useWallet } from '../hooks/useWallet';
@@ -58,6 +58,7 @@ export default function SidePanel({ currentPage, onPageChange }: SidePanelProps)
   };
 
   const toolsItems = [
+    { id: 'analytics', label: 'Analytics', icon: BarChart3, disabled: false },
     { id: 'launch', label: 'Launch Token', icon: Rocket, disabled: !compatibility.memeTokenFactory },
     { id: 'renounce', label: 'Renounce LPs', icon: Lock, disabled: !compatibility.lpVaults }
   ];
@@ -124,6 +125,28 @@ export default function SidePanel({ currentPage, onPageChange }: SidePanelProps)
       {/* Navigation */}
       <div className="flex-1 p-3 space-y-6">
         {/* Home */}
+        <div>
+          <button
+            onClick={() => onPageChange('flamenize')}
+            className={`w-full flex items-center ${isCollapsed ? 'justify-center' : 'space-x-3'} px-3 py-3 rounded-lg transition-colors group relative ${
+              currentPage === 'flamenize'
+                ? 'bg-orange-600 text-white'
+                : 'text-gray-300 hover:text-white hover:bg-gray-800'
+            }`}
+            title={isCollapsed ? 'Flamenize' : ''}
+          >
+            <Flame className="w-5 h-5" />
+            {!isCollapsed && <span className="font-medium">Flamenize</span>}
+            
+            {/* Tooltip for collapsed state */}
+            {isCollapsed && (
+              <div className="absolute left-full ml-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
+                Flamenize
+              </div>
+            )}
+          </button>
+        </div>
+
         <div>
           <button
             onClick={() => onPageChange('home')}

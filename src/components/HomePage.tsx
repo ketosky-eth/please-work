@@ -33,8 +33,123 @@ export default function HomePage() {
   
   const analytics = useAnalytics();
 
-  // Fresh empty state - no tokens launched yet
-  const tokens: Token[] = [];
+  // Mock data for demonstration
+  const tokens: Token[] = [
+    {
+      id: '1',
+      name: 'PepeKing',
+      symbol: 'PEPEK',
+      logo: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
+      price: 0.000045,
+      priceChange24h: 15.6,
+      volume24h: 125000,
+      marketCap: 450000,
+      holders: 2847,
+      bondingProgress: 67.3,
+      launchDate: '2025-01-15T10:30:00Z',
+      creator: '0xabcd...ef12',
+      description: 'The ultimate Pepe token for the Ronin ecosystem. Community-driven and meme-powered! 🐸👑',
+      category: 'trending',
+      chainId: 2021,
+      graduated: false,
+      website: 'https://pepeking.com',
+      twitter: 'https://twitter.com/pepeking',
+      telegram: 'https://t.me/pepeking'
+    },
+    {
+      id: '2',
+      name: 'DogeRonin',
+      symbol: 'DOGER',
+      logo: 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
+      price: 0.000123,
+      priceChange24h: 8.3,
+      volume24h: 89000,
+      marketCap: 1230000,
+      holders: 1923,
+      bondingProgress: 89.2,
+      launchDate: '2025-01-14T15:45:00Z',
+      creator: '0x5678...9abc',
+      description: 'Much wow, very Ronin! The goodest boy on the blockchain. To the moon! 🚀🐕',
+      category: 'graduating',
+      chainId: 2021,
+      graduated: false,
+      twitter: 'https://twitter.com/dogeronin',
+      telegram: 'https://t.me/dogeronin'
+    },
+    {
+      id: '3',
+      name: 'ShibaWarrior',
+      symbol: 'SHIBAW',
+      logo: 'https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
+      price: 0.000089,
+      priceChange24h: -2.1,
+      volume24h: 234000,
+      marketCap: 890000,
+      holders: 3421,
+      bondingProgress: 45.8,
+      launchDate: '2025-01-13T09:20:00Z',
+      creator: '0x9abc...def3',
+      description: 'Warrior spirit meets meme magic. Join the Shiba army on Base! ⚔️🐕',
+      category: 'trending',
+      chainId: 84532,
+      graduated: false,
+      website: 'https://shibawarrior.io'
+    },
+    {
+      id: '4',
+      name: 'CatCoin',
+      symbol: 'MEOW',
+      logo: 'https://images.pexels.com/photos/1170986/pexels-photo-1170986.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
+      price: 0.000034,
+      priceChange24h: 12.4,
+      volume24h: 45000,
+      marketCap: 340000,
+      holders: 1234,
+      bondingProgress: 23.1,
+      launchDate: '2025-01-15T14:10:00Z',
+      creator: '0xdef3...4567',
+      description: 'Purr-fect meme token for cat lovers. Meow to the moon! 🐱🌙',
+      category: 'new',
+      chainId: 2021,
+      graduated: false
+    },
+    {
+      id: '5',
+      name: 'MoonDoge',
+      symbol: 'MDOGE',
+      logo: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
+      price: 0.000067,
+      priceChange24h: -5.7,
+      volume24h: 67000,
+      marketCap: 123000,
+      holders: 654,
+      bondingProgress: 12.5,
+      launchDate: '2025-01-15T16:30:00Z',
+      creator: '0x4567...8901',
+      description: 'To the moon and beyond! The next generation of Doge tokens on Base. 🌙🚀',
+      category: 'new',
+      chainId: 84532,
+      graduated: false
+    },
+    {
+      id: '6',
+      name: 'RoninPepe',
+      symbol: 'RPEPE',
+      logo: 'https://images.pexels.com/photos/1108099/pexels-photo-1108099.jpeg?auto=compress&cs=tinysrgb&w=100&h=100&dpr=1',
+      price: 0.000156,
+      priceChange24h: 34.2,
+      volume24h: 345000,
+      marketCap: 2100000,
+      holders: 4567,
+      bondingProgress: 95.8,
+      launchDate: '2025-01-12T11:15:00Z',
+      creator: '0x8901...2345',
+      description: 'The legendary Pepe has arrived on Ronin! Join the revolution! 🐸⚔️',
+      category: 'graduating',
+      chainId: 2021,
+      graduated: true
+    }
+  ];
 
   const categories = [
     { id: 'all', label: 'All Tokens', icon: Filter },
@@ -76,25 +191,25 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
             <div className="text-2xl font-bold text-white mb-1">
-              {analytics.isLoading ? '...' : formatNumber(analytics.totalTokens)}
+              {analytics.isLoading ? '...' : formatNumber(tokens.length)}
             </div>
             <div className="text-gray-400 text-sm">Total Tokens</div>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
             <div className="text-2xl font-bold text-green-400 mb-1">
-              {analytics.isLoading ? '...' : formatCurrency(analytics.totalVolume24h)}
+              {analytics.isLoading ? '...' : formatCurrency(tokens.reduce((sum, token) => sum + token.volume24h, 0))}
             </div>
             <div className="text-gray-400 text-sm">24h Volume</div>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
             <div className="text-2xl font-bold text-yellow-400 mb-1">
-              {analytics.isLoading ? '...' : formatNumber(analytics.graduatedTokens)}
+              {analytics.isLoading ? '...' : formatNumber(tokens.filter(t => t.graduated).length)}
             </div>
             <div className="text-gray-400 text-sm">Graduated</div>
           </div>
           <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
             <div className="text-2xl font-bold text-orange-400 mb-1">
-              {analytics.isLoading ? '...' : formatNumber(analytics.newTokensToday)}
+              {analytics.isLoading ? '...' : formatNumber(tokens.filter(t => t.category === 'new').length)}
             </div>
             <div className="text-gray-400 text-sm">New Today</div>
           </div>
@@ -135,7 +250,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Empty State - Fresh Platform */}
+        {/* Token Marketplace */}
         <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl overflow-hidden mb-12">
           <div className="p-6 border-b border-gray-700">
             <h2 className="text-2xl font-bold text-white">
@@ -143,28 +258,66 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div className="text-center py-16">
-            <div className="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Flame className="w-10 h-10 text-white" />
+          {filteredTokens.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Flame className="w-10 h-10 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">No tokens found</h3>
+              <p className="text-gray-400 mb-8 max-w-md mx-auto">
+                Try adjusting your search or filter criteria to find tokens.
+              </p>
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">Ready to Launch!</h3>
-            <p className="text-gray-400 mb-8 max-w-md mx-auto">
-              The VYTO Protocol is live and ready for action. Be the first to launch a meme token with our revolutionary bonding curve system.
+          ) : (
+            <div className="p-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredTokens.map((token) => (
+                  <TokenCard
+                    key={token.id}
+                    token={token}
+                    onClick={() => {
+                      // Navigate to token detail or trading page
+                      console.log('Token clicked:', token.name);
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Quick Actions */}
+        <div className="grid md:grid-cols-2 gap-6 mb-12">
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Rocket className="w-8 h-8 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Launch Your Token</h3>
+            <p className="text-gray-400 mb-4">
+              Create your own meme token with bonding curves and automatic liquidity provision.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button 
-                onClick={() => window.location.href = '/launch'}
-                className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105"
-              >
-                Launch First Token 🚀
-              </button>
-              <button 
-                onClick={() => window.location.href = '/renounce'}
-                className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-8 py-3 rounded-lg font-semibold transition-all transform hover:scale-105"
-              >
-                Renounce LPs 🔒
-              </button>
+            <button 
+              onClick={() => window.location.href = '/launch'}
+              className="bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-6 py-3 rounded-lg font-semibold transition-all"
+            >
+              Launch Token
+            </button>
+          </div>
+          
+          <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Flame className="w-8 h-8 text-white" />
             </div>
+            <h3 className="text-xl font-bold text-white mb-2">Explore Flamenize</h3>
+            <p className="text-gray-400 mb-4">
+              Vote on tokens, burn for reputation, and discover the hottest meme tokens.
+            </p>
+            <button 
+              onClick={() => window.location.href = '/flamenize'}
+              className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-6 py-3 rounded-lg font-semibold transition-all"
+            >
+              Explore Flamenize
+            </button>
           </div>
         </div>
 
