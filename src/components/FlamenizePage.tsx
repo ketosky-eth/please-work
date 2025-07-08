@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flame, TrendingUp, TrendingDown, MessageCircle, Share2, ArrowUp, ArrowDown, AlertTriangle, Shield, Users, Eye, Filter, Search, Clock, Star, ExternalLink } from 'lucide-react';
+import { Flame, TrendingUp, TrendingDown, MessageCircle, Share2, ArrowUp, ArrowDown, AlertTriangle, Shield, Users, Eye, Filter, Search, Clock, Star, ExternalLink, X, BarChart3, TrendingDown as TrendingDownIcon } from 'lucide-react';
 import { useWallet } from '../hooks/useWallet';
 import NetworkLogo from './NetworkLogo';
 
@@ -48,6 +48,9 @@ export default function FlamenizePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedToken, setSelectedToken] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'reputation' | 'volume' | 'recent'>('reputation');
+  const [showVoteModal, setShowVoteModal] = useState(false);
+  const [voteModalToken, setVoteModalToken] = useState<string | null>(null);
+  const [showTradingView, setShowTradingView] = useState(false);
 
   // Mock data for Flamenize tokens
   const flamenizeTokens: FlamenizeToken[] = [
@@ -236,8 +239,8 @@ export default function FlamenizePage() {
       return;
     }
     
-    // Simulate voting with token burn
-    alert(`${voteType === 'up' ? 'Upvoted' : 'Downvoted'} token! 1 ${voteType === 'up' ? 'PEPEK' : 'PEPEK'} token burned for this vote.`);
+    setVoteModalToken(tokenId);
+    setShowVoteModal(true);
   };
 
   const handleShare = (token: FlamenizeToken) => {
@@ -273,6 +276,366 @@ export default function FlamenizePage() {
 
   const selectedTokenData = selectedToken ? flamenizeTokens.find(t => t.id === selectedToken) : null;
 
+  // Vote Modal Component
+  const VoteModal = () => {
+    const [voteType, setVoteType] = useState<'upvote' | 'downvote' | 'reverse-upvote' | 'reverse-downvote'>('upvote');
+    const [tokenAmount, setTokenAmount] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    
+    const tokenData = voteModalToken ? flamenizeTokens.find(t => t.id === voteModalToken) : null;
+    
+    const getTokensRequired = () => {
+      if (voteType === 'upvote' || voteType === 'downvote') {
+        return parseFloat(tokenAmount) || 0;
+      } else {
+        return (parseFloat(tokenAmount) || 0) * 2; // Reverse votes cost 2x
+      }
+    };
+    
+    const handleSubmitVote = async () => {
+      if (!tokenAmount || parseFloat(tokenAmount) <= 0) {
+        alert('Please enter a valid token amount');
+        return;
+      }
+      
+      setIsSubmitting(true);
+      
+      // Simulate vote submission
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      const tokensRequired = getTokensRequired();
+      alert(`Vote submitted! ${tokensRequired} ${tokenData?.symbol} tokens burned for ${voteType.replace('-', ' ')}.`);
+      
+      setIsSubmitting(false);
+      setShowVoteModal(false);
+      setVoteModalToken(null);
+      setTokenAmount('');
+      setVoteType('upvote');
+    };
+    
+    if (!showVoteModal || !tokenData) return null;
+    
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 max-w-md w-full">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-white">Vote on {tokenData.name}</h3>
+            <button
+              onClick={() => setShowVoteModal(false)}
+              className="p-2 text-gray-400 hover:text-white transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="space-y-4">
+            {/* Vote Type Selection */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Vote Type
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  onClick={() => setVoteType('upvote')}
+                  className={`p-3 rounded-lg border transition-colors ${
+                    voteType === 'upvote'
+                      ? 'bg-green-600/20 border-green-600 text-green-400'
+                      : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  <ArrowUp className="w-4 h-4 mx-auto mb-1" />
+                  <div className="text-xs">Upvote</div>
+                  <div className="text-xs opacity-75">1:1 ratio</div>
+                </button>
+                
+                <button
+                  onClick={() => setVoteType('downvote')}
+                  className={`p-3 rounded-lg border transition-colors ${
+                    voteType === 'downvote'
+                      ? 'bg-red-600/20 border-red-600 text-red-400'
+                      : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  <ArrowDown className="w-4 h-4 mx-auto mb-1" />
+                  <div className="text-xs">Downvote</div>
+                  <div className="text-xs opacity-75">1:1 ratio</div>
+                </button>
+                
+                <button
+                  onClick={() => setVoteType('reverse-upvote')}
+                  className={`p-3 rounded-lg border transition-colors ${
+                    voteType === 'reverse-upvote'
+                      ? 'bg-green-600/20 border-green-600 text-green-400'
+                      : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  <ArrowUp className="w-4 h-4 mx-auto mb-1" />
+                  <div className="text-xs">Reverse UV</div>
+                  <div className="text-xs opacity-75">2:1 ratio</div>
+                </button>
+                
+                <button
+                  onClick={() => setVoteType('reverse-downvote')}
+                  className={`p-3 rounded-lg border transition-colors ${
+                    voteType === 'reverse-downvote'
+                      ? 'bg-red-600/20 border-red-600 text-red-400'
+                      : 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600'
+                  }`}
+                >
+                  <ArrowDown className="w-4 h-4 mx-auto mb-1" />
+                  <div className="text-xs">Reverse DV</div>
+                  <div className="text-xs opacity-75">2:1 ratio</div>
+                </button>
+              </div>
+            </div>
+            
+            {/* Token Amount Input */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Tokens to Burn
+              </label>
+              <input
+                type="number"
+                value={tokenAmount}
+                onChange={(e) => setTokenAmount(e.target.value)}
+                placeholder="0"
+                min="0"
+                step="0.000001"
+                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+              />
+              <div className="text-xs text-gray-400 mt-1">
+                Available: 1,234.56 {tokenData.symbol}
+              </div>
+            </div>
+            
+            {/* Cost Summary */}
+            {tokenAmount && (
+              <div className="bg-gray-700/50 rounded-lg p-4">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-400">Vote Power:</span>
+                  <span className="text-white">{tokenAmount} votes</span>
+                </div>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-gray-400">Tokens Required:</span>
+                  <span className="text-orange-400 font-semibold">{getTokensRequired()} {tokenData.symbol}</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Vote Type:</span>
+                  <span className="text-white capitalize">{voteType.replace('-', ' ')}</span>
+                </div>
+              </div>
+            )}
+            
+            {/* Submit Button */}
+            <button
+              onClick={handleSubmitVote}
+              disabled={!tokenAmount || parseFloat(tokenAmount) <= 0 || isSubmitting}
+              className="w-full bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 disabled:from-gray-600 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-3 rounded-lg font-semibold transition-all"
+            >
+              {isSubmitting ? 'Submitting Vote...' : `Submit ${voteType.replace('-', ' ').toUpperCase()}`}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
+  // Trading View Component
+  const TradingView = () => {
+    const [tradeType, setTradeType] = useState<'buy' | 'sell'>('buy');
+    const [tradeAmount, setTradeAmount] = useState('');
+    
+    if (!showTradingView || !selectedTokenData) return null;
+    
+    // Mock price data for chart
+    const priceData = [
+      { time: '09:00', price: 0.000040 },
+      { time: '10:00', price: 0.000042 },
+      { time: '11:00', price: 0.000045 },
+      { time: '12:00', price: 0.000043 },
+      { time: '13:00', price: 0.000047 },
+      { time: '14:00', price: 0.000045 },
+      { time: '15:00', price: 0.000048 }
+    ];
+    
+    const maxPrice = Math.max(...priceData.map(d => d.price));
+    const minPrice = Math.min(...priceData.map(d => d.price));
+    
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className="bg-gray-800 border border-gray-700 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="p-6 border-b border-gray-700">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-full overflow-hidden">
+                  <img src={selectedTokenData.logo} alt={selectedTokenData.name} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-white">{selectedTokenData.name} Trading</h3>
+                  <div className="text-gray-400">${selectedTokenData.symbol} • ${selectedTokenData.price.toFixed(6)}</div>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowTradingView(false)}
+                className="p-2 text-gray-400 hover:text-white transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+          
+          <div className="grid lg:grid-cols-3 gap-6 p-6">
+            {/* Chart */}
+            <div className="lg:col-span-2">
+              <div className="bg-gray-700/30 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h4 className="text-lg font-semibold text-white">Price Chart</h4>
+                  <div className="flex items-center space-x-2 text-green-400">
+                    <TrendingUp className="w-4 h-4" />
+                    <span className="text-sm">+15.6%</span>
+                  </div>
+                </div>
+                
+                {/* Simple Line Chart */}
+                <div className="h-64 relative">
+                  <svg className="w-full h-full">
+                    <defs>
+                      <linearGradient id="priceGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#10b981" stopOpacity="0.3"/>
+                        <stop offset="100%" stopColor="#10b981" stopOpacity="0"/>
+                      </linearGradient>
+                    </defs>
+                    
+                    {/* Price line */}
+                    <polyline
+                      fill="none"
+                      stroke="#10b981"
+                      strokeWidth="2"
+                      points={priceData.map((point, index) => {
+                        const x = (index / (priceData.length - 1)) * 100;
+                        const y = 100 - ((point.price - minPrice) / (maxPrice - minPrice)) * 80;
+                        return `${x}%,${y}%`;
+                      }).join(' ')}
+                    />
+                    
+                    {/* Fill area */}
+                    <polygon
+                      fill="url(#priceGradient)"
+                      points={`0%,100% ${priceData.map((point, index) => {
+                        const x = (index / (priceData.length - 1)) * 100;
+                        const y = 100 - ((point.price - minPrice) / (maxPrice - minPrice)) * 80;
+                        return `${x}%,${y}%`;
+                      }).join(' ')} 100%,100%`}
+                    />
+                  </svg>
+                  
+                  {/* Time labels */}
+                  <div className="absolute bottom-0 left-0 right-0 flex justify-between text-xs text-gray-400 mt-2">
+                    {priceData.map((point, index) => (
+                      <span key={index}>{point.time}</span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              {/* Token Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="bg-gray-700/30 rounded-lg p-3">
+                  <div className="text-gray-400 text-xs">24h High</div>
+                  <div className="text-white font-semibold">${maxPrice.toFixed(6)}</div>
+                </div>
+                <div className="bg-gray-700/30 rounded-lg p-3">
+                  <div className="text-gray-400 text-xs">24h Low</div>
+                  <div className="text-white font-semibold">${minPrice.toFixed(6)}</div>
+                </div>
+                <div className="bg-gray-700/30 rounded-lg p-3">
+                  <div className="text-gray-400 text-xs">Volume</div>
+                  <div className="text-white font-semibold">${(selectedTokenData.volume24h / 1000).toFixed(0)}K</div>
+                </div>
+                <div className="bg-gray-700/30 rounded-lg p-3">
+                  <div className="text-gray-400 text-xs">Market Cap</div>
+                  <div className="text-white font-semibold">${(selectedTokenData.marketCap / 1000).toFixed(0)}K</div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Trading Panel */}
+            <div className="space-y-4">
+              <div className="bg-gray-700/30 rounded-lg p-4">
+                <div className="flex bg-gray-700 rounded-lg p-1 mb-4">
+                  <button
+                    onClick={() => setTradeType('buy')}
+                    className={`flex-1 py-2 px-4 rounded text-sm font-medium transition-colors ${
+                      tradeType === 'buy'
+                        ? 'bg-green-600 text-white'
+                        : 'text-gray-300 hover:text-white'
+                    }`}
+                  >
+                    Buy
+                  </button>
+                  <button
+                    onClick={() => setTradeType('sell')}
+                    className={`flex-1 py-2 px-4 rounded text-sm font-medium transition-colors ${
+                      tradeType === 'sell'
+                        ? 'bg-red-600 text-white'
+                        : 'text-gray-300 hover:text-white'
+                    }`}
+                  >
+                    Sell
+                  </button>
+                </div>
+                
+                <div className="space-y-3">
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">
+                      {tradeType === 'buy' ? 'RON Amount' : `${selectedTokenData.symbol} Amount`}
+                    </label>
+                    <input
+                      type="number"
+                      value={tradeAmount}
+                      onChange={(e) => setTradeAmount(e.target.value)}
+                      placeholder="0.0"
+                      className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
+                  
+                  <div className="text-xs text-gray-400">
+                    Balance: {tradeType === 'buy' ? '12.34 RON' : `5,678.90 ${selectedTokenData.symbol}`}
+                  </div>
+                  
+                  <button
+                    className={`w-full py-3 rounded-lg font-semibold transition-colors ${
+                      tradeType === 'buy'
+                        ? 'bg-green-600 hover:bg-green-700 text-white'
+                        : 'bg-red-600 hover:bg-red-700 text-white'
+                    }`}
+                  >
+                    {tradeType === 'buy' ? 'Buy' : 'Sell'} {selectedTokenData.symbol}
+                  </button>
+                </div>
+              </div>
+              
+              {/* Quick Actions */}
+              <div className="bg-gray-700/30 rounded-lg p-4">
+                <h5 className="text-white font-medium mb-3">Quick Actions</h5>
+                <div className="space-y-2">
+                  <button className="w-full text-left px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm text-gray-300 hover:text-white transition-colors">
+                    Add to Watchlist
+                  </button>
+                  <button className="w-full text-left px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm text-gray-300 hover:text-white transition-colors">
+                    View on Explorer
+                  </button>
+                  <button className="w-full text-left px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm text-gray-300 hover:text-white transition-colors">
+                    Share Token
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
   if (selectedTokenData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-900 via-orange-900/10 to-gray-900 pt-8 pb-16">
@@ -329,13 +692,21 @@ export default function FlamenizePage() {
                     >
                       <Share2 className="w-4 h-4 text-gray-300" />
                     </button>
+                    <button
+                      onClick={() => setShowTradingView(true)}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center space-x-2"
+                    >
+                      <BarChart3 className="w-4 h-4" />
+                      <span>Trade</span>
+                    </button>
                     <a
                       href={`https://katana.roninchain.com/swap?outputCurrency=${selectedTokenData.contractAddress}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center space-x-2"
                     >
-                      Trade
+                      <ExternalLink className="w-4 h-4" />
+                      <span>DEX</span>
                     </a>
                   </div>
                 </div>
@@ -478,9 +849,19 @@ export default function FlamenizePage() {
                       style={{ width: `${selectedTokenData.reputationScore}%` }}
                     ></div>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Total Burned: {(selectedTokenData.totalBurned / 1000000).toFixed(1)}M</span>
-                    <span className="text-gray-400">Votes: {selectedTokenData.positiveVotes + selectedTokenData.negativeVotes}</span>
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Total Burned:</span>
+                      <span className="text-orange-400">{(selectedTokenData.totalBurned / 1000000).toFixed(1)}M</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Direct Votes:</span>
+                      <span className="text-white">{selectedTokenData.positiveVotes + selectedTokenData.negativeVotes}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Reverse Votes:</span>
+                      <span className="text-purple-400">234</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -533,6 +914,10 @@ export default function FlamenizePage() {
             </div>
           </div>
         </div>
+        
+        {/* Modals */}
+        <VoteModal />
+        <TradingView />
       </div>
     );
   }
